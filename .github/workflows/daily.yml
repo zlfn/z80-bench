@@ -31,11 +31,13 @@ jobs:
         with:
           submodules: true
 
-      # SDCC's build needs the first five, zxcc's (for HI-TECH C) automake.
+      # SDCC's build needs the first five, zxcc's (for HI-TECH C) autoconf and
+      # automake, and the Fuzix compiler's preprocessor libbsd.
       - name: Install build tools
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq bison flex texinfo libboost-dev zlib1g-dev automake
+          sudo apt-get install -y -qq bison flex texinfo libboost-dev zlib1g-dev \
+            autoconf automake libbsd-dev
 
       - name: Fetch llvm-z80 nightly
         run: |
@@ -65,7 +67,7 @@ jobs:
         run: echo "sha=$(git -C sdcc-src rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - id: sdcc-cache
-        uses: actions/cache@v6
+        uses: actions/cache/restore@v6
         with:
           path: ~/sdcc-trunk
           key: sdcc-trunk-${{ steps.sdcc.outputs.sha }}-${{ hashFiles('tools/build-sdcc.sh') }}
@@ -73,6 +75,12 @@ jobs:
       - name: Build SDCC trunk
         if: steps.sdcc-cache.outputs.cache-hit != 'true'
         run: tools/build-sdcc.sh sdcc-src ~/sdcc-trunk
+
+      - if: steps.sdcc-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ~/sdcc-trunk
+          key: sdcc-trunk-${{ steps.sdcc.outputs.sha }}-${{ hashFiles('tools/build-sdcc.sh') }}
 
       # The compilers below are pinned releases that no longer change daily.
       - name: Fetch CEdev v15.0
@@ -85,7 +93,7 @@ jobs:
           tar -xzf dl/CEdev-Linux.tar.gz -C ~
 
       - id: gb-llvm-cache
-        uses: actions/cache@v6
+        uses: actions/cache/restore@v6
         with:
           path: ~/gb-llvm
           key: gb-llvm-v0.1.0-libxml2-2.15.4-icu-78.3
@@ -118,9 +126,16 @@ jobs:
           tar --zstd -xf dl/icu.pkg.tar.zst -C ~/gb-llvm/lib --strip-components=2 \
             --wildcards 'usr/lib/libicuuc.so.78*' 'usr/lib/libicudata.so.78*'
 
+      - if: steps.gb-llvm-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ~/gb-llvm
+          key: gb-llvm-v0.1.0-libxml2-2.15.4-icu-78.3
+
       # Both are pinned in their build scripts, so the scripts are the keys.
+      # Each long build is saved right away, so a later failure keeps it.
       - id: fcc-cache
-        uses: actions/cache@v6
+        uses: actions/cache/restore@v6
         with:
           path: ~/fcc
           key: fcc-${{ hashFiles('tools/build-fcc.sh') }}
@@ -129,8 +144,14 @@ jobs:
         if: steps.fcc-cache.outputs.cache-hit != 'true'
         run: tools/build-fcc.sh ~/fcc
 
+      - if: steps.fcc-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ~/fcc
+          key: fcc-${{ hashFiles('tools/build-fcc.sh') }}
+
       - id: hitech-cache
-        uses: actions/cache@v6
+        uses: actions/cache/restore@v6
         with:
           path: ~/hitech
           key: hitech-${{ hashFiles('tools/build-hitech.sh') }}
@@ -138,6 +159,12 @@ jobs:
       - name: Build zxcc with HI-TECH C
         if: steps.hitech-cache.outputs.cache-hit != 'true'
         run: tools/build-hitech.sh ~/hitech
+
+      - if: steps.hitech-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ~/hitech
+          key: hitech-${{ hashFiles('tools/build-hitech.sh') }}
 
       - name: Install uc80 0.7.0
         run: |
