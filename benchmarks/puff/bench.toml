@@ -1,0 +1,6 @@
+description = "Inflate 4 KB with puff"
+details = "Mark Adler's puff decompresses a 1.4 KB deflate stream back to 4 KB of text. It reads its input a bit at a time, builds Huffman tables at run time and copies back-references."
+origin = "zlib contrib/puff, zlib license"
+url = "https://github.com/madler/zlib/tree/develop/contrib/puff"
+sources = ["main.c", "puff.c", "input.c", "../harness/data.c"]
+include = ["."]

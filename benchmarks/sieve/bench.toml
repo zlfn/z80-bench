@@ -1,0 +1,6 @@
+description = "Byte sieve, 4 KB"
+details = "The Sieve of Eratosthenes as BYTE magazine published it in 1981, over 4096 byte flags. Tight loops of byte stores with a 16-bit stride."
+origin = "written for z80-bench after c-bench-64"
+url = "https://github.com/thred/c-bench-64"
+sources = ["main.c"]
+include = []

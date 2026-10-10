@@ -1,0 +1,6 @@
+description = "160 digits of pi, 32-bit"
+details = "A spigot algorithm that produces 160 digits of pi, four at a time. Nearly all the time goes into 32-bit multiplication, division and remainder."
+origin = "written for z80-bench after c-bench-64"
+url = "https://github.com/thred/c-bench-64"
+sources = ["main.c"]
+include = []

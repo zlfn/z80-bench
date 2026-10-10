@@ -1,0 +1,9 @@
+-std=c99
+-Ibenchmarks/harness
+-Ibenchmarks/stdcbench
+-Ibenchmarks/coremark
+-Ibenchmarks/puff
+-Ivendor/stdcbench
+-Ivendor/coremark
+-Ivendor/tiny-AES-c
+-DAES256=1

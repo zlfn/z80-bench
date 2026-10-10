@@ -1,0 +1,81 @@
+# What the site says about each compiler. compilers.toml has how they are run.
+# "modified" marks a compiler that runs with code written for this site; the
+# site puts an asterisk after its name.
+# "history" draws a compiler in the History chart until the viewer turns it
+# off; the others start off.
+
+[sdcc]
+name = "SDCC"
+history = true
+logo = "logos/sdcc.svg"
+homepage = "https://sdcc.sourceforge.net/"
+license = "GPL-2.0-or-later, library with a linking exception"
+description = "The Small Device C Compiler, a retargetable optimizing C compiler for 8-bit processors. Its Z80 family ports cover the Z80, Z180, Z80N, R800, eZ80 in Z80 mode, the Rabbits, the TLCS-90 and the Game Boy's SM83."
+language = "C90, C99, C11, most of C23"
+
+# The baseline is not shown as a compiler; only its name appears.
+["sdcc-4.6.0"]
+name = "SDCC 4.6.0"
+
+[llvm-z80]
+name = "llvm-z80"
+history = true
+logo = "logos/llvm-z80.png"
+# Pixel art: scaled without smoothing.
+pixel-art = true
+homepage = "https://github.com/llvm-z80/llvm-z80"
+license = "Apache-2.0 WITH LLVM-exception"
+description = "A fork of LLVM, the open-source compiler infrastructure behind Clang, with backends for the Z80 and the Game Boy's SM83."
+language = "C17, C23 (Clang)"
+
+[zsdcc]
+name = "zsdcc"
+logo = "logos/z88dk.png"
+homepage = "https://github.com/z88dk/z88dk"
+license = "GPL-2.0-or-later"
+description = "SDCC as z88dk builds it: SDCC with z88dk's patches and peephole rules, driven by zcc and linked with z88dk's z80asm, C libraries and startup code for over a hundred Z80 machines."
+language = "C90, C99, C11, most of C23"
+
+[sccz80]
+name = "sccz80"
+logo = "logos/z88dk.png"
+homepage = "https://github.com/z88dk/z88dk"
+license = "Clarified Artistic License"
+description = "z88dk's own compiler, descended from Ron Cain's Small C of 1980 through James Hendrix's Small C and decades of z88dk work, now close to C90 with extensions."
+language = "Most of C90"
+
+[80cc]
+name = "80cc"
+history = true
+logo = "logos/z88dk.png"
+homepage = "https://github.com/z88dk/z88dk"
+license = "Clarified Artistic License"
+description = "z88dk's newer compiler: the Small C frontend it shares with sccz80, and a new backend that lowers an SSA-style intermediate representation to Z80 family assembly."
+language = "Most of C90"
+
+[ez80-clang]
+name = "ez80-clang"
+logo = "logos/ce-programming.png"
+homepage = "https://github.com/CE-Programming/llvm-project"
+license = "Apache-2.0 WITH LLVM-exception"
+description = "CE-Programming's fork of LLVM for the eZ80 in TI calculators, which also compiles for the Z80."
+modified = "Z80-mode helper functions and string functions written for z80-bench. CEdev's runtime is for ADL mode only."
+language = "C17, C23 (Clang)"
+
+[uc80]
+name = "uc80"
+logo = "logos/uc80.png"
+homepage = "https://github.com/avwohl/uc80"
+license = "GPL-3.0-or-later"
+description = "A C compiler for the Z80 and CP/M written in Python, which compiles a whole program at once and optimizes for size."
+language = "C11, most of C23"
+
+[gb-llvm]
+name = "gb-llvm"
+logo = "logos/gb-llvm.png"
+homepage = "https://github.com/DaveDuck321/gb-llvm"
+license = "Apache-2.0 WITH LLVM-exception"
+description = "A fork of LLVM with a backend for the Game Boy's SM83."
+modified = "String functions, 8- and 16-bit division and multiplies written for z80-bench. gb-llvm ships no C library, and its own multiplies never finish on a negative operand."
+language = "C17, C23 (Clang)"
+

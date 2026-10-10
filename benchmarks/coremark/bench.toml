@@ -1,0 +1,13 @@
+description = "CoreMark 1.0, one iteration"
+details = "EEMBC's CoreMark: it searches and sorts a linked list, multiplies small matrices, runs a state machine over input strings and checks every part with a CRC. Most values are 16-bit, with 32-bit sums in the matrix part."
+origin = "EEMBC CoreMark, Apache-2.0"
+url = "https://github.com/eembc/coremark"
+sources = [
+	"core_portme.c",
+	"../../vendor/coremark/core_list_join.c",
+	"../../vendor/coremark/core_main.c",
+	"../../vendor/coremark/core_matrix.c",
+	"../../vendor/coremark/core_state.c",
+	"../../vendor/coremark/core_util.c",
+]
+include = [".", "../../vendor/coremark"]

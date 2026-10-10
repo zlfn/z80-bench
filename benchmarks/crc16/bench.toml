@@ -1,0 +1,6 @@
+description = "CRC-16 over 4 KB"
+details = "CRC-16/XMODEM computed bit by bit over 4 KB. A 16-bit shift and a conditional XOR for every bit."
+origin = "written for z80-bench after c-bench-64"
+url = "https://github.com/thred/c-bench-64"
+sources = ["main.c", "../harness/data.c"]
+include = []

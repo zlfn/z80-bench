@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>z80-bench</title>
+<meta name="description" content="C-compiler benchmarks for the Z80 and the SM83.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='3' y='1' width='10' height='14' rx='1.5' fill='%232a78d6'/%3E%3Cg fill='%2352514e'%3E%3Crect x='0' y='3' width='3' height='1.4'/%3E%3Crect x='0' y='7.3' width='3' height='1.4'/%3E%3Crect x='0' y='11.6' width='3' height='1.4'/%3E%3Crect x='13' y='3' width='3' height='1.4'/%3E%3Crect x='13' y='7.3' width='3' height='1.4'/%3E%3Crect x='13' y='11.6' width='3' height='1.4'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <a class="mark" href="#">
+      <svg class="chip" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="1" width="10" height="14" rx="1.5"/><g class="pins"><rect x="0" y="3" width="3" height="1.4"/><rect x="0" y="7.3" width="3" height="1.4"/><rect x="0" y="11.6" width="3" height="1.4"/><rect x="13" y="3" width="3" height="1.4"/><rect x="13" y="7.3" width="3" height="1.4"/><rect x="13" y="11.6" width="3" height="1.4"/></g></svg>
+      z80-bench
+    </a>
+    <nav>
+      <a href="#results">Results</a>
+      <a href="#history">History</a>
+      <a href="#compilers">Compilers</a>
+      <a href="#benchmarks">Benchmarks</a>
+    </nav>
+    <button class="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5a6.5 6.5 0 1 0 0 13z"/><circle cx="8" cy="8" r="6.5" fill="none"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <h1>C-Compiler Benchmarks for Z80</h1>
+    <dl class="run-meta" id="run-meta"></dl>
+  </section>
+
+  <div class="controls" role="toolbar" aria-label="What to show">
+    <div class="seg" data-key="target" role="group" aria-label="CPU">
+      <span class="seg-label">CPU</span>
+      <button type="button" data-value="z80">Z80</button>
+      <button type="button" data-value="sm83">SM83</button>
+    </div>
+    <div class="seg" data-key="preset" role="group" aria-label="Optimized for">
+      <span class="seg-label">Optimized for</span>
+      <button type="button" data-value="speed">Speed</button>
+      <button type="button" data-value="size">Size</button>
+    </div>
+    <div class="seg" data-key="metric" role="group" aria-label="Measure">
+      <span class="seg-label">Measure</span>
+      <button type="button" data-value="cycles">Cycles</button>
+      <button type="button" data-value="size">Bytes</button>
+    </div>
+  </div>
+
+  <section id="results">
+    <div class="section-head">
+      <h2>Overall</h2>
+      <p class="note" id="base-note"></p>
+      <p class="note" id="mod-note" hidden>* With a runtime written for z80-bench</p>
+    </div>
+    <div class="overall" id="overall"></div>
+
+    <div class="section-head">
+      <h2>By benchmark</h2>
+    </div>
+    <div class="matrix-wrap">
+      <table class="matrix" id="matrix"></table>
+    </div>
+  </section>
+
+  <section id="history">
+    <div class="section-head">
+      <h2>History</h2>
+    </div>
+    <div class="history" id="history-chart"></div>
+  </section>
+
+  <section id="compilers">
+    <div class="section-head"><h2>Compilers</h2></div>
+    <div class="profiles" id="compiler-cards"></div>
+  </section>
+
+  <section id="benchmarks">
+    <div class="section-head"><h2>Benchmarks</h2></div>
+    <div class="benches" id="bench-cards"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Benchmark set after <a href="https://github.com/thred/c-bench-64">c-bench-64</a>.
+    Source and data on <a href="https://github.com/zlfn/z80-bench">GitHub</a>.</p>
+</footer>
+
+<dialog class="viewer" id="viewer" aria-labelledby="viewer-title">
+  <div class="v-head">
+    <div>
+      <h2 id="viewer-title"></h2>
+      <p class="v-sub" id="viewer-sub"></p>
+    </div>
+    <button class="v-close" type="button" aria-label="Close">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+    </button>
+  </div>
+  <div class="v-body">
+    <nav class="v-files" id="viewer-files" aria-label="Files"></nav>
+    <div class="v-main">
+      <p class="v-path" id="viewer-path"></p>
+      <pre class="v-code" tabindex="-1" autofocus><code id="viewer-code"></code></pre>
+    </div>
+  </div>
+</dialog>
+
+<div class="tip" id="tip" role="tooltip" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>

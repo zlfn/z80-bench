@@ -1,0 +1,6 @@
+description = "Bit sieve, 16000 bits"
+details = "The same sieve with one bit per odd number, 16000 of them, tested and cleared through small helper functions. Function calls, shifts and bit masks."
+origin = "written for z80-bench after c-bench-64"
+url = "https://github.com/thred/c-bench-64"
+sources = ["main.c"]
+include = []

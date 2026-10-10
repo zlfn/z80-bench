@@ -1,0 +1,58 @@
+name: Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - site/**
+      - benchmarks/**
+      - vendor/**
+      - compilers-info.toml
+      - tools/publish.py
+      - .github/workflows/pages.yml
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+
+      - id: data
+        name: Check out the data branch
+        run: |
+          if git ls-remote --exit-code --heads origin data >/dev/null; then
+            git fetch -q --depth=1 origin data
+            git worktree add -q --detach site/data FETCH_HEAD
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::No data branch yet. The daily run creates it."
+          fi
+
+      - name: Write the sources and descriptions
+        if: steps.data.outputs.found == 'true'
+        run: tools/publish.py --assets-only
+
+      - uses: actions/upload-pages-artifact@v5
+        if: steps.data.outputs.found == 'true'
+        with:
+          path: site
+
+      - id: deployment
+        if: steps.data.outputs.found == 'true'
+        uses: actions/deploy-pages@v5

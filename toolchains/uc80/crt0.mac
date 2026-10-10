@@ -1,0 +1,43 @@
+; Startup for running uc80 programs bare in the benchmark emulator: linked at
+; 0, stack at the top of memory, .bss zeroed, then main. Otherwise the same as
+; uc80's CP/M crt0, which takes its stack from BDOS and exits through it.
+
+	.Z80
+
+	CSEG
+
+	PUBLIC	__start
+
+	EXTRN	_main
+	EXTRN	__bss_start
+	EXTRN	__bss_end
+
+__start:
+	LD	SP,0
+
+	LD	HL,__bss_end
+	LD	DE,__bss_start
+	OR	A
+	SBC	HL,DE
+	LD	B,H
+	LD	C,L
+	LD	A,B
+	OR	C
+	JR	Z,__nobss
+	LD	HL,__bss_start
+	LD	(HL),0
+	DEC	BC
+	LD	A,B
+	OR	C
+	JR	Z,__nobss
+	LD	D,H
+	LD	E,L
+	INC	DE
+	LDIR
+__nobss:
+	CALL	_main
+__halt:
+	HALT
+	JR	__halt
+
+	END	__start

@@ -1,0 +1,10 @@
+description = "stdcbench 0.8, c90base"
+details = "Philipp Krause's benchmark for small systems. Its c90base module decompresses RLE and Huffman data, sorts sprites by insertion sort and multiplies integer matrices, mostly code taken from real ColecoVision programs."
+origin = "stdcbench 0.8, GPL-2.0-or-later"
+url = "https://sourceforge.net/projects/stdcbench/"
+sources = [
+	"portme.c",
+	"../../vendor/stdcbench/stdcbench.c",
+	"../../vendor/stdcbench/c90base*.c",
+]
+include = [".", "../../vendor/stdcbench"]

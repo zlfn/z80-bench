@@ -1,0 +1,9 @@
+[submodule "vendor/stdcbench"]
+	path = vendor/stdcbench
+	url = https://github.com/llvm-z80/stdcbench
+[submodule "vendor/coremark"]
+	path = vendor/coremark
+	url = https://github.com/eembc/coremark
+[submodule "vendor/tiny-AES-c"]
+	path = vendor/tiny-AES-c
+	url = https://github.com/kokke/tiny-AES-c

@@ -1,0 +1,6 @@
+description = "Dhrystone 2.1, 1000 runs"
+details = "Reinhold Weicker's synthetic integer benchmark, version 2.1, run 1000 times. Procedure calls, record assignment, string copies and comparisons, and array indexing."
+origin = "Dhrystone 2.1 (netlib), adapted"
+url = "https://www.netlib.org/benchmark/dhry-c"
+sources = ["dhry_1.c", "dhry_2.c"]
+include = ["."]

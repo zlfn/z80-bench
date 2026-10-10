@@ -1,0 +1,6 @@
+description = "Recursive 32-bit factorials"
+details = "Recursive factorials of 0 to 15 in 32-bit arithmetic, eight times over. Call and return overhead and 32-bit multiplication."
+origin = "written for z80-bench after c-bench-64"
+url = "https://github.com/thred/c-bench-64"
+sources = ["main.c"]
+include = []

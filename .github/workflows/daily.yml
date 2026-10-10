@@ -1,0 +1,191 @@
+name: Daily run
+
+on:
+  schedule:
+    # After llvm-z80's nightly package and the SDCC mirror, both at 20:00 UTC.
+    - cron: "0 22 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Run even if no compiler and no benchmark changed
+        type: boolean
+        default: false
+
+concurrency:
+  group: daily
+  cancel-in-progress: false
+
+jobs:
+  bench:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    permissions:
+      contents: write
+    outputs:
+      published: ${{ steps.publish.outputs.published }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      Z88DK_IMAGE: z88dk/z88dk:latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+
+      - name: Install SDCC's build tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq bison flex texinfo libboost-dev zlib1g-dev
+
+      - name: Fetch llvm-z80 nightly
+        run: |
+          mkdir -p ~/llvm-z80
+          gh release download nightly --repo llvm-z80/llvm-z80 \
+            --pattern 'LLVM-Z80-nightly-Linux-X64.tar.xz' --output - |
+            tar -xJ --strip-components=1 -C ~/llvm-z80
+
+      - name: Fetch SDCC 4.6.0
+        run: |
+          mkdir -p ~/sdcc-4.6.0 dl
+          gh release download sdcc-4.6.0 --repo llvm-z80/sdcc --dir dl \
+            --pattern 'sdcc-4.6.0-x86_64-linux.tar.xz' --pattern sha256sums.txt
+          (cd dl && sha256sum -c --ignore-missing sha256sums.txt)
+          tar -xJf dl/sdcc-4.6.0-x86_64-linux.tar.xz --strip-components=1 -C ~/sdcc-4.6.0
+
+      - uses: actions/checkout@v7
+        with:
+          repository: llvm-z80/sdcc
+          ref: trunk
+          path: sdcc-src
+          # Full history, for the SVN revision that sdcc --version reports.
+          fetch-depth: 0
+          filter: blob:none
+
+      - id: sdcc
+        run: echo "sha=$(git -C sdcc-src rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - id: sdcc-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/sdcc-trunk
+          key: sdcc-trunk-${{ steps.sdcc.outputs.sha }}-${{ hashFiles('tools/build-sdcc.sh') }}
+
+      - name: Build SDCC trunk
+        if: steps.sdcc-cache.outputs.cache-hit != 'true'
+        run: tools/build-sdcc.sh sdcc-src ~/sdcc-trunk
+
+      # The compilers below are pinned releases that no longer change daily.
+      - name: Fetch CEdev v15.0
+        run: |
+          mkdir -p dl
+          gh release download v15.0 --repo CE-Programming/toolchain --dir dl \
+            --pattern CEdev-Linux.tar.gz
+          echo "85f4794a617b134249a9cba8a084414e86e16d2a68377b1d72ace30c636dbdf9  dl/CEdev-Linux.tar.gz" |
+            sha256sum -c
+          tar -xzf dl/CEdev-Linux.tar.gz -C ~
+
+      - id: gb-llvm-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/gb-llvm
+          key: gb-llvm-v0.1.0
+
+      - name: Fetch gb-llvm v0.1.0
+        if: steps.gb-llvm-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p dl ~/gb-llvm
+          gh release download v0.1.0 --repo DaveDuck321/gb-llvm --dir dl --pattern release.tar.gz
+          echo "8018a9f806be1bc4d72dd9ca983a1eb61c86e5f20299c9a1ea2603f1e4b0e9dd  dl/release.tar.gz" |
+            sha256sum -c
+          # Only what the benchmarks use; the full release is 2 GB unpacked.
+          # ld.lld and llvm-objcopy are hard links to the files before them.
+          tar -xzf dl/release.tar.gz -C ~/gb-llvm ./runtime.S ./lib/clang ./bin/clang \
+            ./bin/ld64.lld ./bin/ld.lld ./bin/llvm-bitcode-strip ./bin/llvm-objcopy \
+            ./bin/llvm-nm ./bin/llvm-readelf
+          rm dl/release.tar.gz
+
+      - name: Install uc80 0.7.0
+        run: |
+          python3 -m venv ~/uc80
+          ~/uc80/bin/pip install -q uc80==0.7.0 um80==0.3.52
+
+      - name: Pull z88dk
+        run: docker pull -q "$Z88DK_IMAGE"
+
+      - name: Check out the data branch
+        run: |
+          if git ls-remote --exit-code --heads origin data >/dev/null; then
+            git fetch -q --depth=1 origin data:data
+            git worktree add -q site/data data
+          else
+            git worktree add -q --orphan -b data site/data
+          fi
+          {
+            echo "LLVM_Z80_BIN=$HOME/llvm-z80/bin"
+            echo "SDCC_BIN=$HOME/sdcc-4.6.0/bin"
+            echo "SDCC_TRUNK_BIN=$HOME/sdcc-trunk/bin"
+            echo "CEDEV_BIN=$HOME/CEdev/bin"
+            echo "GB_LLVM_BIN=$HOME/gb-llvm/bin"
+            echo "UC80_BIN=$HOME/uc80/bin"
+          } >> "$GITHUB_ENV"
+
+      - id: check
+        name: Compare with the last run
+        env:
+          FORCE: ${{ inputs.force }}
+        run: |
+          ./bench.py --bin "sdcc=$SDCC_TRUNK_BIN" --bin "ez80-clang=$CEDEV_BIN" --bin "gb-llvm=$GB_LLVM_BIN" \
+            --bin "uc80=$UC80_BIN" --versions > versions.json
+          cat versions.json
+          python3 - <<'PY'
+          import json, os, subprocess
+
+          versions = json.load(open("versions.json"))
+          commit = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+          try:
+              index = json.load(open("site/data/index.json"))
+              last = next(r for r in index["runs"] if r["id"] == index["latest"])
+              same = last["versions"] == versions and last.get("commit") == commit
+          except (OSError, StopIteration, KeyError):
+              same = False
+          run = os.environ.get("FORCE") == "true" or not same
+          if not run:
+              print("::notice::No compiler and no benchmark changed since the last run.")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              out.write(f"run={str(run).lower()}\n")
+          PY
+
+      - name: Run the benchmarks
+        if: steps.check.outputs.run == 'true'
+        run: |
+          ./bench.py --bin "sdcc=$SDCC_TRUNK_BIN" --bin "ez80-clang=$CEDEV_BIN" --bin "gb-llvm=$GB_LLVM_BIN" \
+            --bin "uc80=$UC80_BIN" -o results/run.json
+
+      - id: publish
+        name: Publish the run
+        if: steps.check.outputs.run == 'true'
+        run: |
+          id=$(date -u +%F)
+          tools/publish.py results/run.json --id "$id"
+          cd site/data
+          git add -A
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit -q -m "Run $id"
+          git push -q origin HEAD:data
+          echo "published=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v7
+        if: always() && steps.check.outputs.run == 'true'
+        with:
+          name: results
+          path: results/run.json
+          if-no-files-found: ignore
+
+  pages:
+    needs: bench
+    if: needs.bench.outputs.published == 'true'
+    uses: ./.github/workflows/pages.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write

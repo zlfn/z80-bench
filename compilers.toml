@@ -1,0 +1,73 @@
+# Flags for each compiler, per target and preset. "speed" and "size" are what
+# each project recommends for its fastest and its smallest code.
+
+# SDCC's trunk, built every day by the daily workflow.
+[sdcc]
+toolchain = "sdcc"
+z80.speed = ["--opt-code-speed", "--max-allocs-per-node", "200000"]
+z80.size = ["--opt-code-size", "--max-allocs-per-node", "200000"]
+sm83.speed = ["--opt-code-speed", "--max-allocs-per-node", "200000"]
+sm83.size = ["--opt-code-size", "--max-allocs-per-node", "200000"]
+
+# Every ratio on the site is against this release of SDCC. It runs with the
+# others so it always sees the same sources and emulator, but the site does
+# not show it as a compiler of its own.
+["sdcc-4.6.0"]
+baseline = true
+release = "4.6.0"
+toolchain = "sdcc"
+z80.speed = ["--opt-code-speed", "--max-allocs-per-node", "200000"]
+z80.size = ["--opt-code-size", "--max-allocs-per-node", "200000"]
+sm83.speed = ["--opt-code-speed", "--max-allocs-per-node", "200000"]
+sm83.size = ["--opt-code-size", "--max-allocs-per-node", "200000"]
+
+[llvm-z80]
+toolchain = "llvm"
+z80.speed = ["-O2"]
+z80.size = ["-Os"]
+sm83.speed = ["-O2"]
+sm83.size = ["-Os"]
+
+# z88dk's own benchmark recipes use -SO3 --max-allocs-per-node200000.
+[zsdcc]
+toolchain = "z88dk"
+zcc-compiler = "sdcc"
+z80.speed = ["-SO3", "--max-allocs-per-node200000", "--opt-code-speed"]
+z80.size = ["-SO3", "--max-allocs-per-node200000", "--opt-code-size"]
+sm83.speed = ["-SO3", "--max-allocs-per-node200000", "--opt-code-speed"]
+sm83.size = ["-SO3", "--max-allocs-per-node200000", "--opt-code-size"]
+
+[sccz80]
+toolchain = "z88dk"
+zcc-compiler = "sccz80"
+z80.speed = ["-O3", "--opt-code-speed"]
+z80.size = ["-O3"]
+sm83.speed = ["-O3", "--opt-code-speed"]
+sm83.size = ["-O3"]
+
+# 80cc has no size/speed switch (--opt-code-speed is inert). z88dk's recipes
+# use IX as the frame pointer on the Z80; the SM83 has no IX.
+[80cc]
+toolchain = "z88dk"
+zcc-compiler = "80cc"
+z80.speed = ["-O2", "-fframe-pointer"]
+z80.size = ["-O2"]
+sm83.speed = ["-O2"]
+sm83.size = ["-O2"]
+
+# CE-Programming's ez80-clang in Z80 mode. -Oz is CEdev's default.
+[ez80-clang]
+toolchain = "ez80-clang"
+z80.speed = ["-O2"]
+z80.size = ["-Oz"]
+
+# uc80 has a single optimization setting.
+[uc80]
+toolchain = "uc80"
+z80.speed = []
+z80.size = []
+
+[gb-llvm]
+toolchain = "gb-llvm"
+sm83.speed = ["-O2"]
+sm83.size = ["-Os"]
