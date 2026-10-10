@@ -27,6 +27,8 @@ git -C "$src" checkout -q -f "$commit"
 for patch in $patches; do
 	git -C "$src" apply "$patch"
 done
+# ticks includes uthash.h from this submodule, not from the system.
+git -C "$src" submodule update -q --init ext/uthash
 
 make -C "$src/src/ticks" -j"$(nproc)" z88dk-ticks >/dev/null
 mkdir -p "$(dirname "$out")"
