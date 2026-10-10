@@ -1,5 +1,6 @@
-/* llvm-z80 ships these functions in its runtime but no C library headers.
- * This declares the ones the benchmarks use. */
+/* The string functions the benchmarks use, for compilers that ship no C
+ * library headers. llvm-z80 has them in its runtime; the others link
+ * toolchains/libc/string.c. */
 
 #ifndef _STRING_H
 #define _STRING_H

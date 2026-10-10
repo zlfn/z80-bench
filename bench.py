@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parent
 BENCHMARKS = ROOT / "benchmarks"
 HARNESS = BENCHMARKS / "harness"
 # llvm-z80 has no C library headers; these declare what its runtime provides.
-LLVM_INCLUDE = ROOT / "toolchains" / "llvm-z80" / "include"
+LIBC_INCLUDE = ROOT / "toolchains" / "libc" / "include"
 BUILD = ROOT / "build"
 TICKS = ROOT / ".cache" / "bin" / "z88dk-ticks"
 TARGETS = ("z80", "sm83")
@@ -130,7 +130,7 @@ class Llvm:
         elf = out / "prog.elf"
         image = out / "prog.bin"
         run([self.bindir / "clang", f"--target={target}", *flags, "-ffreestanding",
-             *bench.cflags(), "-isystem", LLVM_INCLUDE, *bench.sources, "-o", elf])
+             *bench.cflags(), "-isystem", LIBC_INCLUDE, *bench.sources, "-o", elf])
         run([self.bindir / "llvm-objcopy", "-O", "binary", elf, image])
         return Program(image, elf_symbols(self.bindir / "llvm-nm", elf), image.stat().st_size)
 
@@ -154,7 +154,7 @@ class GbLlvm:
         lib = self.bindir.parent / "lib"
         env = ["env", f"LD_LIBRARY_PATH={lib}:{os.environ.get('LD_LIBRARY_PATH', '')}"]
         run([*env, self.bindir / "clang", "--target=gb-unknown-unknown", *flags, "-ffreestanding",
-             *bench.cflags(), "-isystem", LLVM_INCLUDE, *bench.sources,
+             *bench.cflags(), "-isystem", LIBC_INCLUDE, *bench.sources,
              ROOT / "toolchains" / "libc" / "string.c", ROOT / "toolchains" / "gb-llvm" / "runtime.c",
              self.bindir.parent / "runtime.S",
              "-T", ROOT / "toolchains" / "gb-llvm" / "gb.ld",
@@ -205,6 +205,95 @@ class Ez80Clang:
         run([self.binutils / "z80-none-elf-objcopy", "-O", "binary", elf, image])
         return Program(image, elf_symbols(self.binutils / "z80-none-elf-nm", elf),
                        image.stat().st_size)
+
+
+class Fcc:
+    """The Fuzix Compiler Kit in standalone mode, with no Fuzix libraries:
+    programs link with our startup code and string functions. The build in
+    bindir's parent is tied to its path by tools/build-fcc.sh."""
+
+    def __init__(self, bindir: Path):
+        self.bindir = bindir
+        self.root = bindir.parent
+
+    def version(self) -> str:
+        return (self.root / "version").read_text().strip()
+
+    def build(self, bench: Benchmark, target: str, flags: list[str], out: Path) -> Program:
+        here = ROOT / "toolchains" / "fcc"
+        env = ["env", f"PATH={self.bindir}:{os.environ['PATH']}"]
+        objs = [out / "crt0.o"]
+        run([*env, self.bindir / "asz80", "-o", objs[0], here / "crt0.s"])
+        include = ["-I" + str(i) for i in (here / "include", self.root / "lib" / "z80" / "include",
+                                            LIBC_INCLUDE)]
+        for i, src in enumerate([*bench.sources, ROOT / "toolchains" / "libc" / "string.c"]):
+            # fcc keeps its intermediate files next to the source, so each job
+            # compiles a copy of its own; quoted includes still find the original.
+            copy = out / f"{i}-{src.name}"
+            shutil.copyfile(src, copy)
+            objs.append(copy.with_suffix(".o"))
+            run([*env, self.bindir / "fcc", "-mz80", "-s", *flags, *bench.cflags(), *include,
+                 f"-I{src.parent}", "-c", copy, "-o", objs[-1]], cwd=out)
+        image = out / "prog.bin"
+        run([*env, self.bindir / "ldz80", "-b", "-C", "0", "-m", out / "prog.map", "-o", image,
+             *objs, self.root / "lib" / "z80" / "libz80.a"])
+        symbols = {}
+        for line in (out / "prog.map").read_text().splitlines():
+            parts = line.split()
+            if len(parts) == 3:
+                symbols[parts[2]] = int(parts[0], 16)
+        return Program(image, symbols, image.stat().st_size)
+
+
+class Hitech:
+    """HI-TECH C 3.09 for CP/M, run under the zxcc CP/M emulator that
+    tools/build-hitech.sh builds. Programs are CP/M .com files with its own
+    startup code and C library, which ticks runs as CP/M programs.
+
+    Its compiler predates const and volatile, and CP/M file names are 8.3, so
+    the host preprocessor flattens each source first with both keywords
+    defined away. HI-TECH's own headers stand in for the system ones."""
+
+    def __init__(self, bindir: Path):
+        self.bindir = bindir
+        self.cpm = bindir.parent / "lib" / "cpm"
+
+    def zxcc(self, args: list, cwd: Path, made: Path) -> None:
+        env = ["env", f"PATH={self.bindir}:{os.environ['PATH']}"]
+        out = run([*env, self.bindir / "zxcc", "c.com", *args], cwd=cwd)
+        # The driver exits 0 even when a pass fails, so look for its output.
+        if not made.exists() or "undefined symbol" in out:
+            raise Failure(out[-3000:])
+
+    def version(self) -> str:
+        # With no arguments the driver prints its banner and exits nonzero.
+        p = subprocess.run(["env", f"PATH={self.bindir}:{os.environ['PATH']}",
+                            str(self.bindir / "zxcc"), "c.com"], cwd=ROOT,
+                           capture_output=True, text=True, stdin=subprocess.DEVNULL)
+        m = re.search(r"V(\d+\.\d+\S*)", p.stdout)
+        return m.group(1) if m else "unknown"
+
+    def build(self, bench: Benchmark, target: str, flags: list[str], out: Path) -> Program:
+        # zxcc passes an argument starting with "-" on without that dash.
+        options = ["-" + f for f in flags]
+        objs = []
+        for i, src in enumerate(bench.sources):
+            run(["gcc", "-E", "-P", "-std=gnu89", "-undef", "-nostdinc", "-DCPM", "-DHI_TECH_C",
+                 "-Dz80", "-Dconst=", "-Dvolatile=", f"-I{self.cpm / 'include80'}",
+                 *bench.cflags(), f"-I{src.parent}", src, "-o", out / f"f{i}.c"])
+            self.zxcc([*options, "--C", f"f{i}.c"], out, out / f"f{i}.obj")
+            objs.append(f"f{i}.obj")
+        # The program is named after the first object.
+        self.zxcc(["--Mprog.map", *objs], out, out / "f0.com")
+        image = out / "prog.com"
+        (out / "f0.com").rename(image)
+        symbols = {}
+        for m in re.finditer(r"(\S+)\s+(?:text|data|bss|\(abs\))\s+([0-9A-F]{4})\b",
+                             (out / "prog.map").read_text(errors="replace")):
+            symbols[m.group(1)] = int(m.group(2), 16)
+        # CP/M pads a .com file to whole 128-byte records; the map has the
+        # exact end of text and initialized data.
+        return Program(image, symbols, symbols["__Hdata"] - symbols["__Ltext"], entry=0x100)
 
 
 class Uc80:
@@ -389,7 +478,8 @@ def job(compiler: str, toolchain, flags: list[str], bench: Benchmark,
 
 
 # Toolchains that take nothing but the directory of their binaries.
-TOOLCHAINS = {"gb-llvm": GbLlvm, "ez80-clang": Ez80Clang, "uc80": Uc80}
+TOOLCHAINS = {"gb-llvm": GbLlvm, "ez80-clang": Ez80Clang, "fcc": Fcc, "hitech": Hitech,
+              "uc80": Uc80}
 
 
 def make_toolchain(name: str, conf: dict, args):
@@ -432,7 +522,7 @@ def print_table(results: list[dict], compilers: list[str]):
                     if r is None:
                         cells.append("")
                     elif r["status"] == "ok":
-                        cells.append(f"{r['cycles']:,} {r['size']:>6}")
+                        cells.append(f"{r['cycles']:,} {r.get('size', '?'):>6}")
                     else:
                         cells.append(r["status"])
                 print(f"{b:12}" + "".join(f"{x:>24}" for x in cells))
@@ -516,6 +606,7 @@ def main():
             "compilers": {n: {
                 "version": versions[n],
                 "baseline": all_compilers[n].get("baseline", False),
+                "nightly": all_compilers[n].get("nightly", False),
                 "flags": {t: all_compilers[n][t] for t in TARGETS if t in all_compilers[n]},
             } for n in names},
             "benchmarks": {b.name: {

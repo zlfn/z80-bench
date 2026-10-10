@@ -3,15 +3,24 @@
 # site puts an asterisk after its name.
 # "history" draws a compiler in the History chart until the viewer turns it
 # off; the others start off.
+# "since" is the year the compiler, or the project it grew from, started.
+# "language-url" is where the language support is detailed.
+# "family" is the compiler it derives from. "ai" marks a compiler developed with
+# heavy AI use and says why; the site shows only the mark. "repo", "branch" and "path" are
+# where publish.py looks up the last commit, to mark a compiler unmaintained.
 
 [sdcc]
 name = "SDCC"
+since = 1999
 history = true
 logo = "logos/sdcc.svg"
 homepage = "https://sdcc.sourceforge.net/"
 license = "GPL-2.0-or-later, library with a linking exception"
 description = "The Small Device C Compiler, a retargetable optimizing C compiler for 8-bit processors. Its Z80 family ports cover the Z80, Z180, Z80N, R800, eZ80 in Z80 mode, the Rabbits, the TLCS-90 and the Game Boy's SM83."
-language = "C90, C99, C11, most of C23"
+language = "C90, C99, C11, C17, part of C23, part of C2y"
+family = "SDCC"
+repo = "llvm-z80/sdcc"
+branch = "trunk"
 
 # The baseline is not shown as a compiler; only its name appears.
 ["sdcc-4.6.0"]
@@ -19,6 +28,7 @@ name = "SDCC 4.6.0"
 
 [llvm-z80]
 name = "llvm-z80"
+since = 2026
 history = true
 logo = "logos/llvm-z80.png"
 # Pixel art: scaled without smoothing.
@@ -26,56 +36,114 @@ pixel-art = true
 homepage = "https://github.com/llvm-z80/llvm-z80"
 license = "Apache-2.0 WITH LLVM-exception"
 description = "A fork of LLVM, the open-source compiler infrastructure behind Clang, with backends for the Z80 and the Game Boy's SM83."
-language = "C17, C23 (Clang)"
+language = "C89, C99, C11, C17, C23, part of C2y"
+language-url = "https://clang.llvm.org/c_status.html"
+family = "LLVM"
+ai = "Developed with Claude Code by its maintainer."
+repo = "llvm-z80/llvm-z80"
+branch = "main"
 
 [zsdcc]
 name = "zsdcc"
+since = 2015
 logo = "logos/z88dk.png"
 homepage = "https://github.com/z88dk/z88dk"
 license = "GPL-2.0-or-later"
 description = "SDCC as z88dk builds it: SDCC with z88dk's patches and peephole rules, driven by zcc and linked with z88dk's z80asm, C libraries and startup code for over a hundred Z80 machines."
-language = "C90, C99, C11, most of C23"
+language = "C90, C99, C11, C17, part of C23, part of C2y"
+family = "SDCC"
+repo = "z88dk/z88dk"
+branch = "master"
+path = "src/zsdcc"
 
 [sccz80]
 name = "sccz80"
+since = 1998
 logo = "logos/z88dk.png"
 homepage = "https://github.com/z88dk/z88dk"
 license = "Clarified Artistic License"
 description = "z88dk's own compiler, descended from Ron Cain's Small C of 1980 through James Hendrix's Small C and decades of z88dk work, now close to C90 with extensions."
-language = "Most of C90"
+language = "Part of C90"
+family = "Small C"
+repo = "z88dk/z88dk"
+branch = "master"
+path = "src/sccz80"
 
 [80cc]
 name = "80cc"
+since = 2026
 history = true
 logo = "logos/z88dk.png"
 homepage = "https://github.com/z88dk/z88dk"
 license = "Clarified Artistic License"
 description = "z88dk's newer compiler: the Small C frontend it shares with sccz80, and a new backend that lowers an SSA-style intermediate representation to Z80 family assembly."
-language = "Most of C90"
+language = "Part of C90"
+family = "Small C"
+ai = "Its source directory keeps working rules for AI coding agents in AGENTS.md."
+repo = "z88dk/z88dk"
+branch = "master"
+path = "src/80cc"
 
 [ez80-clang]
 name = "ez80-clang"
+since = 2016
 logo = "logos/ce-programming.png"
 homepage = "https://github.com/CE-Programming/llvm-project"
 license = "Apache-2.0 WITH LLVM-exception"
 description = "CE-Programming's fork of LLVM for the eZ80 in TI calculators, which also compiles for the Z80."
 modified = "Z80-mode helper functions and string functions written for z80-bench. CEdev's runtime is for ADL mode only."
-language = "C17, C23 (Clang)"
+language = "C89, C99, C11, C17, C23, part of C2y"
+language-url = "https://clang.llvm.org/c_status.html"
+family = "LLVM"
+repo = "CE-Programming/llvm-project"
+branch = "z80"
+
+[fcc]
+name = "fcc"
+since = 2022
+logo = "logos/fcc.png"
+homepage = "https://github.com/EtchedPixels/Fuzix-Compiler-Kit"
+license = "GPL-3.0"
+description = "The Fuzix Compiler Kit: Alan Cox's C compiler for 8-bit processors, written to build the Fuzix operating system for the 8080, 8085 and Z80."
+modified = "Startup code, string functions and a stddef.h with size_t written for z80-bench. Standalone builds get no C library."
+language = "C89 subset"
+repo = "EtchedPixels/Fuzix-Compiler-Kit"
+branch = "main"
+
+[hitech]
+name = "HI-TECH C"
+since = 1984
+logo = "logos/hitech.jpg"
+homepage = "https://github.com/agn453/HI-TECH-Z80-C"
+license = "Free for any use, copyright HI-TECH Software"
+description = "HI-TECH Software's C compiler for CP/M-80 from the late 1980s, later released free, with fixes kept up by Tony Nicholson. It runs here under the zxcc CP/M emulator and its programs as CP/M programs."
+language = "Part of C89"
+repo = "agn453/HI-TECH-Z80-C"
+branch = "master"
 
 [uc80]
 name = "uc80"
+since = 2025
 logo = "logos/uc80.png"
 homepage = "https://github.com/avwohl/uc80"
 license = "GPL-3.0-or-later"
 description = "A C compiler for the Z80 and CP/M written in Python, which compiles a whole program at once and optimizes for size."
-language = "C11, most of C23"
+language = "C89, C99, C11, C17, C23"
+ai = "Its recent commits are co-authored by Claude, and the repository has a CLAUDE.md."
+repo = "avwohl/uc80"
+branch = "main"
 
 [gb-llvm]
 name = "gb-llvm"
+since = 2023
 logo = "logos/gb-llvm.png"
 homepage = "https://github.com/DaveDuck321/gb-llvm"
 license = "Apache-2.0 WITH LLVM-exception"
 description = "A fork of LLVM with a backend for the Game Boy's SM83."
 modified = "String functions, 8- and 16-bit division and multiplies written for z80-bench. gb-llvm ships no C library, and its own multiplies never finish on a negative operand."
-language = "C17, C23 (Clang)"
+language = "C89, C99, C11, C17, C23, part of C2y"
+language-url = "https://clang.llvm.org/c_status.html"
+family = "LLVM"
+repo = "DaveDuck321/gb-llvm"
+branch = "main"
 

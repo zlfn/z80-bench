@@ -31,10 +31,11 @@ jobs:
         with:
           submodules: true
 
-      - name: Install SDCC's build tools
+      # SDCC's build needs the first five, zxcc's (for HI-TECH C) automake.
+      - name: Install build tools
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq bison flex texinfo libboost-dev zlib1g-dev
+          sudo apt-get install -y -qq bison flex texinfo libboost-dev zlib1g-dev automake
 
       - name: Fetch llvm-z80 nightly
         run: |
@@ -117,6 +118,27 @@ jobs:
           tar --zstd -xf dl/icu.pkg.tar.zst -C ~/gb-llvm/lib --strip-components=2 \
             --wildcards 'usr/lib/libicuuc.so.78*' 'usr/lib/libicudata.so.78*'
 
+      # Both are pinned in their build scripts, so the scripts are the keys.
+      - id: fcc-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/fcc
+          key: fcc-${{ hashFiles('tools/build-fcc.sh') }}
+
+      - name: Build the Fuzix Compiler Kit
+        if: steps.fcc-cache.outputs.cache-hit != 'true'
+        run: tools/build-fcc.sh ~/fcc
+
+      - id: hitech-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/hitech
+          key: hitech-${{ hashFiles('tools/build-hitech.sh') }}
+
+      - name: Build zxcc with HI-TECH C
+        if: steps.hitech-cache.outputs.cache-hit != 'true'
+        run: tools/build-hitech.sh ~/hitech
+
       - name: Install uc80 0.7.0
         run: |
           python3 -m venv ~/uc80
@@ -140,6 +162,8 @@ jobs:
             echo "CEDEV_BIN=$HOME/CEdev/bin"
             echo "GB_LLVM_BIN=$HOME/gb-llvm/bin"
             echo "UC80_BIN=$HOME/uc80/bin"
+            echo "FCC_BIN=$HOME/fcc/bin"
+            echo "HITECH_BIN=$HOME/hitech/bin"
           } >> "$GITHUB_ENV"
 
       - id: check
@@ -148,7 +172,7 @@ jobs:
           FORCE: ${{ inputs.force }}
         run: |
           ./bench.py --bin "sdcc=$SDCC_TRUNK_BIN" --bin "ez80-clang=$CEDEV_BIN" --bin "gb-llvm=$GB_LLVM_BIN" \
-            --bin "uc80=$UC80_BIN" --versions > versions.json
+            --bin "uc80=$UC80_BIN" --bin "fcc=$FCC_BIN" --bin "hitech=$HITECH_BIN" --versions > versions.json
           cat versions.json
           python3 - <<'PY'
           import json, os, subprocess
@@ -172,7 +196,7 @@ jobs:
         if: steps.check.outputs.run == 'true'
         run: |
           ./bench.py --bin "sdcc=$SDCC_TRUNK_BIN" --bin "ez80-clang=$CEDEV_BIN" --bin "gb-llvm=$GB_LLVM_BIN" \
-            --bin "uc80=$UC80_BIN" -o results/run.json
+            --bin "uc80=$UC80_BIN" --bin "fcc=$FCC_BIN" --bin "hitech=$HITECH_BIN" -o results/run.json
 
       - id: publish
         name: Publish the run

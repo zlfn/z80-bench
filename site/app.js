@@ -74,9 +74,27 @@ function ratio(r) {
 
 // The compilers that build for the selected CPU, in compilers.toml order.
 // The baseline is only the yardstick for ratios and is not shown itself.
-function compilers() {
+function available() {
   return Object.keys(run.compilers).filter((c) => !run.compilers[c].baseline
     && run.results.some((r) => r.compiler === c && r.target === state.target && r.status !== "unsupported"));
+}
+
+// The ones the viewer has not hidden in Overall.
+function compilers() {
+  const hidden = hiddenSet();
+  return available().filter((c) => !hidden.has(c));
+}
+
+function hiddenSet() {
+  try {
+    const saved = JSON.parse(load("hidden"));
+    if (Array.isArray(saved)) return new Set(saved);
+  } catch (_) { /* nothing hidden */ }
+  return new Set();
+}
+
+function setHidden(set) {
+  store("hidden", JSON.stringify([...set]));
 }
 
 function baseline() {
@@ -86,6 +104,93 @@ function baseline() {
 // The display name from compilers-info.toml.
 function label(c) {
   return (info[c]?.name || c) + (info[c]?.modified ? "*" : "");
+}
+
+// Marks after a compiler's name, in this order.
+const MARKS = {
+  ai: { label: "Heavy AI use", title: "Developed with heavy use of AI coding agents.",
+    svg: '<path d="M6.5 3.5Q7.3 8.7 12.5 9.5Q7.3 10.3 6.5 15.5Q5.7 10.3.5 9.5Q5.7 8.7 6.5 3.5Z"/><path d="M12.5.5Q12.9 3.1 15.5 3.5Q12.9 3.9 12.5 6.5Q12.1 3.9 9.5 3.5Q12.1 3.1 12.5.5Z"/>' },
+  nightly: { label: "Built daily", title: "Built every day from its development branch",
+    svg: '<path d="M12.8 10.4A5.8 5.8 0 0 1 5.6 3.2a5.8 5.8 0 1 0 7.2 7.2Z"/>' },
+  stale: { label: "Unmaintained", title: "No commits for more than six months",
+    svg: '<circle cx="8" cy="8" r="5.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.9V8l2.2 1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' },
+};
+const STALE_DAYS = 183;
+const FAMILY_LOGO = { LLVM: "logos/llvm.png", SDCC: "logos/sdcc.svg" };
+// Small C never had a logo; this plain mark stands in and follows the text color.
+const FAMILY_MARK = {
+  "Small C": '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="1" width="14" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/>'
+    + '<text x="8" y="11.3" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" font-weight="700" fill="currentColor">C</text></svg>',
+};
+
+function isStale(c) {
+  const d = info[c]?.last_commit;
+  return d ? (Date.now() - Date.parse(d)) / 864e5 > STALE_DAYS : false;
+}
+
+function markKinds(c) {
+  const kinds = [];
+  if (info[c]?.ai) kinds.push("ai");
+  if (run.compilers[c]?.nightly) kinds.push("nightly");
+  if (isStale(c)) kinds.push("stale");
+  return kinds;
+}
+
+function markIcon(kind, title = MARKS[kind].title) {
+  const m = el("span", { class: "cmark " + kind, role: "img", title, "aria-label": title });
+  m.innerHTML = `<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">${MARKS[kind].svg}</svg>`;
+  return m;
+}
+
+function markTitle(c, kind) {
+  if (kind === "stale") return `No commits since ${info[c].last_commit}`;
+  return MARKS[kind].title;
+}
+
+// A compiler's name with the AI mark, for the results. The cards show the rest.
+// `after` sits right against the name.
+function nameWithMarks(c, after = null) {
+  const box = el("span", { class: "cname" }, el("span", {}, label(c), after));
+  if (markKinds(c).includes("ai")) box.append(markIcon("ai", markTitle(c, "ai")));
+  return box;
+}
+
+// What the asterisk, the "!" and the AI mark on the selected CPU mean.
+function renderMarksNote() {
+  const box = $("marks-note");
+  box.replaceChildren();
+  const cs = available();
+  if (cs.some((c) => info[c]?.modified)) box.append(el("span", {}, "* Incomplete runtime"));
+  if (cs.some((c) => failMark(c))) {
+    box.append(el("span", {}, el("span", { class: "fail-mark" }, "!"), "Some benchmarks failed"));
+  }
+  if (cs.some((c) => info[c]?.ai)) box.append(el("span", {}, markIcon("ai"), MARKS.ai.label));
+  box.hidden = !box.childElementCount;
+}
+
+// The family, how it is built and its marks, under a card's description.
+function badges(name, c) {
+  const about = info[name] || {};
+  const box = el("div", { class: "p-badges" });
+  if (about.family) {
+    const fam = el("span", { class: "p-badge", title: `Derived from ${about.family}` });
+    if (FAMILY_LOGO[about.family]) fam.append(el("img", { src: FAMILY_LOGO[about.family], alt: "" }));
+    if (FAMILY_MARK[about.family]) {
+      const m = el("span", { class: "fam-mark" });
+      m.innerHTML = FAMILY_MARK[about.family];
+      fam.append(m);
+    }
+    fam.append(about.family);
+    box.append(fam);
+  }
+  for (const k of markKinds(name)) {
+    box.append(el("span", { class: "p-badge", title: markTitle(name, k) }, markIcon(k, markTitle(name, k)),
+      MARKS[k].label));
+  }
+  if (about.modified) {
+    box.append(el("span", { class: "p-badge", title: about.modified }, "* Incomplete runtime"));
+  }
+  return box.childElementCount ? box : null;
 }
 
 function benches() {
@@ -166,40 +271,86 @@ function renderMeta() {
 // the table, the best bar is blue and the worst yellow.
 function barRows(box, rows) {
   box.replaceChildren();
-  const vals = rows.filter((r) => r.value != null).map((r) => r.value);
+  const vals = rows.filter((r) => r.value != null && !r.hidden).map((r) => r.value);
   const max = Math.max(...vals);
   const min = Math.min(...vals);
   // The longest bar leaves room for its label.
   const at = (f) => `calc((100% - 72px) * ${f})`;
   for (const r of rows) {
     const tone = r.value === min ? " best" : r.value === max ? " slow" : "";
-    box.append(el("div", { class: "ov-name" + (r.first ? " first" : "") }, r.name));
-    const track = el("div", { class: "ov-track" + (r.first ? " first" : "") });
-    if (r.value != null) {
+    const off = r.hidden ? " off" : "";
+    box.append(el("div", { class: "ov-name" + (r.first ? " first" : "") + off }, r.name));
+    const track = el("div", { class: "ov-track" + (r.first ? " first" : "") + off });
+    if (r.hidden) {
+      // A hidden compiler keeps its score but not its bar, which would not be to scale.
+      track.append(el("span", { class: "ov-hidden" }, r.text));
+    } else if (r.value != null) {
       track.append(el("div", { class: "ov-bar" + tone, style: `width:${at(r.value / max)}` }),
         el("span", { class: "ov-val", style: `left:${at(r.value / max)}` }, r.text));
     } else {
       track.append(r.missing);
     }
     if (r.first) r.note.classList.add("first");
+    if (r.hidden) r.note.classList.add("off");
     box.append(track, r.note);
   }
 }
 
 function renderOverall() {
   $("base-note").textContent = `${label(baseline())} is 1.00×`;
-  $("mod-note").hidden = !compilers().some((c) => info[c]?.modified);
+  renderMarksNote();
   const latest = index.runs.find((r) => r.id === index.latest);
   const scores = latest.summary[state.target][state.preset][state.metric];
-  const rows = compilers().map((c) => ({ c, ...scores[c] }))
-    .sort((a, b) => (a.score ?? Infinity) - (b.score ?? Infinity));
-  barRows($("overall"), rows.map((r) => ({
-    name: label(r.c),
-    value: r.score || null,
-    text: r.score ? ratio(r.score) : "",
-    missing: el("span", { class: "ov-none" }, "nothing passed"),
-    note: el("div", { class: "ov-pass" + (r.passed < r.total ? " short" : "") }, `${r.passed}/${r.total}`),
-  })));
+  const hidden = hiddenSet();
+  // Hidden compilers go last, so the ranking above them stays unbroken.
+  const rank = (r) => (hidden.has(r.c) ? 1e9 : 0) + (r.score ?? 1e6);
+  const rows = available().map((c) => ({ c, ...scores[c] })).sort((a, b) => rank(a) - rank(b));
+  barRows($("overall"), rows.map((r) => {
+    const off = hidden.has(r.c);
+    const toggle = el("button", { type: "button", class: "ov-toggle", "aria-pressed": String(!off),
+      title: off ? "Show this compiler" : "Hide this compiler" }, eyeIcon(off),
+      nameWithMarks(r.c, failMark(r.c)));
+    toggle.addEventListener("click", () => {
+      if (off) hidden.delete(r.c);
+      else hidden.add(r.c);
+      setHidden(hidden);
+      hideTip();
+      renderView();
+    });
+    return {
+      name: toggle,
+      hidden: off,
+      value: r.score || null,
+      text: r.score ? ratio(r.score) : "",
+      missing: el("span", { class: "ov-none" }, "nothing passed"),
+      note: el("div", { class: "ov-pass" + (r.passed < r.total ? " short" : "") }, `${r.passed}/${r.total}`),
+    };
+  }));
+  $("show-all").hidden = !rows.some((r) => hidden.has(r.c));
+}
+
+// A red "!" when any benchmark failed to build or gave a wrong result on
+// the selected CPU and preset; the title says how many of each.
+function failMark(c) {
+  const counts = {};
+  for (const r of run.results) {
+    if (r.compiler === c && r.target === state.target && r.preset === state.preset
+        && r.status !== "ok" && r.status !== "unsupported") {
+      counts[r.status] = (counts[r.status] || 0) + 1;
+    }
+  }
+  const words = { "build-failed": "build failed", miscompiled: "miscompiled", "run-failed": "did not run" };
+  const parts = Object.entries(counts).map(([k, n]) => `${n} ${words[k] || k}`);
+  if (!parts.length) return null;
+  const title = parts.join(", ");
+  return el("span", { class: "fail-mark", title, "aria-label": title }, "!");
+}
+
+function eyeIcon(off) {
+  const i = el("span", { class: "eye", "aria-hidden": "true" });
+  i.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 8s2.4-4.5 6.5-4.5S14.5 8 14.5 8 12.1 12.5 8 12.5 1.5 8 1.5 8Z"/><circle cx="8" cy="8" r="2"/>'
+    + (off ? '<path d="M2.5 13.5l11-11"/>' : "") + "</svg>";
+  return i;
 }
 
 // Matrix
@@ -222,20 +373,19 @@ function renderMatrix() {
   table.replaceChildren();
   const cs = compilers();
   const head = el("tr", {}, el("th", { scope: "col" }, "Benchmark"));
-  for (const c of cs) head.append(el("th", { scope: "col", class: "c" }, label(c)));
+  for (const c of cs) head.append(el("th", { scope: "col", class: "c" }, nameWithMarks(c)));
   table.append(el("thead", {}, head));
 
   const body = el("tbody");
   for (const b of benches()) {
-    const info = benchInfo[b] || run.benchmarks[b];
     const rs = cs.map((c) => result(c, b));
     const vals = rs.map((r) => valueOf(r)).filter((v) => v != null);
     const best = Math.min(...vals);
     const top = Math.max(...vals);
     const baseVal = valueOf(result(baseline(), b));
 
-    const tr = el("tr", {}, el("th", { scope: "row" }, el("a", { class: "b-name", href: `#src/${b}` }, b),
-      el("span", { class: "b-desc" }, info.description)));
+    const tr = el("tr", {}, el("th", { scope: "row" },
+      el("a", { class: "b-name", href: `#src/${b}` }, b)));
 
     cs.forEach((c, i) => {
       const r = rs[i];
@@ -294,6 +444,11 @@ function renderHistory() {
   // A compiler keeps its color on both CPUs and whatever is switched off.
   const all = Object.keys(run.compilers).filter((c) => !run.compilers[c].baseline);
   const color = (c) => `var(${SERIES[all.indexOf(c) % SERIES.length]})`;
+  // Past the palette, colors come round again on dashed lines.
+  const dashed = (c) => all.indexOf(c) >= SERIES.length;
+  const swatch = (c) => dashed(c)
+    ? `background:repeating-linear-gradient(90deg, ${color(c)} 0 4px, transparent 4px 7px)`
+    : `background:${color(c)}`;
   const shown = historyShown();
   const series = cs.filter((c) => shown.has(c)).map((c) => ({
     c,
@@ -306,7 +461,7 @@ function renderHistory() {
   const legend = el("div", { class: "legend" });
   for (const c of cs) {
     const b = el("button", { type: "button", "aria-pressed": String(shown.has(c)) },
-      el("i", { style: `background:${color(c)}` }), label(c));
+      el("i", { style: swatch(c) }), label(c));
     b.addEventListener("click", () => {
       if (shown.has(c)) shown.delete(c);
       else shown.add(c);
@@ -359,7 +514,7 @@ function renderHistory() {
   for (const s of series) {
     const d = s.pts.map((p, k) => `${k ? "L" : "M"}${x(p.i)},${y(p.y)}`).join("");
     svg.append(svgEl("path", { d, fill: "none", stroke: color(s.c), "stroke-width": 2,
-      "stroke-linejoin": "round", "stroke-linecap": "round" }));
+      "stroke-linejoin": "round", "stroke-linecap": "round", "stroke-dasharray": dashed(s.c) ? "6 4" : "none" }));
     const last = s.pts[s.pts.length - 1];
     svg.append(svgEl("circle", { cx: x(last.i), cy: y(last.y), r: 4, fill: color(s.c),
       stroke: "var(--surface)", "stroke-width": 2 }));
@@ -389,7 +544,7 @@ function renderHistory() {
       const rows = series.map((s) => ({ s, p: s.pts.find((p) => p.i === idx) }))
         .filter((r) => r.p).sort((a, b) => a.p.y - b.p.y);
       for (const { s, p } of rows) {
-        t.append(el("div", { class: "t-row" }, el("i", { style: `background:${color(s.c)}` }), label(s.c),
+        t.append(el("div", { class: "t-row" }, el("i", { style: swatch(s.c) }), label(s.c),
           el("b", {}, formatValue(p.y))));
       }
     });
@@ -412,15 +567,19 @@ function renderCompilers() {
     const about = info[name] || {};
     const facts = el("dl", { class: "p-facts" });
     const fact = (k, v) => v && facts.append(el("dt", {}, k), el("dd", {}, v));
-    fact("Language", about.language);
+    fact("Language", about["language-url"] && about.language
+      ? el("a", { href: about["language-url"] }, about.language) : about.language);
     fact("License", about.license);
-    fact("Modified", about.modified);
+    fact("Builds", c.nightly ? `Every day from ${about.branch || "its development branch"}` : "A fixed release");
+    fact("Last commit", about.last_commit);
+    const flags = el("dl", { class: "p-facts" });
     for (const t of ["z80", "sm83"]) {
       for (const p of ["speed", "size"]) {
         const f = c.flags?.[t]?.[p];
-        if (f) fact(`${CPU_NAME[t]} ${p}`, el("code", {}, f.join(" ") || "(none)"));
+        if (f) flags.append(el("dt", {}, `${CPU_NAME[t]} ${p}`), el("dd", {}, el("code", {}, f.join(" ") || "(none)")));
       }
     }
+    const options = el("details", { class: "p-options" }, el("summary", {}, "Compiler options"), flags);
     const host = about.homepage ? new URL(about.homepage).host + new URL(about.homepage).pathname.replace(/\/$/, "") : "";
     const logo = el("div", { class: "p-logo" });
     if (about.logo) logo.append(el("img", { src: about.logo, alt: "", class: about["pixel-art"] ? "pixel" : "" }));
@@ -430,8 +589,9 @@ function renderCompilers() {
         el("span", { class: "p-ver" }, c.version),
         about.homepage ? el("a", { class: "p-link", href: about.homepage }, host) : null),
       el("div", { class: "p-body" },
-        el("div", { class: "p-text" }, el("p", {}, about.description || "")),
-        facts))));
+        el("div", { class: "p-text" }, el("p", {}, about.description || ""),
+          about.since ? el("p", { class: "p-since" }, `Since ${about.since}`) : null, badges(name, c)),
+        el("div", { class: "p-side" }, facts, options)))));
   }
 }
 
@@ -593,6 +753,10 @@ function renderView() {
 }
 
 function setupControls() {
+  $("show-all").addEventListener("click", () => {
+    setHidden(new Set());
+    renderView();
+  });
   for (const seg of document.querySelectorAll(".seg")) {
     seg.addEventListener("click", (ev) => {
       const b = ev.target.closest("button");

@@ -21,10 +21,13 @@ import argparse
 import datetime
 import json
 import math
+import os
 import re
 import shutil
 import sys
 import tomllib
+import urllib.parse
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -141,11 +144,40 @@ def main():
     write_assets()
 
 
+def last_commit(repo: str, branch: str | None, path: str | None) -> str | None:
+    """The date of the last commit to a GitHub repository, branch and path, or
+    None if GitHub cannot be reached. GH_TOKEN raises the API rate limit."""
+    query = urllib.parse.urlencode({k: v for k, v in (("sha", branch), ("path", path)) if v}
+                                   | {"per_page": 1})
+    req = urllib.request.Request(f"https://api.github.com/repos/{repo}/commits?{query}",
+                                 headers={"Accept": "application/vnd.github+json"})
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    if token:
+        req.add_header("Authorization", f"Bearer {token}")
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            return json.load(resp)[0]["commit"]["committer"]["date"][:10]
+    except (OSError, ValueError, LookupError) as e:
+        print(f"warning: no last commit for {repo}: {e}", file=sys.stderr)
+        return None
+
+
 def write_assets():
     """What the site shows besides the runs, taken from the current sources."""
     DATA.mkdir(parents=True, exist_ok=True)
     (DATA / "sources.json").write_text(json.dumps(copy_sources(), indent=1) + "\n")
     info = tomllib.loads((ROOT / "compilers-info.toml").read_text())
+    # When GitHub cannot be reached, keep the dates the last publish found.
+    try:
+        before = json.loads((DATA / "compilers.json").read_text())
+    except (OSError, ValueError):
+        before = {}
+    for name, about in info.items():
+        if "repo" in about:
+            date = last_commit(about["repo"], about.get("branch"), about.get("path"))
+            date = date or before.get(name, {}).get("last_commit")
+            if date:
+                about["last_commit"] = date
     (DATA / "compilers.json").write_text(json.dumps(info, indent=1) + "\n")
     benches = {}
     for d in sorted(BENCHMARKS.iterdir()):
