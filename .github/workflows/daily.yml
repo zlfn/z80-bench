@@ -87,7 +87,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/gb-llvm
-          key: gb-llvm-v0.1.0
+          key: gb-llvm-v0.1.0-libxml2-2.15.4-icu-78.3
 
       - name: Fetch gb-llvm v0.1.0
         if: steps.gb-llvm-cache.outputs.cache-hit != 'true'
@@ -102,6 +102,20 @@ jobs:
             ./bin/ld64.lld ./bin/ld.lld ./bin/llvm-bitcode-strip ./bin/llvm-objcopy \
             ./bin/llvm-nm ./bin/llvm-readelf
           rm dl/release.tar.gz
+          # Its ld.lld was built on Arch Linux against a libxml2 and an ICU that
+          # Ubuntu does not have; bench.py puts lib/ on its library path.
+          curl -sSfL -o dl/libxml2.pkg.tar.zst \
+            https://archive.archlinux.org/packages/l/libxml2/libxml2-2.15.4-1-x86_64.pkg.tar.zst
+          curl -sSfL -o dl/icu.pkg.tar.zst \
+            https://archive.archlinux.org/packages/i/icu/icu-78.3-1-x86_64.pkg.tar.zst
+          echo "a6b5c30f51a7ca7c85348de8e83280e6825a8f3e193cc6916ecd8e695d4a24bb  dl/libxml2.pkg.tar.zst" |
+            sha256sum -c
+          echo "118fe41efa6c550f3fe67893946dcea2c6cbb5272299a6ddf4160fb17f3e4bb0  dl/icu.pkg.tar.zst" |
+            sha256sum -c
+          tar --zstd -xf dl/libxml2.pkg.tar.zst -C ~/gb-llvm/lib --strip-components=2 \
+            --wildcards 'usr/lib/libxml2.so.16*'
+          tar --zstd -xf dl/icu.pkg.tar.zst -C ~/gb-llvm/lib --strip-components=2 \
+            --wildcards 'usr/lib/libicuuc.so.78*' 'usr/lib/libicudata.so.78*'
 
       - name: Install uc80 0.7.0
         run: |

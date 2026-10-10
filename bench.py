@@ -149,7 +149,11 @@ class GbLlvm:
     def build(self, bench: Benchmark, target: str, flags: list[str], out: Path) -> Program:
         elf = out / "prog.elf"
         image = out / "prog.bin"
-        run([self.bindir / "clang", "--target=gb-unknown-unknown", *flags, "-ffreestanding",
+        # The release's ld.lld needs a libxml2 and an ICU newer than some systems
+        # have; CI puts them in the release's lib/.
+        lib = self.bindir.parent / "lib"
+        env = ["env", f"LD_LIBRARY_PATH={lib}:{os.environ.get('LD_LIBRARY_PATH', '')}"]
+        run([*env, self.bindir / "clang", "--target=gb-unknown-unknown", *flags, "-ffreestanding",
              *bench.cflags(), "-isystem", LLVM_INCLUDE, *bench.sources,
              ROOT / "toolchains" / "libc" / "string.c", ROOT / "toolchains" / "gb-llvm" / "runtime.c",
              self.bindir.parent / "runtime.S",
