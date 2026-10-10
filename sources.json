@@ -1,0 +1,94 @@
+{
+ "aes256": [
+  "benchmarks/aes256/main.c",
+  "vendor/tiny-AES-c/aes.c",
+  "vendor/tiny-AES-c/aes.h",
+  "benchmarks/harness/data.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "coremark": [
+  "benchmarks/coremark/core_portme.c",
+  "benchmarks/coremark/core_portme.h",
+  "vendor/coremark/core_list_join.c",
+  "vendor/coremark/core_main.c",
+  "vendor/coremark/core_matrix.c",
+  "vendor/coremark/core_state.c",
+  "vendor/coremark/core_util.c",
+  "vendor/coremark/coremark.h",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "crc16": [
+  "benchmarks/crc16/main.c",
+  "benchmarks/harness/data.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "crc32": [
+  "benchmarks/crc32/main.c",
+  "benchmarks/harness/data.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "crc8": [
+  "benchmarks/crc8/main.c",
+  "benchmarks/harness/data.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "dhrystone": [
+  "benchmarks/dhrystone/dhry_1.c",
+  "benchmarks/dhrystone/dhry_2.c",
+  "benchmarks/dhrystone/dhry.h",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "fact": [
+  "benchmarks/fact/main.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "pi": [
+  "benchmarks/pi/main.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "puff": [
+  "benchmarks/puff/main.c",
+  "benchmarks/puff/puff.c",
+  "benchmarks/puff/input.c",
+  "benchmarks/puff/puff.h",
+  "benchmarks/puff/setjmp.h",
+  "benchmarks/harness/data.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "sieve": [
+  "benchmarks/sieve/main.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "sieve-bit": [
+  "benchmarks/sieve-bit/main.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "stdcbench": [
+  "benchmarks/stdcbench/portme.c",
+  "benchmarks/stdcbench/portme.h",
+  "vendor/stdcbench/stdcbench.c",
+  "vendor/stdcbench/c90base-compression.c",
+  "vendor/stdcbench/c90base-data.c",
+  "vendor/stdcbench/c90base-huffman-iterative.c",
+  "vendor/stdcbench/c90base-huffman-recursive.c",
+  "vendor/stdcbench/c90base-huffman_tree.c",
+  "vendor/stdcbench/c90base-immul.c",
+  "vendor/stdcbench/c90base-isort.c",
+  "vendor/stdcbench/c90base.c",
+  "vendor/stdcbench/stdcbench.h",
+  "vendor/stdcbench/c90base-huffman.h",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ]
+}

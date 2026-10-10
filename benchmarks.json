@@ -1,0 +1,74 @@
+{
+ "aes256": {
+  "description": "AES-256-CBC over 4 KB",
+  "details": "Encrypts 4 KB in CBC mode with tiny-AES-c, key expansion included. Byte table lookups, XORs and shifts over a 16-byte state.",
+  "origin": "tiny-AES-c, Unlicense",
+  "url": "https://github.com/kokke/tiny-AES-c"
+ },
+ "coremark": {
+  "description": "CoreMark\u00ae 1.0, one iteration",
+  "details": "EEMBC's CoreMark\u00ae: it searches and sorts a linked list, multiplies small matrices, runs a state machine over input strings and checks every part with a CRC. Most values are 16-bit, with 32-bit sums in the matrix part.",
+  "origin": "EEMBC CoreMark, Apache-2.0",
+  "url": "https://github.com/eembc/coremark"
+ },
+ "crc16": {
+  "description": "CRC-16 over 4 KB",
+  "details": "CRC-16/XMODEM computed bit by bit over 4 KB. A 16-bit shift and a conditional XOR for every bit.",
+  "origin": "written for z80-bench after c-bench-64",
+  "url": "https://github.com/thred/c-bench-64"
+ },
+ "crc32": {
+  "description": "CRC-32 over 4 KB",
+  "details": "CRC-32/BZIP2 computed bit by bit over 4 KB, without a table. A 32-bit shift and a conditional XOR for every bit.",
+  "origin": "written for z80-bench after c-bench-64",
+  "url": "https://github.com/thred/c-bench-64"
+ },
+ "crc8": {
+  "description": "CRC-8 over 4 KB",
+  "details": "CRC-8/GSM-A computed bit by bit over 4 KB. An 8-bit shift and a conditional XOR for every bit.",
+  "origin": "written for z80-bench after c-bench-64",
+  "url": "https://github.com/thred/c-bench-64"
+ },
+ "dhrystone": {
+  "description": "Dhrystone 2.1, 1000 runs",
+  "details": "Reinhold Weicker's synthetic integer benchmark, version 2.1, run 1000 times. Procedure calls, record assignment, string copies and comparisons, and array indexing.",
+  "origin": "Dhrystone 2.1 (netlib), adapted",
+  "url": "https://www.netlib.org/benchmark/dhry-c"
+ },
+ "fact": {
+  "description": "Recursive 32-bit factorials",
+  "details": "Recursive factorials of 0 to 15 in 32-bit arithmetic, eight times over. Call and return overhead and 32-bit multiplication.",
+  "origin": "written for z80-bench after c-bench-64",
+  "url": "https://github.com/thred/c-bench-64"
+ },
+ "pi": {
+  "description": "160 digits of pi, 32-bit",
+  "details": "A spigot algorithm that produces 160 digits of pi, four at a time. Nearly all the time goes into 32-bit multiplication, division and remainder.",
+  "origin": "written for z80-bench after c-bench-64",
+  "url": "https://github.com/thred/c-bench-64"
+ },
+ "puff": {
+  "description": "Inflate 4 KB with puff",
+  "details": "Mark Adler's puff decompresses a 1.4 KB deflate stream back to 4 KB of text. It reads its input a bit at a time, builds Huffman tables at run time and copies back-references.",
+  "origin": "zlib contrib/puff, zlib license",
+  "url": "https://github.com/madler/zlib/tree/develop/contrib/puff"
+ },
+ "sieve": {
+  "description": "Byte sieve, 4 KB",
+  "details": "The Sieve of Eratosthenes as BYTE magazine published it in 1981, over 4096 byte flags. Tight loops of byte stores with a 16-bit stride.",
+  "origin": "written for z80-bench after c-bench-64",
+  "url": "https://github.com/thred/c-bench-64"
+ },
+ "sieve-bit": {
+  "description": "Bit sieve, 16000 bits",
+  "details": "The same sieve with one bit per odd number, 16000 of them, tested and cleared through small helper functions. Function calls, shifts and bit masks.",
+  "origin": "written for z80-bench after c-bench-64",
+  "url": "https://github.com/thred/c-bench-64"
+ },
+ "stdcbench": {
+  "description": "stdcbench 0.8, c90base",
+  "details": "Philipp Krause's benchmark for small systems. Its c90base module decompresses RLE and Huffman data, sorts sprites by insertion sort and multiplies integer matrices, mostly code taken from real ColecoVision programs.",
+  "origin": "stdcbench 0.8, GPL-2.0-or-later",
+  "url": "https://sourceforge.net/projects/stdcbench/"
+ }
+}
