@@ -59,7 +59,7 @@
   "repo": "z88dk/z88dk",
   "branch": "master",
   "path": "src/sccz80",
-  "last_commit": "2026-09-30"
+  "last_commit": "2026-10-09"
  },
  "80cc": {
   "name": "80cc",
@@ -75,7 +75,7 @@
   "repo": "z88dk/z88dk",
   "branch": "master",
   "path": "src/80cc",
-  "last_commit": "2026-10-08"
+  "last_commit": "2026-10-10"
  },
  "ez80-clang": {
   "name": "ez80-clang",
