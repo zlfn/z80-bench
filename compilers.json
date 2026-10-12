@@ -91,6 +91,7 @@
  },
  "fcc": {
   "name": "fcc",
+  "runs-on": "Fuzix",
   "since": 2022,
   "logo": "logos/fcc.png",
   "homepage": "https://github.com/EtchedPixels/Fuzix-Compiler-Kit",
@@ -103,6 +104,7 @@
  },
  "hitech": {
   "name": "HI-TECH C",
+  "runs-on": "CP/M",
   "since": 1984,
   "logo": "logos/hitech.jpg",
   "homepage": "https://github.com/agn453/HI-TECH-Z80-C",
@@ -124,6 +126,18 @@
   "repo": "avwohl/uc80",
   "branch": "main",
   "last_commit": "2026-09-30"
+ },
+ "dcc": {
+  "name": "dcc",
+  "since": 2026,
+  "logo": "logos/dcc.png",
+  "homepage": "https://github.com/davidly/dcc",
+  "license": "MIT",
+  "description": "David Lee's C compiler for CP/M on the Z80, with its own peephole optimizer, Z80 runtime and clones of Microsoft's M80 assembler and L80 linker. It compiles a program from one C file.",
+  "language": "C89, part of C99, part of C11",
+  "repo": "davidly/dcc",
+  "branch": "main",
+  "last_commit": "2026-10-09"
  },
  "gb-llvm": {
   "name": "gb-llvm",

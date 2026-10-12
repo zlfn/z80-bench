@@ -2,7 +2,7 @@
  "runs": [
   {
    "id": "2026-10-12",
-   "commit": "7283c1251e3ed8788ada9f1363d823a45bcc75ae",
+   "commit": "62112fd99c4a31dd740839edca13b4eac61a9431",
    "versions": {
     "sdcc": "4.6.4 #16998",
     "sdcc-4.6.0": "4.6.0 #16608",
@@ -14,6 +14,7 @@
     "fcc": "7b2a72e",
     "hitech": "3.09-21",
     "uc80": "0.7.0",
+    "dcc": "c98156fe",
     "gb-llvm": "21.0.0git 5bc8de9127f7"
    },
    "summary": {
@@ -261,6 +262,12 @@
         "value": 35873769,
         "passed": 11,
         "total": 13
+       },
+       "dcc": {
+        "score": 2.1095,
+        "value": 29572121,
+        "passed": 9,
+        "total": 13
        }
       },
       "size": {
@@ -322,6 +329,12 @@
         "score": 1.9205,
         "value": 1362,
         "passed": 11,
+        "total": 13
+       },
+       "dcc": {
+        "score": 2.1745,
+        "value": 1542,
+        "passed": 9,
         "total": 13
        }
       }
@@ -387,6 +400,12 @@
         "value": 35813751,
         "passed": 11,
         "total": 13
+       },
+       "dcc": {
+        "score": 1.8344,
+        "value": 25578646,
+        "passed": 9,
+        "total": 13
        }
       },
       "size": {
@@ -448,6 +467,12 @@
         "score": 1.8556,
         "value": 1354,
         "passed": 11,
+        "total": 13
+       },
+       "dcc": {
+        "score": 2.1877,
+        "value": 1596,
+        "passed": 9,
         "total": 13
        }
       }

@@ -1,16 +1,49 @@
 {
- "checked": "2026-10-12",
- "versions": {
-  "sdcc": "4.6.4 #16998",
-  "llvm-z80": "24.0.0git defafaf471b1",
-  "80cc": "v26468-4522364999-20261011",
-  "zsdcc": "v26468-4522364999-20261011",
-  "sccz80": "v26468-4522364999-20261011",
-  "ez80-clang": "19.1.0 ef28e9c54cd1, z88dk v26468-4522364999-20261011",
-  "fcc": "7b2a72e",
-  "hitech": "3.09-21",
-  "uc80": "0.7.0",
-  "gb-llvm": "21.0.0git 5bc8de9127f7"
+ "compilers": {
+  "sdcc": {
+   "version": "4.6.4 #16998",
+   "checked": "2026-10-12"
+  },
+  "llvm-z80": {
+   "version": "24.0.0git defafaf471b1",
+   "checked": "2026-10-12"
+  },
+  "80cc": {
+   "version": "v26468-4522364999-20261011",
+   "checked": "2026-10-12"
+  },
+  "zsdcc": {
+   "version": "v26468-4522364999-20261011",
+   "checked": "2026-10-12"
+  },
+  "sccz80": {
+   "version": "v26468-4522364999-20261011",
+   "checked": "2026-10-12"
+  },
+  "ez80-clang": {
+   "version": "19.1.0 ef28e9c54cd1, z88dk v26468-4522364999-20261011",
+   "checked": "2026-10-12"
+  },
+  "fcc": {
+   "version": "7b2a72e",
+   "checked": "2026-10-12"
+  },
+  "hitech": {
+   "version": "3.09-21",
+   "checked": "2026-10-12"
+  },
+  "uc80": {
+   "version": "0.7.0",
+   "checked": "2026-10-12"
+  },
+  "dcc": {
+   "version": "c98156fe",
+   "checked": "2026-10-13"
+  },
+  "gb-llvm": {
+   "version": "21.0.0git 5bc8de9127f7",
+   "checked": "2026-10-12"
+  }
  },
  "features": [
   {
@@ -474,6 +507,10 @@
      "result": "ok",
      "note": "Error: \"unexpected token 'IDENT' 'a'\"."
     },
+    "dcc": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
     "gb-llvm": {
      "result": "ok",
      "note": "Error: \"unknown type name 'a'\"."
@@ -586,6 +623,10 @@
      "note": "Has no const."
     },
     "uc80": {
+     "result": "ok",
+     "note": "No diagnostic."
+    },
+    "dcc": {
      "result": "ok",
      "note": "No diagnostic."
     },
@@ -736,6 +777,10 @@
      "note": "No diagnostic."
     },
     "uc80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "dcc": {
      "result": "no",
      "note": "No diagnostic."
     },
@@ -946,6 +991,10 @@
      "result": "no",
      "note": "No diagnostic for any case."
     },
+    "dcc": {
+     "result": "no",
+     "note": "Case 2 diagnosed, but not cases 1 and 3. Has no _Alignas for case 4."
+    },
     "gb-llvm": {
      "result": "no",
      "note": "Cases 1, 2 and 4 diagnosed, but not case 3."
@@ -1115,6 +1164,10 @@
      "result": "no",
      "note": "No diagnostic for any case."
     },
+    "dcc": {
+     "result": "no",
+     "note": "No diagnostic for any case."
+    },
     "gb-llvm": {
      "result": "ok",
      "note": "All three cases diagnosed."
@@ -1176,6 +1229,10 @@
      "result": "no",
      "note": "No diagnostic for either case."
     },
+    "dcc": {
+     "result": "no",
+     "note": "Case 2 diagnosed, but not case 1."
+    },
     "gb-llvm": {
      "result": "ok",
      "note": "Both cases diagnosed."
@@ -1224,6 +1281,10 @@
      "note": "Rejects the valid file as well: \"undefined struct/union: later\"."
     },
     "uc80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "dcc": {
      "result": "no",
      "note": "No diagnostic."
     },
@@ -1402,6 +1463,10 @@
      "result": "no",
      "note": "No diagnostic for either case."
     },
+    "dcc": {
+     "result": "no",
+     "note": "No diagnostic for either case."
+    },
     "gb-llvm": {
      "result": "no",
      "note": "Case 1 diagnosed, but not case 2."
@@ -1461,6 +1526,10 @@
     "uc80": {
      "result": "ok",
      "note": "Error at the lone backslash: \"lexical error at byte 0x5c\"."
+    },
+    "dcc": {
+     "result": "ok",
+     "note": "Error: \"identifier expected near '\\'\"."
     },
     "gb-llvm": {
      "result": "no",
@@ -1552,6 +1621,10 @@
      "result": "no",
      "note": "No diagnostic."
     },
+    "dcc": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
     "gb-llvm": {
      "result": "ok",
      "note": "Error: \"invalid token at start of a preprocessor expression\"."
@@ -1613,6 +1686,10 @@
      "result": "no",
      "note": "No diagnostic."
     },
+    "dcc": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
     "gb-llvm": {
      "result": "ok",
      "note": "Error: \"unterminated /* comment\"."
@@ -1664,6 +1741,10 @@
      "result": "no",
      "note": "No diagnostic."
     },
+    "dcc": {
+     "result": "no",
+     "note": "Rejects a structure cast to void even when it is complete: \"unsupported expression statement\"."
+    },
     "gb-llvm": {
      "result": "ok",
      "note": "Error: \"incomplete type 'struct opaque' where a complete type is required\"."
@@ -1712,6 +1793,10 @@
      "note": "No diagnostic."
     },
     "uc80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "dcc": {
      "result": "no",
      "note": "No diagnostic."
     },
@@ -1796,6 +1881,10 @@
      "result": "no",
      "note": "No diagnostic."
     },
+    "dcc": {
+     "result": "ok",
+     "note": "Error: \"constant integer expression expected near 'a'\"."
+    },
     "gb-llvm": {
      "result": "ok",
      "note": "Warning with -pedantic: \"expression is not an integer constant expression; folding it to a constant is a GNU extension\"."
@@ -1846,6 +1935,10 @@
     "uc80": {
      "result": "no",
      "note": "No diagnostic."
+    },
+    "dcc": {
+     "result": "no",
+     "note": "Rejects the valid bit-field width as well: \"unsupported sizeof expression\"."
     },
     "gb-llvm": {
      "result": "ok",
@@ -1917,6 +2010,10 @@
      "result": "ok",
      "note": "No diagnostic."
     },
+    "dcc": {
+     "result": "ok",
+     "note": "No diagnostic."
+    },
     "gb-llvm": {
      "result": "no",
      "note": "Warning: \"static function 'bump' is used in an inline function with external linkage\"."
@@ -1978,6 +2075,10 @@
      "result": "no",
      "note": "No diagnostic for either case."
     },
+    "dcc": {
+     "result": "no",
+     "note": "Has no variable-length arrays."
+    },
     "gb-llvm": {
      "result": "no",
      "note": "No diagnostic for either case."
@@ -2037,6 +2138,10 @@
     "uc80": {
      "result": "no",
      "note": "No diagnostic for either case."
+    },
+    "dcc": {
+     "result": "no",
+     "note": "Has no _Atomic."
     },
     "gb-llvm": {
      "result": "ok",
