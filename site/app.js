@@ -149,6 +149,11 @@ const FAMILY_MARK = {
     + '<text x="8" y="11.3" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" font-weight="700" fill="currentColor">C</text></svg>',
 };
 
+// A floppy disk, for compilers that can run on a Z80 themselves.
+const NATIVE_MARK = '<path d="M2.5 2.5h8.6l2.4 2.4v8.1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>'
+  + '<rect x="5" y="2.5" width="5" height="3.2" fill="currentColor"/>'
+  + '<rect x="4.7" y="8.8" width="6.6" height="4.5" rx="0.6" fill="none" stroke="currentColor" stroke-width="1.2"/>';
+
 function isStale(c) {
   const d = info[c]?.last_commit;
   return d ? (Date.now() - Date.parse(d)) / 864e5 > STALE_DAYS : false;
@@ -203,6 +208,13 @@ function badges(name, c) {
     }
     fam.append(about.family);
     box.append(fam);
+  }
+  if (about["runs-on"]) {
+    const os = about["runs-on"];
+    const icon = el("span", { class: "cmark", "aria-hidden": "true" });
+    icon.innerHTML = `<svg viewBox="0 0 16 16" aria-hidden="true">${NATIVE_MARK}</svg>`;
+    box.append(el("span", { class: "p-badge", title: `The compiler itself can run on a Z80, under ${os}` },
+      icon, "Runs on Z80"));
   }
   for (const k of markKinds(name)) {
     box.append(el("span", { class: "p-badge", title: markTitle(name, k) }, markIcon(k, markTitle(name, k)),
@@ -728,11 +740,12 @@ function cstdCell(r, c, feature) {
 // A feature checked manually says what the compiler did and the version that
 // did it, since the check does not run again with each new one.
 function cstdManualCell(m, c, feature) {
-  if (!m) return el("td", { class: "res" });
+  const checked = cstdInfo.compilers?.[c];
+  if (!m || !checked) return el("td", { class: "res" });
   const td = el("td", { class: `res ${m.result}` }, CSTD_MARK[m.result], el("span", { class: "manual-mark" }, "*"));
   hoverTip(td, (t) => {
     t.append(el("div", { class: "t-head" }, label(c)), el("div", {}, ...descNodes(feature.description)),
-      el("div", { class: "t-manual" }, `Checked manually on ${cstdInfo.checked} with ${cstdInfo.versions[c] || "?"}`),
+      el("div", { class: "t-manual" }, `Checked manually on ${checked.checked} with ${checked.version}`),
       el("div", {}, m.note));
   });
   return td;
@@ -775,7 +788,7 @@ function renderCstd() {
   table.style.minWidth = `${340 + 72 * cs.length}px`;
 
   const head = el("tr", {}, el("th", { scope: "col" }, "Feature"), el("th", { scope: "col" }, "Paper"));
-  for (const c of cs) head.append(el("th", { scope: "col", class: "c" }, label(c)));
+  for (const c of cs) head.append(el("th", { scope: "col", class: "c" }, el("span", { class: "c-name" }, label(c))));
   table.append(el("thead", {}, head));
 
   const closed = cstdClosed();
@@ -818,6 +831,24 @@ function renderCstd() {
     table.append(body);
   }
   renderCstdOthers();
+  fitCstdNames();
+}
+
+// The compiler columns are all as wide; a name too long for one gets a
+// smaller font, just enough to stay on one line, and wraps only below 9px.
+function fitCstdNames() {
+  for (const name of $("cstd-table").querySelectorAll("thead .c-name")) {
+    name.style.fontSize = "";
+    name.classList.remove("wrap");
+    const th = name.parentElement;
+    const style = getComputedStyle(th);
+    const room = th.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    const need = name.getBoundingClientRect().width;
+    if (room <= 0 || need <= room) continue;
+    const size = parseFloat(getComputedStyle(name).fontSize) * room / need;
+    name.style.fontSize = `${Math.max(9, Math.floor(size * 10) / 10)}px`;
+    if (size < 9) name.classList.add("wrap");
+  }
 }
 
 function paperLinks(papers) {
@@ -1099,6 +1130,7 @@ async function main() {
   renderCompilers();
   routeHash();
   new ResizeObserver(placeGroups).observe($("matrix"));
+  new ResizeObserver(fitCstdNames).observe($("cstd-table").parentElement);
   let width = window.innerWidth;
   window.addEventListener("resize", () => {
     if (window.innerWidth !== width) {

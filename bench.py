@@ -429,6 +429,72 @@ class Uc80:
         return Program(image, symbols, symbols["__bss_start"])
 
 
+class Dcc:
+    """dcc with the peephole optimizer, runtime stripper, assembler and linker
+    it ships, built the way its own scripts build a program: one C file, run
+    through dccpeep, then linked after the parts of its runtime it uses.
+    Programs are CP/M .com files.
+
+    M80 and L80 tell names apart by their first six characters, and every
+    harness name starts with "bench_". So dcc compiles each program from one
+    file that includes all of its sources, the harness among them, with the
+    harness names renamed to differ early on."""
+
+    RENAMES = {"bench_begin": "hbegin", "bench_end": "hend", "bench_done": "hdone",
+               "bench_result": "hresult", "bench_fill": "hfill", "bench_hash": "hhash",
+               "bench_input": "hinput", "bench_input_len": "hinlen", "bench_output_len": "houtlen"}
+
+    def __init__(self, bindir: Path):
+        self.bindir = bindir
+        self.root = bindir.parent
+
+    def version(self) -> str:
+        return (self.root / "version").read_text().strip()
+
+    @staticmethod
+    def crlf(path: Path) -> None:
+        # The assembler takes CP/M text files.
+        path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+
+    def build(self, bench: Benchmark, target: str, flags: list[str], out: Path) -> Program:
+        tool = lambda name: self.bindir / name
+        (out / "prog.c").write_text("".join(f'#include "{s}"\n' for s in bench.sources))
+        renames = [f"-D{c}={a}" for c, a in self.RENAMES.items()]
+        run([tool("dcc"), "-I", self.root / "include", *bench.cflags(), *renames,
+             out / "prog.c", "-o", out / "PROG.MAC"])
+        # flags are dccpeep's: it is what optimizes for time or for size.
+        run([tool("dccpeep"), *flags, out / "PROG.MAC", out / "PEEP.MAC"])
+        (out / "PEEP.MAC").replace(out / "PROG.MAC")
+        self.crlf(out / "PROG.MAC")
+        run([tool("m80c"), "=PROG.MAC", "/X", "/O", "/Z", "/C"], cwd=out)
+        shutil.copyfile(self.root / "DCCRTL.MAC", out / "DCCRTL.MAC")
+        self.crlf(out / "DCCRTL.MAC")
+        run([tool("dccrtlstrip"), "-r", out / "DCCRTL.MAC", "-o", out / "RTLMIN.MAC", out / "PROG.MAC"])
+        self.crlf(out / "RTLMIN.MAC")
+        run([tool("m80c"), "=RTLMIN.MAC", "/X", "/O", "/Z", "/C"], cwd=out)
+        run([tool("l80c"), "/P:100,RTLMIN,PROG,PROG/N/E/Y"], cwd=out)
+
+        # The link's symbols, cut to six characters; a module's own are
+        # prefixed with its name.
+        linked = {m[2]: int(m[1], 16) for m in re.finditer(r"([0-9A-F]{4}) ([^\s:]+)(?=\s)",
+                                                           (out / "PROG.SYM").read_text(errors="replace"))}
+        asm = (out / "PROG.MAC").read_text(errors="replace")
+        symbols = {}
+        for name, alias in self.RENAMES.items():
+            short = f"_{alias}".upper()[:6]
+            if short in linked:
+                symbols[name] = linked[short]
+            # Uninitialized data a single file keeps to itself is never made
+            # public, only set to an offset in its block.
+            elif m := re.search(rf"_{alias}\s+equ\s+__bssb\+(\d+)", asm):
+                symbols[name] = linked["__BSSB"] + int(m[1])
+        image = out / "prog.com"
+        (out / "PROG.COM").replace(image)
+        # The .com file is padded to whole 128-byte records; the program and
+        # its data end where the uninitialized block begins.
+        return Program(image, symbols, linked["__DATA"] - 0x100, entry=0x100)
+
+
 class Sdcc:
     def __init__(self, bindir: Path | None):
         self.bindir = bindir
@@ -580,7 +646,7 @@ def job(compiler: str, toolchain, flags: list[str], bench: Benchmark,
 
 # Toolchains that take nothing but the directory of their binaries.
 TOOLCHAINS = {"gb-llvm": GbLlvm, "fcc": Fcc, "hitech": Hitech,
-              "uc80": Uc80}
+              "uc80": Uc80, "dcc": Dcc}
 
 
 def make_toolchain(name: str, conf: dict, args):

@@ -178,10 +178,14 @@ def reason(r: dict) -> tuple[str, str] | None:
     # HI-TECH C's "; expected".
     if m := re.fullmatch(r"(\S) expected", detail):
         detail = f"Expected '{m[1]}'"
-    short = re.sub(r"^[\w.-]+:\d+(?::\d+)?(?::| -)\s*(?:(?:fatal )?error:\s*)?", "", detail)
+    # Less the place, and the "error:" or dcc's "error DCC-E1203:" before it.
+    short = re.sub(r"^[\w.-]+:\d+(?::\d+)?(?::| -)\s*(?:(?:fatal )?error(?: DCC-E\d+)?:\s*)?", "", detail)
+    short = re.sub(r"^[\w.-]+: fatal:\s*", "", short)
     if re.match(r"[a-z]+\b", short):
         short = short[0].upper() + short[1:]
-    return short[:80], detail
+    if len(short) > 80:
+        short = short[:79].rsplit(" ", 1)[0].rstrip(",;:") + "…"
+    return short, detail
 
 
 def included(path: Path, include: list[Path]) -> list[Path]:
@@ -215,7 +219,7 @@ def cstd_info() -> dict:
         if "why" in f:
             item["why"] = f["why"]
         features.append(item)
-    return {"checked": manual["checked"], "versions": manual["versions"], "features": features}
+    return {"compilers": manual["compilers"], "features": features}
 
 
 def copy_sources() -> dict:

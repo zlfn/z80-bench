@@ -92,6 +92,13 @@ toolchain = "uc80"
 z80.speed = []
 z80.size = []
 
+# dcc has no optimization levels of its own; its peephole optimizer, dccpeep,
+# rewrites the code for time or for size, and these flags go to it.
+[dcc]
+toolchain = "dcc"
+z80.speed = ["-Ot"]
+z80.size = ["-Os"]
+
 [gb-llvm]
 toolchain = "gb-llvm"
 std = ["-std=c2y"]

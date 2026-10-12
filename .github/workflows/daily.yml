@@ -166,6 +166,22 @@ jobs:
           path: ~/hitech
           key: hitech-${{ hashFiles('tools/build-hitech.sh') }}
 
+      - id: dcc-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: ~/dcc
+          key: dcc-${{ hashFiles('tools/build-dcc.sh') }}
+
+      - name: Build dcc
+        if: steps.dcc-cache.outputs.cache-hit != 'true'
+        run: tools/build-dcc.sh ~/dcc
+
+      - if: steps.dcc-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ~/dcc
+          key: dcc-${{ hashFiles('tools/build-dcc.sh') }}
+
       - name: Install uc80 0.7.0
         run: |
           python3 -m venv ~/uc80
@@ -191,6 +207,7 @@ jobs:
             echo "UC80_BIN=$HOME/uc80/bin"
             echo "FCC_BIN=$HOME/fcc/bin"
             echo "HITECH_BIN=$HOME/hitech/bin"
+            echo "DCC_BIN=$HOME/dcc/bin"
           } >> "$GITHUB_ENV"
 
       - id: check
@@ -199,7 +216,8 @@ jobs:
           FORCE: ${{ inputs.force }}
         run: |
           ./bench.py --bin "sdcc=$SDCC_TRUNK_BIN" --bin "ez80-clang=$CEDEV_BIN" --bin "gb-llvm=$GB_LLVM_BIN" \
-            --bin "uc80=$UC80_BIN" --bin "fcc=$FCC_BIN" --bin "hitech=$HITECH_BIN" --versions > versions.json
+            --bin "uc80=$UC80_BIN" --bin "fcc=$FCC_BIN" --bin "hitech=$HITECH_BIN" \
+            --bin "dcc=$DCC_BIN" --versions > versions.json
           cat versions.json
           python3 - <<'PY'
           import json, os, subprocess
@@ -223,7 +241,8 @@ jobs:
         if: steps.check.outputs.run == 'true'
         run: |
           ./bench.py --bin "sdcc=$SDCC_TRUNK_BIN" --bin "ez80-clang=$CEDEV_BIN" --bin "gb-llvm=$GB_LLVM_BIN" \
-            --bin "uc80=$UC80_BIN" --bin "fcc=$FCC_BIN" --bin "hitech=$HITECH_BIN" -o results/run.json
+            --bin "uc80=$UC80_BIN" --bin "fcc=$FCC_BIN" --bin "hitech=$HITECH_BIN" \
+            --bin "dcc=$DCC_BIN" -o results/run.json
 
       - id: publish
         name: Publish the run

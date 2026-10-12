@@ -1,24 +1,24 @@
-# What each compiler did with the features features.toml checks manually, and
-# the version that did it. Each was given <standard>/<name>.c as it is and
-# with each -DCASE=n, cut down to that part beforehand so that preprocessors
-# without #elif see it too, and with the flags its probes get. The Clang-based
-# compilers also got -pedantic, Clang's option for every diagnostic the
-# standard asks for. "ok" means the compiler does what the standard says, and
-# "no" that it does not, or that it rejects code the check needs.
+# What each compiler did with the features features.toml checks manually.
+# Each was given <standard>/<name>.c as it is and with each -DCASE=n, cut down
+# to that part beforehand so that preprocessors without #elif see it too, and
+# with the flags its probes get. The Clang-based compilers also got -pedantic,
+# Clang's option for every diagnostic the standard asks for. "ok" means the
+# compiler does what the standard says, and "no" that it does not, or that it
+# rejects code the check needs.
 
-checked = "2026-10-12"
-
-[versions]
-sdcc = "4.6.4 #16998"
-"llvm-z80" = "24.0.0git defafaf471b1"
-"80cc" = "v26468-4522364999-20261011"
-zsdcc = "v26468-4522364999-20261011"
-sccz80 = "v26468-4522364999-20261011"
-"ez80-clang" = "19.1.0 ef28e9c54cd1, z88dk v26468-4522364999-20261011"
-fcc = "7b2a72e"
-hitech = "3.09-21"
-uc80 = "0.7.0"
-"gb-llvm" = "21.0.0git 5bc8de9127f7"
+# The version of each compiler that was checked, and when.
+[compilers]
+sdcc = { version = "4.6.4 #16998", checked = "2026-10-12" }
+"llvm-z80" = { version = "24.0.0git defafaf471b1", checked = "2026-10-12" }
+"80cc" = { version = "v26468-4522364999-20261011", checked = "2026-10-12" }
+zsdcc = { version = "v26468-4522364999-20261011", checked = "2026-10-12" }
+sccz80 = { version = "v26468-4522364999-20261011", checked = "2026-10-12" }
+"ez80-clang" = { version = "19.1.0 ef28e9c54cd1, z88dk v26468-4522364999-20261011", checked = "2026-10-12" }
+fcc = { version = "7b2a72e", checked = "2026-10-12" }
+hitech = { version = "3.09-21", checked = "2026-10-12" }
+uc80 = { version = "0.7.0", checked = "2026-10-12" }
+dcc = { version = "c98156fe", checked = "2026-10-13" }
+"gb-llvm" = { version = "21.0.0git 5bc8de9127f7", checked = "2026-10-12" }
 
 [c23.kr-definitions]
 sdcc = { result = "ok", note = "Error: \"K&R-style function 'add' is not permitted in ISO C23 or later\"." }
@@ -30,6 +30,7 @@ sccz80 = { result = "no", note = "No diagnostic." }
 fcc = { result = "ok", note = "Error: \"missing semicolon\". It has no such definitions at all." }
 hitech = { result = "no", note = "No diagnostic." }
 uc80 = { result = "ok", note = "Error: \"unexpected token 'IDENT' 'a'\"." }
+dcc = { result = "no", note = "No diagnostic." }
 "gb-llvm" = { result = "ok", note = "Error: \"unknown type name 'a'\"." }
 
 [c23.array-qualifiers]
@@ -42,6 +43,7 @@ sccz80 = { result = "ok", note = "No diagnostic." }
 fcc = { result = "no", note = "Rejects any initialized local pointer to an array, const or not: \"not a valid auto initializer\"." }
 hitech = { result = "no", note = "Has no const." }
 uc80 = { result = "ok", note = "No diagnostic." }
+dcc = { result = "ok", note = "No diagnostic." }
 "gb-llvm" = { result = "ok", note = "No diagnostic." }
 
 [c23.empty-parameter-lists]
@@ -54,6 +56,7 @@ sccz80 = { result = "no", note = "No diagnostic." }
 fcc = { result = "no", note = "No diagnostic." }
 hitech = { result = "no", note = "No diagnostic." }
 uc80 = { result = "no", note = "No diagnostic." }
+dcc = { result = "no", note = "No diagnostic." }
 "gb-llvm" = { result = "ok", note = "Error: \"too many arguments to function call, expected 0, have 1\"." }
 
 [c2y.earthly-demons-1]
@@ -66,6 +69,7 @@ sccz80 = { result = "no", note = "Case 1 diagnosed, but not case 2. Has no inlin
 fcc = { result = "no", note = "Case 1 diagnosed, but not case 2. Has no inline or _Alignas for cases 3 and 4." }
 hitech = { result = "no", note = "Case 1 diagnosed; case 2 only warned of as unused. Has no inline or _Alignas for cases 3 and 4." }
 uc80 = { result = "no", note = "No diagnostic for any case." }
+dcc = { result = "no", note = "Case 2 diagnosed, but not cases 1 and 3. Has no _Alignas for case 4." }
 "gb-llvm" = { result = "no", note = "Cases 1, 2 and 4 diagnosed, but not case 3." }
 
 [c2y.void-parameter]
@@ -78,6 +82,7 @@ sccz80 = { result = "no", note = "Case 3 diagnosed, but not cases 1 and 2." }
 fcc = { result = "no", note = "Case 3 diagnosed, but not cases 1 and 2." }
 hitech = { result = "no", note = "No diagnostic for cases 2 and 3. Has no const for case 1." }
 uc80 = { result = "no", note = "No diagnostic for any case." }
+dcc = { result = "no", note = "No diagnostic for any case." }
 "gb-llvm" = { result = "ok", note = "All three cases diagnosed." }
 
 [c2y.initializer-constraints]
@@ -90,6 +95,7 @@ sccz80 = { result = "no", note = "No diagnostic for case 2. Cannot initialize a 
 fcc = { result = "no", note = "Case 2 diagnosed. Cannot initialize a local structure for the file and case 1." }
 hitech = { result = "no", note = "Case 2 diagnosed. Cannot initialize a local structure for the file and case 1." }
 uc80 = { result = "no", note = "No diagnostic for either case." }
+dcc = { result = "no", note = "Case 2 diagnosed, but not case 1." }
 "gb-llvm" = { result = "ok", note = "Both cases diagnosed." }
 
 [c2y.incomplete-tentative]
@@ -102,6 +108,7 @@ sccz80 = { result = "no", note = "Rejects the valid file as well: \"Cannot not d
 fcc = { result = "ok", note = "Error: \"struct/union not declared\"." }
 hitech = { result = "no", note = "Rejects the valid file as well: \"undefined struct/union: later\"." }
 uc80 = { result = "no", note = "No diagnostic." }
+dcc = { result = "no", note = "No diagnostic." }
 "gb-llvm" = { result = "ok", note = "Error: \"tentative definition has type 'struct never' that is never completed\"." }
 
 [c2y.linkage-conflicts]
@@ -114,6 +121,7 @@ sccz80 = { result = "no", note = "No diagnostic for either case." }
 fcc = { result = "no", note = "Rejects the valid file as well: \"storage class mismatch\"." }
 hitech = { result = "no", note = "Only warns that the variables are unused." }
 uc80 = { result = "no", note = "No diagnostic for either case." }
+dcc = { result = "no", note = "No diagnostic for either case." }
 "gb-llvm" = { result = "no", note = "Case 1 diagnosed, but not case 2." }
 
 [c2y.ucn-pasting]
@@ -126,6 +134,7 @@ sccz80 = { result = "ok", note = "Error at the lone backslash: \"Missing token, 
 fcc = { result = "no", note = "Its preprocessor has no ##: \"missing semicolon\" for the valid file." }
 hitech = { result = "no", note = "Its preprocessor has no ##: \"illegal '#' directive\"." }
 uc80 = { result = "ok", note = "Error at the lone backslash: \"lexical error at byte 0x5c\"." }
+dcc = { result = "ok", note = "Error: \"identifier expected near '\\'\"." }
 "gb-llvm" = { result = "no", note = "No diagnostic." }
 
 [c2y.pp-integer-expressions]
@@ -138,6 +147,7 @@ sccz80 = { result = "ok", note = "Error from z88dk's preprocessor: \"invalid tok
 fcc = { result = "no", note = "Its preprocessor warns about the valid #if as well: \"Unexpected text following preprocessor command\"." }
 hitech = { result = "ok", note = "Error: \"Illegal character \\\" in preprocessor if\"." }
 uc80 = { result = "no", note = "No diagnostic." }
+dcc = { result = "no", note = "No diagnostic." }
 "gb-llvm" = { result = "ok", note = "Error: \"invalid token at start of a preprocessor expression\"." }
 
 [c2y.unterminated-comment]
@@ -150,6 +160,7 @@ sccz80 = { result = "ok", note = "Warning from z88dk's preprocessor: \"truncated
 fcc = { result = "no", note = "Its preprocessor never finished; it was stopped after 60 seconds." }
 hitech = { result = "no", note = "No diagnostic." }
 uc80 = { result = "no", note = "No diagnostic." }
+dcc = { result = "no", note = "No diagnostic." }
 "gb-llvm" = { result = "ok", note = "Error: \"unterminated /* comment\"." }
 
 [c2y.incomplete-lvalues]
@@ -162,6 +173,7 @@ sccz80 = { result = "no", note = "No diagnostic." }
 fcc = { result = "ok", note = "Error: \"invalid type conversion\"." }
 hitech = { result = "no", note = "No diagnostic." }
 uc80 = { result = "no", note = "No diagnostic." }
+dcc = { result = "no", note = "Rejects a structure cast to void even when it is complete: \"unsupported expression statement\"." }
 "gb-llvm" = { result = "ok", note = "Error: \"incomplete type 'struct opaque' where a complete type is required\"." }
 
 [c2y.va-start-fixed]
@@ -174,6 +186,7 @@ sccz80 = { result = "no", note = "No diagnostic." }
 fcc = { result = "no", note = "No diagnostic." }
 hitech = { result = "no", note = "No diagnostic." }
 uc80 = { result = "no", note = "No diagnostic." }
+dcc = { result = "no", note = "No diagnostic." }
 "gb-llvm" = { result = "ok", note = "Error: \"'va_start' used in function with fixed args\". Its back end cannot compile the variadic function the file needs." }
 
 [c2y.static-assert-ice]
@@ -186,6 +199,7 @@ sccz80 = { result = "no", note = "Has no _Static_assert." }
 fcc = { result = "no", note = "Has no _Static_assert." }
 hitech = { result = "no", note = "Has no _Static_assert." }
 uc80 = { result = "no", note = "No diagnostic." }
+dcc = { result = "ok", note = "Error: \"constant integer expression expected near 'a'\"." }
 "gb-llvm" = { result = "ok", note = "Warning with -pedantic: \"expression is not an integer constant expression; folding it to a constant is a GNU extension\"." }
 
 [c2y.incomplete-member-access]
@@ -198,6 +212,7 @@ sccz80 = { result = "no", note = "Rejects the valid bit-field width as well: \"C
 fcc = { result = "no", note = "Rejects the valid bit-field width as well: \"bad type\"." }
 hitech = { result = "no", note = "Rejects the valid bit-field width as well: \"integer constant expected\"." }
 uc80 = { result = "no", note = "No diagnostic." }
+dcc = { result = "no", note = "Rejects the valid bit-field width as well: \"unsupported sizeof expression\"." }
 "gb-llvm" = { result = "ok", note = "Error: \"incomplete definition of type 'struct self'\"." }
 
 [c2y.static-in-inline]
@@ -210,6 +225,7 @@ sccz80 = { result = "no", note = "Has no inline." }
 fcc = { result = "no", note = "Has no inline." }
 hitech = { result = "no", note = "Has no inline." }
 uc80 = { result = "ok", note = "No diagnostic." }
+dcc = { result = "ok", note = "No diagnostic." }
 "gb-llvm" = { result = "no", note = "Warning: \"static function 'bump' is used in an inline function with external linkage\"." }
 
 [c2y.composite-types]
@@ -222,6 +238,7 @@ sccz80 = { result = "no", note = "Has no variable-length arrays." }
 fcc = { result = "no", note = "Has no variable-length arrays." }
 hitech = { result = "no", note = "Has no variable-length arrays." }
 uc80 = { result = "no", note = "No diagnostic for either case." }
+dcc = { result = "no", note = "Has no variable-length arrays." }
 "gb-llvm" = { result = "no", note = "No diagnostic for either case." }
 
 [c2y.atomic-members]
@@ -234,4 +251,5 @@ sccz80 = { result = "no", note = "Has no _Atomic." }
 fcc = { result = "no", note = "Has no _Atomic." }
 hitech = { result = "no", note = "Has no _Atomic." }
 uc80 = { result = "no", note = "No diagnostic for either case." }
+dcc = { result = "no", note = "Has no _Atomic." }
 "gb-llvm" = { result = "ok", note = "Error: \"accessing a member of an atomic structure or union is undefined behavior\"." }

@@ -3,6 +3,7 @@
 # off; the others start off.
 # "since" is the year the compiler, or the project it grew from, started.
 # "language-url" is where the language support is detailed.
+# "runs-on" is the operating system a compiler can itself run on a Z80 under.
 # "family" is the compiler it derives from. "repo", "branch" and "path" are
 # where publish.py looks up the last commit, to mark a compiler unmaintained.
 
@@ -94,6 +95,7 @@ branch = "z80"
 
 [fcc]
 name = "fcc"
+runs-on = "Fuzix"
 since = 2022
 logo = "logos/fcc.png"
 homepage = "https://github.com/EtchedPixels/Fuzix-Compiler-Kit"
@@ -105,6 +107,7 @@ branch = "main"
 
 [hitech]
 name = "HI-TECH C"
+runs-on = "CP/M"
 since = 1984
 logo = "logos/hitech.jpg"
 homepage = "https://github.com/agn453/HI-TECH-Z80-C"
@@ -123,6 +126,17 @@ license = "GPL-3.0-or-later"
 description = "A C compiler for the Z80 and CP/M written in Python, which compiles a whole program at once and optimizes for size."
 language = "C89, C99, C11, C17, C23"
 repo = "avwohl/uc80"
+branch = "main"
+
+[dcc]
+name = "dcc"
+since = 2026
+logo = "logos/dcc.png"
+homepage = "https://github.com/davidly/dcc"
+license = "MIT"
+description = "David Lee's C compiler for CP/M on the Z80, with its own peephole optimizer, Z80 runtime and clones of Microsoft's M80 assembler and L80 linker. It compiles a program from one C file."
+language = "C89, part of C99, part of C11"
+repo = "davidly/dcc"
 branch = "main"
 
 [gb-llvm]
