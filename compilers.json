@@ -11,7 +11,7 @@
   "family": "SDCC",
   "repo": "llvm-z80/sdcc",
   "branch": "trunk",
-  "last_commit": "2026-10-09"
+  "last_commit": "2026-10-11"
  },
  "sdcc-4.6.0": {
   "name": "SDCC 4.6.0"
@@ -31,7 +31,7 @@
   "ai": "Developed with Claude Code by its maintainer.",
   "repo": "llvm-z80/llvm-z80",
   "branch": "main",
-  "last_commit": "2026-10-10"
+  "last_commit": "2026-10-11"
  },
  "zsdcc": {
   "name": "zsdcc",
@@ -75,7 +75,7 @@
   "repo": "z88dk/z88dk",
   "branch": "master",
   "path": "src/80cc",
-  "last_commit": "2026-10-10"
+  "last_commit": "2026-10-11"
  },
  "ez80-clang": {
   "name": "ez80-clang",

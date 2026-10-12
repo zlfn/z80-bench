@@ -909,7 +909,462 @@
      }
     }
    }
+  },
+  {
+   "id": "2026-10-12",
+   "commit": "691126d1056fbf96ea1483f14ab4630b28e0a3b1",
+   "versions": {
+    "sdcc": "4.6.4 #16998",
+    "sdcc-4.6.0": "4.6.0 #16608",
+    "llvm-z80": "24.0.0git defafaf471b1",
+    "zsdcc": "v26468-4522364999-20261011",
+    "sccz80": "v26468-4522364999-20261011",
+    "80cc": "v26468-4522364999-20261011",
+    "ez80-clang": "19.1.0 ef28e9c54cd1",
+    "fcc": "7b2a72e",
+    "hitech": "3.09-21",
+    "uc80": "0.7.0",
+    "gb-llvm": "21.0.0git 5bc8de9127f7"
+   },
+   "summary": {
+    "sm83": {
+     "size": {
+      "cycles": {
+       "sdcc": {
+        "score": 1.0009,
+        "value": 18451441,
+        "passed": 12,
+        "total": 12
+       },
+       "sdcc-4.6.0": {
+        "score": 1.0,
+        "value": 18435599,
+        "passed": 12,
+        "total": 12
+       },
+       "llvm-z80": {
+        "score": 1.0423,
+        "value": 19214829,
+        "passed": 12,
+        "total": 12
+       },
+       "zsdcc": {
+        "score": 1.0236,
+        "value": 18870381,
+        "passed": 6,
+        "total": 12
+       },
+       "sccz80": {
+        "score": 1.5858,
+        "value": 29235329,
+        "passed": 10,
+        "total": 12
+       },
+       "80cc": {
+        "score": 0.6764,
+        "value": 12469737,
+        "passed": 7,
+        "total": 12
+       },
+       "gb-llvm": {
+        "score": 1.5341,
+        "value": 28282198,
+        "passed": 8,
+        "total": 12
+       }
+      },
+      "size": {
+       "sdcc": {
+        "score": 1.0,
+        "value": 1152,
+        "passed": 12,
+        "total": 12
+       },
+       "sdcc-4.6.0": {
+        "score": 1.0,
+        "value": 1152,
+        "passed": 12,
+        "total": 12
+       },
+       "llvm-z80": {
+        "score": 1.2389,
+        "value": 1427,
+        "passed": 12,
+        "total": 12
+       },
+       "zsdcc": {
+        "score": 1.0262,
+        "value": 1182,
+        "passed": 6,
+        "total": 12
+       },
+       "sccz80": {
+        "score": 1.1912,
+        "value": 1372,
+        "passed": 10,
+        "total": 12
+       },
+       "80cc": {
+        "score": 0.9051,
+        "value": 1043,
+        "passed": 7,
+        "total": 12
+       },
+       "gb-llvm": {
+        "score": 1.0179,
+        "value": 1173,
+        "passed": 8,
+        "total": 12
+       }
+      }
+     },
+     "speed": {
+      "cycles": {
+       "sdcc": {
+        "score": 1.0007,
+        "value": 17906802,
+        "passed": 12,
+        "total": 12
+       },
+       "sdcc-4.6.0": {
+        "score": 1.0,
+        "value": 17893732,
+        "passed": 12,
+        "total": 12
+       },
+       "llvm-z80": {
+        "score": 0.9062,
+        "value": 16214984,
+        "passed": 12,
+        "total": 12
+       },
+       "zsdcc": {
+        "score": 1.1213,
+        "value": 20064338,
+        "passed": 7,
+        "total": 12
+       },
+       "sccz80": {
+        "score": 1.6497,
+        "value": 29519864,
+        "passed": 10,
+        "total": 12
+       },
+       "80cc": {
+        "score": 0.696,
+        "value": 12453260,
+        "passed": 7,
+        "total": 12
+       },
+       "gb-llvm": {
+        "score": 1.4034,
+        "value": 25112939,
+        "passed": 8,
+        "total": 12
+       }
+      },
+      "size": {
+       "sdcc": {
+        "score": 1.0,
+        "value": 1153,
+        "passed": 12,
+        "total": 12
+       },
+       "sdcc-4.6.0": {
+        "score": 1.0,
+        "value": 1153,
+        "passed": 12,
+        "total": 12
+       },
+       "llvm-z80": {
+        "score": 1.5705,
+        "value": 1811,
+        "passed": 12,
+        "total": 12
+       },
+       "zsdcc": {
+        "score": 1.0456,
+        "value": 1206,
+        "passed": 7,
+        "total": 12
+       },
+       "sccz80": {
+        "score": 1.2212,
+        "value": 1408,
+        "passed": 10,
+        "total": 12
+       },
+       "80cc": {
+        "score": 0.9076,
+        "value": 1046,
+        "passed": 7,
+        "total": 12
+       },
+       "gb-llvm": {
+        "score": 1.4359,
+        "value": 1656,
+        "passed": 8,
+        "total": 12
+       }
+      }
+     }
+    },
+    "z80": {
+     "size": {
+      "cycles": {
+       "sdcc": {
+        "score": 0.9993,
+        "value": 15841406,
+        "passed": 12,
+        "total": 12
+       },
+       "sdcc-4.6.0": {
+        "score": 1.0,
+        "value": 15852135,
+        "passed": 12,
+        "total": 12
+       },
+       "llvm-z80": {
+        "score": 0.8193,
+        "value": 12987994,
+        "passed": 12,
+        "total": 12
+       },
+       "zsdcc": {
+        "score": 0.8556,
+        "value": 13563542,
+        "passed": 12,
+        "total": 12
+       },
+       "sccz80": {
+        "score": 1.7414,
+        "value": 27605134,
+        "passed": 10,
+        "total": 12
+       },
+       "80cc": {
+        "score": 0.7717,
+        "value": 12232816,
+        "passed": 7,
+        "total": 12
+       },
+       "ez80-clang": {
+        "score": 1.2368,
+        "value": 19606432,
+        "passed": 12,
+        "total": 12
+       },
+       "fcc": {
+        "score": 3.246,
+        "value": 51456167,
+        "passed": 7,
+        "total": 12
+       },
+       "hitech": {
+        "score": 1.6337,
+        "value": 25897837,
+        "passed": 7,
+        "total": 12
+       },
+       "uc80": {
+        "score": 2.6354,
+        "value": 41777385,
+        "passed": 10,
+        "total": 12
+       }
+      },
+      "size": {
+       "sdcc": {
+        "score": 0.9981,
+        "value": 1028,
+        "passed": 12,
+        "total": 12
+       },
+       "sdcc-4.6.0": {
+        "score": 1.0,
+        "value": 1030,
+        "passed": 12,
+        "total": 12
+       },
+       "llvm-z80": {
+        "score": 1.2372,
+        "value": 1274,
+        "passed": 12,
+        "total": 12
+       },
+       "zsdcc": {
+        "score": 0.9529,
+        "value": 981,
+        "passed": 12,
+        "total": 12
+       },
+       "sccz80": {
+        "score": 1.293,
+        "value": 1332,
+        "passed": 10,
+        "total": 12
+       },
+       "80cc": {
+        "score": 1.0328,
+        "value": 1064,
+        "passed": 7,
+        "total": 12
+       },
+       "ez80-clang": {
+        "score": 1.4136,
+        "value": 1456,
+        "passed": 12,
+        "total": 12
+       },
+       "fcc": {
+        "score": 1.7464,
+        "value": 1799,
+        "passed": 7,
+        "total": 12
+       },
+       "hitech": {
+        "score": 1.1237,
+        "value": 1157,
+        "passed": 7,
+        "total": 12
+       },
+       "uc80": {
+        "score": 1.5754,
+        "value": 1622,
+        "passed": 10,
+        "total": 12
+       }
+      }
+     },
+     "speed": {
+      "cycles": {
+       "sdcc": {
+        "score": 0.9995,
+        "value": 15777950,
+        "passed": 12,
+        "total": 12
+       },
+       "sdcc-4.6.0": {
+        "score": 1.0,
+        "value": 15785669,
+        "passed": 12,
+        "total": 12
+       },
+       "llvm-z80": {
+        "score": 0.7159,
+        "value": 11300967,
+        "passed": 12,
+        "total": 12
+       },
+       "zsdcc": {
+        "score": 0.8461,
+        "value": 13356461,
+        "passed": 12,
+        "total": 12
+       },
+       "sccz80": {
+        "score": 1.6293,
+        "value": 25719102,
+        "passed": 10,
+        "total": 12
+       },
+       "80cc": {
+        "score": 0.8351,
+        "value": 13182088,
+        "passed": 9,
+        "total": 12
+       },
+       "ez80-clang": {
+        "score": 0.9998,
+        "value": 15782630,
+        "passed": 4,
+        "total": 12
+       },
+       "fcc": {
+        "score": 3.1562,
+        "value": 49822603,
+        "passed": 6,
+        "total": 12
+       },
+       "hitech": {
+        "score": 1.6563,
+        "value": 26145420,
+        "passed": 7,
+        "total": 12
+       },
+       "uc80": {
+        "score": 2.641,
+        "value": 41690679,
+        "passed": 10,
+        "total": 12
+       }
+      },
+      "size": {
+       "sdcc": {
+        "score": 0.9994,
+        "value": 1051,
+        "passed": 12,
+        "total": 12
+       },
+       "sdcc-4.6.0": {
+        "score": 1.0,
+        "value": 1052,
+        "passed": 12,
+        "total": 12
+       },
+       "llvm-z80": {
+        "score": 1.4897,
+        "value": 1567,
+        "passed": 12,
+        "total": 12
+       },
+       "zsdcc": {
+        "score": 0.9648,
+        "value": 1015,
+        "passed": 12,
+        "total": 12
+       },
+       "sccz80": {
+        "score": 1.2777,
+        "value": 1344,
+        "passed": 10,
+        "total": 12
+       },
+       "80cc": {
+        "score": 1.0826,
+        "value": 1139,
+        "passed": 9,
+        "total": 12
+       },
+       "ez80-clang": {
+        "score": 1.9359,
+        "value": 2036,
+        "passed": 4,
+        "total": 12
+       },
+       "fcc": {
+        "score": 1.882,
+        "value": 1980,
+        "passed": 6,
+        "total": 12
+       },
+       "hitech": {
+        "score": 1.0889,
+        "value": 1145,
+        "passed": 7,
+        "total": 12
+       },
+       "uc80": {
+        "score": 1.5343,
+        "value": 1614,
+        "passed": 10,
+        "total": 12
+       }
+      }
+     }
+    }
+   }
   }
  ],
- "latest": "2026-10-11"
+ "latest": "2026-10-12"
 }
