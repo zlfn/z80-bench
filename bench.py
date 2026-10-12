@@ -29,9 +29,10 @@ BUILD = ROOT / "build"
 TICKS = ROOT / ".cache" / "bin" / "z88dk-ticks"
 TARGETS = ("z80", "sm83")
 PRESETS = ("speed", "size")
-# About five times the slowest correct run here. A program still running at
-# this point never gets to where ticks is waiting, which counts as miscompiled.
-CYCLE_LIMIT = 2_000_000_000
+# Well above the slowest correct run here, gb-llvm's pi on the SM83. A program
+# still running at this point never gets to where ticks is waiting, which
+# counts as miscompiled.
+CYCLE_LIMIT = 3_000_000_000
 # ticks stops counting while the CPU sits in HALT, so a program that halts
 # early never reaches the cycle limit. This wall-clock limit catches it.
 TICKS_TIMEOUT = 120
@@ -53,7 +54,10 @@ def run(cmd, cwd=None, timeout=3600, on_timeout=None) -> str:
         raise (on_timeout or Failure)(f"{Path(str(cmd[0])).name} timed out after {timeout}s")
     if p.returncode != 0:
         # zcc reports a crashed compiler as a plain failure with no output.
-        msg = (p.stderr.strip() or p.stdout.strip())[-3000:] or "no output"
+        msg = p.stderr.strip() or p.stdout.strip() or "no output"
+        # A crash says why at the start, a link failure at the end.
+        if len(msg) > 4000:
+            msg = msg[:2000] + "\n...\n" + msg[-2000:]
         raise Failure(f"{Path(str(cmd[0])).name} exited {p.returncode}: {msg}")
     return p.stdout
 

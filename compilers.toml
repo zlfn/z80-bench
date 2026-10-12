@@ -32,6 +32,17 @@ z80.size = ["-Os"]
 sm83.speed = ["-O2"]
 sm83.size = ["-Os"]
 
+# 80cc has no size/speed switch (--opt-code-speed is inert). z88dk's recipes
+# use IX as the frame pointer on the Z80; the SM83 has no IX.
+[80cc]
+nightly = true
+toolchain = "z88dk"
+zcc-compiler = "80cc"
+z80.speed = ["-O2", "-fframe-pointer"]
+z80.size = ["-O2"]
+sm83.speed = ["-O2"]
+sm83.size = ["-O2"]
+
 # z88dk's own benchmark recipes use -SO3 --max-allocs-per-node200000.
 [zsdcc]
 nightly = true
@@ -50,17 +61,6 @@ z80.speed = ["-O3", "--opt-code-speed"]
 z80.size = ["-O3"]
 sm83.speed = ["-O3", "--opt-code-speed"]
 sm83.size = ["-O3"]
-
-# 80cc has no size/speed switch (--opt-code-speed is inert). z88dk's recipes
-# use IX as the frame pointer on the Z80; the SM83 has no IX.
-[80cc]
-nightly = true
-toolchain = "z88dk"
-zcc-compiler = "80cc"
-z80.speed = ["-O2", "-fframe-pointer"]
-z80.size = ["-O2"]
-sm83.speed = ["-O2"]
-sm83.size = ["-O2"]
 
 # CE-Programming's ez80-clang in Z80 mode. -Oz is CEdev's default.
 [ez80-clang]

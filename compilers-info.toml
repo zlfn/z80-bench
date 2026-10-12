@@ -43,6 +43,21 @@ ai = "Developed with Claude Code by its maintainer."
 repo = "llvm-z80/llvm-z80"
 branch = "main"
 
+[80cc]
+name = "80cc"
+since = 2026
+history = true
+logo = "logos/z88dk.png"
+homepage = "https://github.com/z88dk/z88dk"
+license = "Clarified Artistic License"
+description = "z88dk's newer compiler: the Small C frontend it shares with sccz80, and a new backend that lowers an SSA-style intermediate representation to Z80 family assembly."
+language = "Part of C90"
+family = "Small C"
+ai = "Its source directory keeps working rules for AI coding agents in AGENTS.md."
+repo = "z88dk/z88dk"
+branch = "master"
+path = "src/80cc"
+
 [zsdcc]
 name = "zsdcc"
 since = 2015
@@ -68,21 +83,6 @@ family = "Small C"
 repo = "z88dk/z88dk"
 branch = "master"
 path = "src/sccz80"
-
-[80cc]
-name = "80cc"
-since = 2026
-history = true
-logo = "logos/z88dk.png"
-homepage = "https://github.com/z88dk/z88dk"
-license = "Clarified Artistic License"
-description = "z88dk's newer compiler: the Small C frontend it shares with sccz80, and a new backend that lowers an SSA-style intermediate representation to Z80 family assembly."
-language = "Part of C90"
-family = "Small C"
-ai = "Its source directory keeps working rules for AI coding agents in AGENTS.md."
-repo = "z88dk/z88dk"
-branch = "master"
-path = "src/80cc"
 
 [ez80-clang]
 name = "ez80-clang"

@@ -2,7 +2,8 @@
 """Add a bench.py result to the site's data.
 
 The full result goes to site/data/runs/<id>.json. site/data/index.json lists
-every run with its summary scores, which is all the history chart needs. The
+every run with its summary scores, which is all the history chart needs, and
+is rebuilt from the run files on every publish. The
 benchmark sources, with every header they include, go under site/src/ for the
 source viewer, listed in site/data/sources.json. compilers-info.toml and the
 benchmark descriptions go to site/data/compilers.json and benchmarks.json.
@@ -14,7 +15,9 @@ value divided by the baseline's. The baseline scores 1.0.
 The history chart plots absolute values instead: the score times the
 geometric mean of the baseline's values. That is the compiler's own geometric
 mean when it passed everything, and counts a missing benchmark as being as
-fast as the others.
+fast as the others. So where a compiler newly failed or passed a benchmark,
+its summary names them and gives its change over the benchmarks it passed in
+both runs.
 """
 
 import argparse
@@ -71,6 +74,115 @@ def summarize(run: dict) -> dict:
     return out
 
 
+def compare(prev: dict, run: dict, summary: dict) -> None:
+    """Add to run's summary the scored benchmarks each compiler newly failed
+    or passed since prev, and then its step: the geometric mean of its value
+    over the one before, on the benchmarks it passed in both runs."""
+    scored = [b for b, v in run["benchmarks"].items()
+              if v["scored"] and prev["benchmarks"].get(b, {}).get("scored")]
+    before = {(r["compiler"], r["target"], r["preset"], r["bench"]): r for r in prev["results"]}
+    after = {(r["compiler"], r["target"], r["preset"], r["bench"]): r for r in run["results"]}
+    failing = lambda s: s not in ("ok", "unsupported", None)
+    for t, presets in summary.items():
+        for p, metrics in presets.items():
+            for metric, scores in metrics.items():
+                key = METRICS[metric]
+                for c, s in scores.items():
+                    was = {b: before.get((c, t, p, b), {}).get("status") for b in scored}
+                    now = {b: after.get((c, t, p, b), {}).get("status") for b in scored}
+                    failed = {b: now[b] for b in scored if was[b] == "ok" and failing(now[b])}
+                    fixed = [b for b in scored if failing(was[b]) and now[b] == "ok"]
+                    if not failed and not fixed:
+                        continue
+                    s["new_failures"] = failed
+                    s["fixed"] = fixed
+                    both = [b for b in scored if was[b] == now[b] == "ok"]
+                    if both:
+                        logs = [math.log(after[(c, t, p, b)][key] / before[(c, t, p, b)][key]) for b in both]
+                        s["step"] = round(math.exp(sum(logs) / len(logs)), 4)
+
+
+def write_index():
+    """Rebuild index.json from the run files, so every run is summarized the
+    current way."""
+    runs = [json.loads(f.read_text()) for f in sorted((DATA / "runs").glob("*.json"))]
+    if not runs:
+        return
+    entries = []
+    for i, run in enumerate(runs):
+        summary = summarize(run)
+        if i:
+            compare(runs[i - 1], run, summary)
+        entries.append({
+            "id": run["id"],
+            "commit": run.get("commit", ""),
+            "versions": {c: v["version"] for c, v in run["compilers"].items()},
+            "summary": summary,
+        })
+    index = {"runs": entries, "latest": entries[-1]["id"]}
+    (DATA / "index.json").write_text(json.dumps(index, indent=1) + "\n")
+
+
+def tidy(line: str) -> str:
+    """A message line without directories, caret marks or extra spaces."""
+    line = re.sub(r"(?:[\w.+-]*/)+(?=[\w.+-])", "", line)
+    # fcc builds numbered copies of the sources.
+    line = re.sub(r"\b\d+-(?=[\w.-]+\.[ch]\b)", "", line)
+    line = re.sub(r"\^-*", " ", line)
+    return re.sub(r"\s+", " ", line).strip()
+
+
+def reason(r: dict) -> tuple[str, str] | None:
+    """A short reason for a failed result and a longer one, read from its
+    error message."""
+    e = r.get("error", "").strip()
+    if not e:
+        return None
+    if m := re.fullmatch(r"result (0x[0-9a-f]+), expected (0x[0-9a-f]+)", e):
+        return "Wrong result", f"Returned {m[1]}, expected {m[2]}"
+    if m := re.fullmatch(r"still running after ([\d,]+) cycles", e):
+        return "Never finished", f"Still running after {m[1]} cycles"
+    if m := re.fullmatch(r"\S+ timed out after (\d+)s", e):
+        if r["status"] == "miscompiled":
+            return "Never finished", f"Still running after {m[1]} seconds"
+        return "Timed out", f"Took more than {m[1]} seconds to build"
+    m = re.match(r"\S+ exited (\d+): ", e)
+    body = e[m.end():] if m else e
+    if m and body == "no output":
+        return "No message", f"Exited with status {m[1]} and printed nothing"
+    lines = [l.strip() for l in body.splitlines() if l.strip()]
+
+    for i, l in enumerate(lines):
+        if a := re.search(r"([\w.]+\.\w+):(\d+): .*Assertion `(.*)' failed", l):
+            return "Compiler crashed", f"Assertion failed: {a[3]} ({a[1]}:{a[2]})"
+        if u := re.search(r"UNREACHABLE executed at (.*)!", l):
+            return "Compiler crashed", tidy(f"{lines[i - 1]} ({u[1]})" if i else l)
+        if f := re.search(r"LLVM ERROR: (.*)", l):
+            return "Compiler crashed", tidy(f[1])
+    if re.search(r"Stack dump:|PLEASE (?:submit|ATTACH)|due to signal", body):
+        return "Compiler crashed", "The compiler crashed"
+
+    syms = list(dict.fromkeys(re.findall(r"undefined (?:symbol|reference to)\W*([A-Za-z_$][\w$.]*)", body)))
+    if syms:
+        more = f" +{len(syms) - 1}" if len(syms) > 1 else ""
+        return f"Missing {syms[0]}{more}", "Undefined symbols: " + ", ".join(syms)
+
+    # The first line that reports an error: GCC style, fcc's "file:line - ",
+    # or HI-TECH C's caret under the fault.
+    for pat in (r"\b(?:error|fatal)\b", r"^[\w.-]+:\d+ - ", r"\^"):
+        line = next((l for l in lines if re.search(pat, l, re.I) and not re.search(r"\bwarning\b", l, re.I)), None)
+        if line:
+            break
+    detail = tidy(line or lines[0])[:200]
+    # HI-TECH C's "; expected".
+    if m := re.fullmatch(r"(\S) expected", detail):
+        detail = f"Expected '{m[1]}'"
+    short = re.sub(r"^[\w.-]+:\d+(?::\d+)?(?::| -)\s*(?:(?:fatal )?error:\s*)?", "", detail)
+    if re.match(r"[a-z]+\b", short):
+        short = short[0].upper() + short[1:]
+    return short[:80], detail
+
+
 def included(path: Path, include: list[Path]) -> list[Path]:
     """The headers a file includes, as found in its own directory or the
     benchmark's include path. System headers are not found and drop out."""
@@ -113,9 +225,10 @@ def main():
     ap.add_argument("--id", default=datetime.date.today().isoformat(),
                     help="run id, the date of the run by default")
     ap.add_argument("--assets-only", action="store_true",
-                    help="only write the sources and descriptions, not a run")
+                    help="only write the index, sources and descriptions, not a new run")
     args = ap.parse_args()
     if args.assets_only:
+        write_index()
         write_assets()
         return
     if not args.result:
@@ -123,24 +236,15 @@ def main():
 
     run = json.loads(args.result.read_text())
     run["id"] = args.id
-    # Compiler messages carry local paths and are not shown on the site.
+    # Compiler messages carry local paths, so only the reasons read from them
+    # are kept.
     for r in run["results"]:
+        if why := reason(r):
+            r["reason"], r["detail"] = why
         r.pop("error", None)
     (DATA / "runs").mkdir(parents=True, exist_ok=True)
     (DATA / "runs" / f"{args.id}.json").write_text(json.dumps(run, separators=(",", ":")) + "\n")
-
-    index_path = DATA / "index.json"
-    index = json.loads(index_path.read_text()) if index_path.exists() else {"runs": []}
-    index["runs"] = [r for r in index["runs"] if r["id"] != args.id]
-    index["runs"].append({
-        "id": args.id,
-        "commit": run.get("commit", ""),
-        "versions": {c: v["version"] for c, v in run["compilers"].items()},
-        "summary": summarize(run),
-    })
-    index["runs"].sort(key=lambda r: r["id"])
-    index["latest"] = index["runs"][-1]["id"]
-    index_path.write_text(json.dumps(index, indent=1) + "\n")
+    write_index()
     write_assets()
 
 

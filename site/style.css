@@ -12,6 +12,7 @@
   --accent: #2a78d6;
   --accent-soft: #cde2fb;
   --critical: #d03b3b;
+  --good: #006300;
   --serious: #b9541c;
   --slow: #c98500;
   --bar: #96948b;
@@ -48,6 +49,7 @@
     --accent: #3987e5;
     --accent-soft: #184f95;
     --critical: #e66767;
+    --good: #0ca30c;
     --serious: #ec835a;
     --slow: #fab219;
     --bar: #66655f;
@@ -82,6 +84,7 @@
   --accent: #3987e5;
   --accent-soft: #184f95;
   --critical: #e66767;
+  --good: #0ca30c;
   --serious: #ec835a;
   --slow: #fab219;
   --bar: #66655f;
@@ -313,6 +316,32 @@ table { border-collapse: collapse; width: 100%; }
 .matrix thead th.c { font: 600 13px var(--mono); color: var(--ink); }
 .matrix tbody tr + tr th, .matrix tbody tr + tr td { border-top: 1px solid var(--grid); }
 .matrix tbody th { font-weight: 400; width: 120px; vertical-align: top; }
+/* Group names run up the left of the table, with a bracket toward their rows,
+   when the page is wide enough to leave room for them. */
+.matrix-box { position: relative; }
+.matrix-groups { display: none; position: absolute; top: 0; bottom: 0; right: 100%; width: 22px; margin-right: 8px; }
+@media (min-width: 1320px) { .matrix-groups { display: block; } }
+.mg { position: absolute; left: 0; right: 0; display: flex; align-items: center; }
+.mg span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.mg::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  right: 0;
+  width: 5px;
+  border: 1.5px solid var(--axis);
+  border-right: 0;
+  border-radius: 3px 0 0 3px;
+}
 .b-name { font: 600 13.5px var(--mono); text-decoration: none; }
 a.b-name:hover { text-decoration: underline; }
 .cell { vertical-align: top; min-width: 92px; cursor: default; outline: none; }
@@ -330,6 +359,9 @@ a.b-name:hover { text-decoration: underline; }
 .status svg { width: 13px; height: 13px; flex: none; }
 .status.build-failed { color: var(--serious); font-weight: 600; }
 .status.miscompiled { color: var(--critical); font-weight: 600; }
+/* The reason read from a failure's message, beside its status. */
+.why { font-size: 11.5px; color: var(--muted); overflow-wrap: anywhere; }
+.fail-why { display: inline-flex; align-items: baseline; gap: 8px; min-width: 0; }
 
 /* History */
 
@@ -344,6 +376,11 @@ a.b-name:hover { text-decoration: underline; }
 .history .axis text, .history .end text { font: 11.5px var(--sans); fill: var(--muted); }
 .history .end text { fill: var(--ink-2); font-family: var(--mono); }
 .history .cross { stroke: var(--axis); stroke-width: 1; }
+.history .h-flag { pointer-events: none; }
+.history .h-flag path { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.history .h-flag path.halo { stroke: var(--surface); stroke-width: 5; }
+.history .h-flag.bad path:not(.halo) { stroke: var(--critical); }
+.history .h-flag.good path:not(.halo) { stroke: var(--good); }
 .empty { margin: 8px 4px 12px; color: var(--muted); font-size: 14px; }
 
 /* Compilers and benchmarks */
@@ -486,6 +523,14 @@ a.b-name:hover { text-decoration: underline; }
 .tip .t-row { display: flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
 .tip .t-row i { width: 12px; height: 2px; border-radius: 1px; flex: none; }
 .tip .t-row b { color: var(--ink); font-weight: 600; margin-left: auto; padding-left: 12px; }
+.tip .t-why { color: var(--ink); font-weight: 600; }
+.tip .t-why.build-failed { color: var(--serious); }
+.tip .t-why.miscompiled { color: var(--critical); }
+.tip .t-change { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--grid); }
+.tip .t-name { font: 600 12px var(--mono); color: var(--ink); margin-bottom: 2px; }
+.tip .t-change .bad { color: var(--critical); font-weight: 700; }
+.tip .t-change .good { color: var(--good); font-weight: 700; }
+.tip .t-step { color: var(--muted); font-variant-numeric: tabular-nums; }
 
 @media (max-width: 640px) {
   .v-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }

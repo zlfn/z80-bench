@@ -1,11 +1,18 @@
 "use strict";
 
-// Display order: the two whole-program benchmarks first, Dhrystone last.
-const BENCH_ORDER = ["stdcbench", "coremark", "aes256", "puff", "pi", "crc8", "crc16", "crc32",
-  "sieve", "sieve-bit", "fact", "dhrystone"];
+// The benchmarks in the order the site lists them, under their groups.
+const BENCH_GROUPS = [
+  ["Suites", ["stdcbench", "coremark", "dhrystone"]],
+  ["Applications", ["aes256", "puff"]],
+  ["Kernels", ["crc8", "crc16", "crc32", "sieve", "sieve-bit"]],
+  ["Runtimes", ["pi", "fact"]],
+];
 const CLOCK_HZ = { z80: 4000000, sm83: 4194304 };
 const CPU_NAME = { z80: "Z80", sm83: "SM83" };
 const SERIES = ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6", "--s7", "--s8"];
+// History colors these compilers always get: blue, orange and green. The
+// others take the colors left, in display order.
+const SERIES_FIXED = { "llvm-z80": "--s1", sdcc: "--s2", "80cc": "--s3" };
 
 const state = { target: "z80", preset: "speed", metric: "cycles" };
 let index = null;
@@ -70,12 +77,25 @@ function ratio(r) {
   return r.toFixed(2) + "×";
 }
 
+function percent(r) {
+  const d = (r - 1) * 100;
+  return (d < 0 ? "−" : "+") + Math.abs(d).toFixed(1) + "%";
+}
+
 // Data access
 
-// The compilers that build for the selected CPU, in compilers.toml order.
-// The baseline is only the yardstick for ratios and is not shown itself.
+// The run's compilers in compilers-info.toml order, so a change of order
+// reaches runs made before it. Compilers it does not list come last.
+function runCompilers() {
+  const order = Object.keys(info);
+  const rank = (c) => (order.includes(c) ? order.indexOf(c) : order.length);
+  return Object.keys(run.compilers).sort((a, b) => rank(a) - rank(b));
+}
+
+// The compilers that build for the selected CPU, in that order. The baseline
+// is only the yardstick for ratios and is not shown itself.
 function available() {
-  return Object.keys(run.compilers).filter((c) => !run.compilers[c].baseline
+  return runCompilers().filter((c) => !run.compilers[c].baseline
     && run.results.some((r) => r.compiler === c && r.target === state.target && r.status !== "unsupported"));
 }
 
@@ -193,10 +213,18 @@ function badges(name, c) {
   return box.childElementCount ? box : null;
 }
 
-function benches() {
+// [group, benchmarks] pairs for this run. Benchmarks in no group come last,
+// under an empty name.
+function benchGroups() {
   const known = Object.keys(run.benchmarks);
-  return BENCH_ORDER.filter((b) => known.includes(b))
-    .concat(known.filter((b) => !BENCH_ORDER.includes(b)).sort());
+  const grouped = BENCH_GROUPS.flatMap(([, bs]) => bs);
+  return BENCH_GROUPS.map(([g, bs]) => [g, bs.filter((b) => known.includes(b))])
+    .concat([["", known.filter((b) => !grouped.includes(b)).sort()]])
+    .filter(([, bs]) => bs.length);
+}
+
+function benches() {
+  return benchGroups().flatMap(([, bs]) => bs);
 }
 
 function result(compiler, bench) {
@@ -358,6 +386,9 @@ function eyeIcon(off) {
 const ICON_FAIL = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>';
 const ICON_BAD = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8l6.6 11.7H1.4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6.2v3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.6" r="0.9" fill="currentColor"/></svg>';
 
+// A failed status as it reads after a benchmark's name.
+const STATUS_TEXT = { "build-failed": "failed to build", miscompiled: "miscompiled", "run-failed": "did not run" };
+
 function statusChip(r) {
   const kind = r ? r.status : "missing";
   const label = { "build-failed": "Build failed", miscompiled: "Miscompiled", "run-failed": "Did not run",
@@ -377,21 +408,33 @@ function renderMatrix() {
   table.append(el("thead", {}, head));
 
   const body = el("tbody");
-  for (const b of benches()) {
+  for (const [group, bs] of benchGroups()) for (const b of bs) {
     const rs = cs.map((c) => result(c, b));
     const vals = rs.map((r) => valueOf(r)).filter((v) => v != null);
     const best = Math.min(...vals);
     const top = Math.max(...vals);
     const baseVal = valueOf(result(baseline(), b));
 
-    const tr = el("tr", {}, el("th", { scope: "row" },
+    const tr = el("tr", { "data-group": group }, el("th", { scope: "row" },
       el("a", { class: "b-name", href: `#src/${b}` }, b)));
 
     cs.forEach((c, i) => {
       const r = rs[i];
       const v = valueOf(r);
       if (v == null) {
-        tr.append(el("td", { class: "cell fail" }, statusChip(r)));
+        const td = el("td", { class: "cell fail" }, statusChip(r));
+        if (r?.reason) {
+          td.tabIndex = 0;
+          const show = () => showTip(td, (t) => {
+            t.append(el("div", { class: "t-head" }, `${label(c)} · ${b}`), el("div", { class: `t-why ${r.status}` }, r.reason));
+            if (r.detail.toLowerCase() !== r.reason.toLowerCase()) t.append(el("div", {}, r.detail));
+          });
+          td.addEventListener("pointerenter", show);
+          td.addEventListener("focus", show);
+          td.addEventListener("pointerleave", hideTip);
+          td.addEventListener("blur", hideTip);
+        }
+        tr.append(td);
         return;
       }
       const isBest = v === best;
@@ -417,9 +460,31 @@ function renderMatrix() {
     body.append(tr);
   }
   table.append(body);
+  placeGroups();
+}
+
+// Puts each group's name beside its rows, outside the table.
+function placeGroups() {
+  const box = $("matrix-groups");
+  const body = $("matrix").tBodies[0];
+  if (!body) return;
+  const origin = box.parentElement.getBoundingClientRect().top;
+  const spans = [];
+  for (const tr of body.rows) {
+    const { top, bottom } = tr.getBoundingClientRect();
+    const last = spans.at(-1);
+    if (last && last.group === tr.dataset.group) last.bottom = bottom;
+    else spans.push({ group: tr.dataset.group, top, bottom });
+  }
+  box.replaceChildren(...spans.filter((s) => s.group).map((s) => el("div", {
+    class: "mg", style: `top:${s.top - origin}px;height:${s.bottom - s.top}px`,
+  }, el("span", {}, s.group))));
 }
 
 // History
+
+// The marks put on a run's point, centered on it.
+const FLAG_PATH = { bad: "M-3.5,-3.5L3.5,3.5M3.5,-3.5L-3.5,3.5", good: "M-4,0.5L-1.3,3.2L4,-2.8" };
 
 // The compilers drawn in the History chart: the viewer's choice, or the ones
 // compilers-info.toml marks with "history".
@@ -442,10 +507,11 @@ function renderHistory() {
 
   const cs = compilers();
   // A compiler keeps its color on both CPUs and whatever is switched off.
-  const all = Object.keys(run.compilers).filter((c) => !run.compilers[c].baseline);
-  const color = (c) => `var(${SERIES[all.indexOf(c) % SERIES.length]})`;
+  const rest = runCompilers().filter((c) => !run.compilers[c].baseline && !SERIES_FIXED[c]);
+  const free = SERIES.filter((s) => !Object.values(SERIES_FIXED).includes(s));
+  const color = (c) => `var(${SERIES_FIXED[c] || free[rest.indexOf(c) % free.length]})`;
   // Past the palette, colors come round again on dashed lines.
-  const dashed = (c) => all.indexOf(c) >= SERIES.length;
+  const dashed = (c) => rest.indexOf(c) >= free.length;
   const swatch = (c) => dashed(c)
     ? `background:repeating-linear-gradient(90deg, ${color(c)} 0 4px, transparent 4px 7px)`
     : `background:${color(c)}`;
@@ -454,7 +520,7 @@ function renderHistory() {
     c,
     pts: runs.map((r, i) => {
       const s = r.summary?.[state.target]?.[state.preset]?.[state.metric]?.[c];
-      return s && s.value ? { i, y: s.value } : null;
+      return s && s.value ? { i, y: s.value, s } : null;
     }).filter(Boolean),
   })).filter((s) => s.pts.length);
 
@@ -477,7 +543,7 @@ function renderHistory() {
   }
 
   const W = Math.max(box.clientWidth - 32, 320);
-  const H = 240;
+  const H = 300;
   const pad = { l: 44, r: 84, t: 10, b: 28 };
   const ys = series.flatMap((s) => s.pts.map((p) => p.y));
   const lo = Math.min(...ys) * 0.96;
@@ -529,6 +595,22 @@ function renderHistory() {
   }
   svg.append(ends);
 
+  // A cross on a run where the compiler newly failed a benchmark, a check
+  // mark where it passed one again, drawn over every line.
+  for (const s of series) {
+    for (const p of s.pts) {
+      const flags = [];
+      if (Object.keys(p.s.new_failures || {}).length) flags.push("bad");
+      if (p.s.fixed?.length) flags.push("good");
+      flags.forEach((kind, k) => {
+        const g = svgEl("g", { class: `h-flag ${kind}`,
+          transform: `translate(${x(p.i) + (k - (flags.length - 1) / 2) * 10},${y(p.y)})` });
+        g.append(svgEl("path", { d: FLAG_PATH[kind], class: "halo" }), svgEl("path", { d: FLAG_PATH[kind] }));
+        svg.append(g);
+      });
+    }
+  }
+
   const hit = svgEl("rect", { x: pad.l, y: pad.t, width: W - pad.l - pad.r, height: H - pad.t - pad.b,
     fill: "transparent" });
   hit.addEventListener("pointermove", (ev) => {
@@ -547,6 +629,22 @@ function renderHistory() {
         t.append(el("div", { class: "t-row" }, el("i", { style: swatch(s.c) }), label(s.c),
           el("b", {}, formatValue(p.y))));
       }
+      for (const { s, p } of rows) {
+        const failed = Object.entries(p.s.new_failures || {});
+        const fixed = p.s.fixed || [];
+        if (!failed.length && !fixed.length) continue;
+        const box = el("div", { class: "t-change" }, el("div", { class: "t-name" }, label(s.c)));
+        for (const [b, st] of failed) {
+          box.append(el("div", {}, el("span", { class: "bad" }, "✕"), ` ${b} ${STATUS_TEXT[st] || st}`));
+        }
+        for (const b of fixed) box.append(el("div", {}, el("span", { class: "good" }, "✓"), ` ${b} passes again`));
+        const prev = s.pts.find((q) => q.i === idx - 1);
+        if (prev && p.s.step) {
+          box.append(el("div", { class: "t-step" },
+            `Line ${percent(p.y / prev.y)}, same benchmarks ${percent(p.s.step)}`));
+        }
+        t.append(box);
+      }
     });
   });
   hit.addEventListener("pointerleave", () => {
@@ -562,7 +660,8 @@ function renderHistory() {
 function renderCompilers() {
   const box = $("compiler-cards");
   box.replaceChildren();
-  for (const [name, c] of Object.entries(run.compilers)) {
+  for (const name of runCompilers()) {
+    const c = run.compilers[name];
     if (c.baseline) continue;
     const about = info[name] || {};
     const facts = el("dl", { class: "p-facts" });
@@ -617,7 +716,8 @@ function renderBenchmarks() {
             first: p === "speed" && c !== cs[0],
             value: v,
             text: v == null ? "" : fmt[metric](v),
-            missing: statusChip(r),
+            missing: el("span", { class: "fail-why", title: r?.detail || "" }, statusChip(r),
+              r?.reason ? el("span", { class: "why" }, r.reason) : null),
             note: el("div", { class: "ov-pass" }, v != null && bv ? ratio(v / bv) : ""),
           });
         }
@@ -799,6 +899,7 @@ async function main() {
   renderView();
   renderCompilers();
   routeHash();
+  new ResizeObserver(placeGroups).observe($("matrix"));
   let width = window.innerWidth;
   window.addEventListener("resize", () => {
     if (window.innerWidth !== width) {
