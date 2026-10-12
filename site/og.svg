@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- The link preview image. Render it to og.png at this size:
+       rsvg-convert -w 1200 -h 630 og.svg -o og.png -->
+  <rect width="1200" height="630" fill="#141413"/>
+
+  <!-- The site's mark: the fastest bar in blue, the others in gray. -->
+  <rect x="820" y="204" width="280" height="54" rx="27" fill="#3987e5"/>
+  <rect x="820" y="288" width="196" height="54" rx="27" fill="#6d6c66"/>
+  <rect x="820" y="372" width="126" height="54" rx="27" fill="#6d6c66"/>
+
+  <text x="96" y="300" font-family="JetBrains Mono" font-weight="600" font-size="92" fill="#e6e4df">z80-bench</text>
+  <text x="98" y="376" font-family="Noto Sans" font-size="42" fill="#b5b3ab">C compilers benchmark for Z80</text>
+</svg>
