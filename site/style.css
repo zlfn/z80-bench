@@ -277,7 +277,7 @@ section { padding-top: 40px; }
 .ov-hidden { font-size: 13px; line-height: 22px; }
 .show-all { padding: 0; border: 0; background: none; font: inherit; font-size: 13px; color: var(--accent); cursor: pointer; }
 .show-all:hover { text-decoration: underline; }
-.ov-track { position: relative; height: 22px; }
+.ov-track { position: relative; height: 22px; min-width: 0; }
 .ov-bar {
   position: absolute;
   left: 0;
@@ -371,13 +371,14 @@ a.b-name:hover { text-decoration: underline; }
 .bar i { display: block; height: 100%; background: var(--bar); border-radius: 0 3px 3px 0; }
 .best .bar i { background: var(--accent); }
 .slow .bar i { background: var(--slow); }
-.status { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
+.status { display: inline-flex; flex: none; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
 .status svg { width: 13px; height: 13px; flex: none; }
 .status.build-failed { color: var(--serious); font-weight: 600; }
 .status.miscompiled { color: var(--critical); font-weight: 600; }
 /* The reason read from a failure's message, beside its status. */
-.why { font-size: 11.5px; color: var(--muted); overflow-wrap: anywhere; }
-.fail-why { display: inline-flex; align-items: baseline; gap: 8px; min-width: 0; }
+/* A reason stays on its row's one line; the whole message is in the title. */
+.why { min-width: 0; overflow: hidden; font-size: 11.5px; color: var(--muted); white-space: nowrap; text-overflow: ellipsis; }
+.fail-why { display: inline-flex; align-items: baseline; gap: 8px; min-width: 0; max-width: 100%; }
 
 /* C support */
 
