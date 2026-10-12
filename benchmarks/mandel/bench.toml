@@ -1,0 +1,10 @@
+description = "Mandelbrot set, float"
+details = "Escape counts for a 32 by 24 grid of points, up to 24 iterations each, in single-precision floats. Floating-point multiplication, addition and comparison."
+origin = "written for z80-bench"
+url = ""
+tier = "extended"
+math = true
+# The count may differ by a few where rounding moves a point across the edge.
+tolerance = 0.01
+sources = ["main.c"]
+include = []

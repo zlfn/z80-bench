@@ -1,0 +1,7 @@
+description = "40 digits of pi, 64-bit"
+details = "The pi32 spigot with its 32-bit numbers widened to 64 bits, for 40 digits. Nearly all the time goes into 64-bit multiplication, division and remainder."
+origin = "written for z80-bench after c-bench-64"
+url = "https://github.com/thred/c-bench-64"
+tier = "extended"
+sources = ["main.c"]
+include = []

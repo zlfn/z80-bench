@@ -5,22 +5,18 @@
 
 #define OUT_LEN 4096
 
-extern const uint16_t puff_input_len;
-extern const uint16_t puff_output_len;
-extern const unsigned char puff_input[];
-
 static unsigned char out[OUT_LEN];
 
 int main(void)
 {
 	unsigned long outlen = OUT_LEN;
-	unsigned long inlen = puff_input_len;
+	unsigned long inlen = bench_input_len;
 	int err;
 
 	bench_begin();
-	err = puff(out, &outlen, puff_input, &inlen);
+	err = puff(out, &outlen, bench_input, &inlen);
 	bench_end();
-	if (err || outlen != puff_output_len)
+	if (err || outlen != bench_output_len)
 		bench_result = 0xFFFFFFFFul;
 	else
 		bench_result = bench_hash(out, OUT_LEN);

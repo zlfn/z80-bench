@@ -1,0 +1,7 @@
+description = "Recursive 64-bit factorials"
+details = "Recursive factorials of 0 to 20 in 64-bit arithmetic, eight times over. Call and return overhead and 64-bit multiplication."
+origin = "written for z80-bench after c-bench-64"
+url = "https://github.com/thred/c-bench-64"
+tier = "extended"
+sources = ["main.c"]
+include = []

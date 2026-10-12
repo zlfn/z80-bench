@@ -2,11 +2,14 @@
 # each project recommends for its fastest and its smallest code.
 # "nightly" marks a compiler the daily workflow builds from its development
 # branch, so its numbers can change from one day to the next.
+# "std" selects the newest C standard a compiler has, for the C feature
+# probes only.
 
 # SDCC's trunk, built every day by the daily workflow.
 [sdcc]
 nightly = true
 toolchain = "sdcc"
+std = ["--std=c2y"]
 z80.speed = ["--opt-code-speed", "--max-allocs-per-node", "200000"]
 z80.size = ["--opt-code-size", "--max-allocs-per-node", "200000"]
 sm83.speed = ["--opt-code-speed", "--max-allocs-per-node", "200000"]
@@ -27,6 +30,7 @@ sm83.size = ["--opt-code-size", "--max-allocs-per-node", "200000"]
 [llvm-z80]
 nightly = true
 toolchain = "llvm"
+std = ["-std=c2y"]
 z80.speed = ["-O2"]
 z80.size = ["-Os"]
 sm83.speed = ["-O2"]
@@ -47,6 +51,7 @@ sm83.size = ["-O2"]
 [zsdcc]
 nightly = true
 toolchain = "z88dk"
+std = ["-Cs--std=c2y"]
 zcc-compiler = "sdcc"
 z80.speed = ["-SO3", "--max-allocs-per-node200000", "--opt-code-speed"]
 z80.size = ["-SO3", "--max-allocs-per-node200000", "--opt-code-size"]
@@ -65,6 +70,7 @@ sm83.size = ["-O3"]
 # CE-Programming's ez80-clang in Z80 mode. -Oz is CEdev's default.
 [ez80-clang]
 toolchain = "ez80-clang"
+std = ["-std=c2y"]
 z80.speed = ["-O2"]
 z80.size = ["-Oz"]
 
@@ -88,5 +94,6 @@ z80.size = []
 
 [gb-llvm]
 toolchain = "gb-llvm"
+std = ["-std=c2y"]
 sm83.speed = ["-O2"]
 sm83.size = ["-Os"]

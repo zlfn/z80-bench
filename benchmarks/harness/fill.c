@@ -14,12 +14,3 @@ void bench_fill(uint8_t *buf, uint16_t len)
 		*buf++ = (uint8_t)x;
 	}
 }
-
-uint32_t bench_hash(const uint8_t *buf, uint16_t len)
-{
-	uint32_t h = 5381;
-
-	while (len--)
-		h = (h << 5) + h + *buf++;
-	return h;
-}

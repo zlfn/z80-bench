@@ -1,12 +1,19 @@
 "use strict";
 
-// The benchmarks in the order the site lists them, under their groups.
-const BENCH_GROUPS = [
-  ["Suites", ["stdcbench", "coremark", "dhrystone"]],
-  ["Applications", ["aes256", "puff"]],
-  ["Kernels", ["crc8", "crc16", "crc32", "sieve", "sieve-bit"]],
-  ["Runtimes", ["pi", "fact"]],
-];
+// The benchmarks of each tier in the order the site lists them, under their
+// groups. Only the core tier goes into the scores.
+const BENCH_GROUPS = {
+  core: [
+    ["Suites", ["stdcbench", "coremark", "dhrystone"]],
+    ["Applications", ["aes256", "puff", "zx0"]],
+    ["Kernels", ["crc8", "crc16", "crc32", "sieve", "sieve-bit"]],
+    ["32-bit", ["pi32", "fact32"]],
+  ],
+  extended: [
+    ["64-bit", ["pi64", "fact64"]],
+    ["Float", ["mandel", "linsolve"]],
+  ],
+};
 const CLOCK_HZ = { z80: 4000000, sm83: 4194304 };
 const CPU_NAME = { z80: "Z80", sm83: "SM83" };
 const SERIES = ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6", "--s7", "--s8"];
@@ -14,12 +21,13 @@ const SERIES = ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6", "--s7", "--s8"];
 // others take the colors left, in display order.
 const SERIES_FIXED = { "llvm-z80": "--s1", sdcc: "--s2", "80cc": "--s3" };
 
-const state = { target: "z80", preset: "speed", metric: "cycles" };
+const state = { target: "z80", preset: "speed", metric: "cycles", tier: "core" };
 let index = null;
 let run = null;
 let sources = {};
 let info = {};
 let benchInfo = {};
+let cstdInfo = null;
 
 const $ = (id) => document.getElementById(id);
 
@@ -123,13 +131,11 @@ function baseline() {
 
 // The display name from compilers-info.toml.
 function label(c) {
-  return (info[c]?.name || c) + (info[c]?.modified ? "*" : "");
+  return info[c]?.name || c;
 }
 
 // Marks after a compiler's name, in this order.
 const MARKS = {
-  ai: { label: "Heavy AI use", title: "Developed with heavy use of AI coding agents.",
-    svg: '<path d="M6.5 3.5Q7.3 8.7 12.5 9.5Q7.3 10.3 6.5 15.5Q5.7 10.3.5 9.5Q5.7 8.7 6.5 3.5Z"/><path d="M12.5.5Q12.9 3.1 15.5 3.5Q12.9 3.9 12.5 6.5Q12.1 3.9 9.5 3.5Q12.1 3.1 12.5.5Z"/>' },
   nightly: { label: "Built daily", title: "Built every day from its development branch",
     svg: '<path d="M12.8 10.4A5.8 5.8 0 0 1 5.6 3.2a5.8 5.8 0 1 0 7.2 7.2Z"/>' },
   stale: { label: "Unmaintained", title: "No commits for more than six months",
@@ -150,7 +156,6 @@ function isStale(c) {
 
 function markKinds(c) {
   const kinds = [];
-  if (info[c]?.ai) kinds.push("ai");
   if (run.compilers[c]?.nightly) kinds.push("nightly");
   if (isStale(c)) kinds.push("stale");
   return kinds;
@@ -167,24 +172,20 @@ function markTitle(c, kind) {
   return MARKS[kind].title;
 }
 
-// A compiler's name with the AI mark, for the results. The cards show the rest.
-// `after` sits right against the name.
+// A compiler's name for the results, with `after` right against it. The cards
+// show its marks.
 function nameWithMarks(c, after = null) {
-  const box = el("span", { class: "cname" }, el("span", {}, label(c), after));
-  if (markKinds(c).includes("ai")) box.append(markIcon("ai", markTitle(c, "ai")));
-  return box;
+  return el("span", { class: "cname" }, el("span", {}, label(c), after));
 }
 
-// What the asterisk, the "!" and the AI mark on the selected CPU mean.
+// What the "!" on the selected CPU means.
 function renderMarksNote() {
   const box = $("marks-note");
   box.replaceChildren();
   const cs = available();
-  if (cs.some((c) => info[c]?.modified)) box.append(el("span", {}, "* Incomplete runtime"));
   if (cs.some((c) => failMark(c))) {
     box.append(el("span", {}, el("span", { class: "fail-mark" }, "!"), "Some benchmarks failed"));
   }
-  if (cs.some((c) => info[c]?.ai)) box.append(el("span", {}, markIcon("ai"), MARKS.ai.label));
   box.hidden = !box.childElementCount;
 }
 
@@ -207,18 +208,20 @@ function badges(name, c) {
     box.append(el("span", { class: "p-badge", title: markTitle(name, k) }, markIcon(k, markTitle(name, k)),
       MARKS[k].label));
   }
-  if (about.modified) {
-    box.append(el("span", { class: "p-badge", title: about.modified }, "* Incomplete runtime"));
-  }
   return box.childElementCount ? box : null;
 }
 
-// [group, benchmarks] pairs for this run. Benchmarks in no group come last,
-// under an empty name.
+function tierOf(bench) {
+  return run.benchmarks[bench]?.tier || "core";
+}
+
+// [group, benchmarks] pairs of the selected tier in this run. Benchmarks in
+// no group come last, under an empty name.
 function benchGroups() {
-  const known = Object.keys(run.benchmarks);
-  const grouped = BENCH_GROUPS.flatMap(([, bs]) => bs);
-  return BENCH_GROUPS.map(([g, bs]) => [g, bs.filter((b) => known.includes(b))])
+  const groups = BENCH_GROUPS[state.tier] || [];
+  const known = Object.keys(run.benchmarks).filter((b) => tierOf(b) === state.tier);
+  const grouped = groups.flatMap(([, bs]) => bs);
+  return groups.map(([g, bs]) => [g, bs.filter((b) => known.includes(b))])
     .concat([["", known.filter((b) => !grouped.includes(b)).sort()]])
     .filter(([, bs]) => bs.length);
 }
@@ -335,9 +338,12 @@ function renderOverall() {
   const rows = available().map((c) => ({ c, ...scores[c] })).sort((a, b) => rank(a) - rank(b));
   barRows($("overall"), rows.map((r) => {
     const off = hidden.has(r.c);
+    const fail = failMark(r.c);
+    const name = nameWithMarks(r.c, fail);
+    // A compiler that did not pass everything has its name in red too.
+    if (fail) name.classList.add("failing");
     const toggle = el("button", { type: "button", class: "ov-toggle", "aria-pressed": String(!off),
-      title: off ? "Show this compiler" : "Hide this compiler" }, eyeIcon(off),
-      nameWithMarks(r.c, failMark(r.c)));
+      title: off ? "Show this compiler" : "Hide this compiler" }, eyeIcon(off), name);
     toggle.addEventListener("click", () => {
       if (off) hidden.delete(r.c);
       else hidden.add(r.c);
@@ -363,7 +369,7 @@ function failMark(c) {
   const counts = {};
   for (const r of run.results) {
     if (r.compiler === c && r.target === state.target && r.preset === state.preset
-        && r.status !== "ok" && r.status !== "unsupported") {
+        && tierOf(r.bench) === "core" && r.status !== "ok" && r.status !== "unsupported") {
       counts[r.status] = (counts[r.status] || 0) + 1;
     }
   }
@@ -409,6 +415,12 @@ function renderMatrix() {
 
   const body = el("tbody");
   for (const [group, bs] of benchGroups()) for (const b of bs) {
+    // Where the page is too narrow for the names beside the table, a row
+    // inside it starts each group.
+    if (group && b === bs[0]) {
+      body.append(el("tr", { class: "g-sep" },
+        el("th", { scope: "rowgroup", colspan: String(cs.length + 1) }, group)));
+    }
     const rs = cs.map((c) => result(c, b));
     const vals = rs.map((r) => valueOf(r)).filter((v) => v != null);
     const best = Math.min(...vals);
@@ -471,6 +483,7 @@ function placeGroups() {
   const origin = box.parentElement.getBoundingClientRect().top;
   const spans = [];
   for (const tr of body.rows) {
+    if (tr.classList.contains("g-sep")) continue;
     const { top, bottom } = tr.getBoundingClientRect();
     const last = spans.at(-1);
     if (last && last.group === tr.dataset.group) last.bottom = bottom;
@@ -500,7 +513,7 @@ function renderHistory() {
   const box = $("history-chart");
   box.replaceChildren();
   const runs = index.runs;
-  if (runs.length < 2) {
+  if (!runs.length) {
     box.append(el("p", { class: "empty" }, "No history yet."));
     return;
   }
@@ -548,7 +561,8 @@ function renderHistory() {
   const ys = series.flatMap((s) => s.pts.map((p) => p.y));
   const lo = Math.min(...ys) * 0.96;
   const hi = Math.max(...ys) * 1.04;
-  const x = (i) => pad.l + (runs.length === 1 ? 0 : (i / (runs.length - 1)) * (W - pad.l - pad.r));
+  // A single run sits in the middle.
+  const x = (i) => pad.l + (runs.length === 1 ? 0.5 : i / (runs.length - 1)) * (W - pad.l - pad.r);
   const y = (v) => pad.t + (1 - (v - lo) / (hi - lo)) * (H - pad.t - pad.b);
 
   const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
@@ -653,6 +667,187 @@ function renderHistory() {
   });
   svg.append(hit);
   box.append(svg);
+}
+
+// C support
+
+const STANDARDS = ["C2y", "C23", "C11", "C99"];
+// The freely available draft WG14 lists for each standard.
+const STANDARD_DRAFT = {
+  C2y: "N3886", C23: "N3220", C11: "N1570", C99: "N1256",
+};
+const WG14_DOCS = "https://www.open-std.org/jtc1/sc22/wg14/www/docs/";
+
+// The standards whose features are folded away; all of them at first.
+function cstdClosed() {
+  try {
+    const saved = JSON.parse(load("cstd-closed"));
+    if (Array.isArray(saved)) return new Set(saved);
+  } catch (_) { /* nothing saved */ }
+  return new Set(STANDARDS);
+}
+
+// cppstat's descriptions: `code`, _terms_ and Markdown links. A _term_ stands
+// on its own, so names such as __has_c_attribute stay as they are.
+function descNodes(text) {
+  const out = [];
+  const plain = text.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1");
+  plain.split(/(`[^`]+`|(?<!\w)_[^_\s][^_]*_(?!\w))/).forEach((part, i) => {
+    if (!part) return;
+    if (i % 2 === 0) out.push(part);
+    else if (part.startsWith("`")) out.push(el("code", {}, part.slice(1, -1)));
+    else out.push(el("em", {}, part.slice(1, -1)));
+  });
+  return out;
+}
+
+const CSTD_MARK = { ok: "✓", bad: "✗", no: "—" };
+
+function hoverTip(td, fill) {
+  td.tabIndex = 0;
+  const show = () => showTip(td, fill);
+  td.addEventListener("pointerenter", show);
+  td.addEventListener("focus", show);
+  td.addEventListener("pointerleave", hideTip);
+  td.addEventListener("blur", hideTip);
+}
+
+function cstdCell(r, c, feature) {
+  const kind = !r ? "" : r.status === "ok" ? "ok" : r.status === "miscompiled" ? "bad" : "no";
+  const td = el("td", { class: `res ${kind}` }, CSTD_MARK[kind] || "");
+  if (r && r.status !== "ok") {
+    hoverTip(td, (t) => {
+      t.append(el("div", { class: "t-head" }, label(c)), el("div", {}, ...descNodes(feature.description)));
+      if (r.reason) t.append(el("div", { class: `t-why ${r.status}` }, r.reason));
+      if (r.detail && r.detail.toLowerCase() !== (r.reason || "").toLowerCase()) t.append(el("div", {}, r.detail));
+    });
+  }
+  return td;
+}
+
+// A feature checked manually says what the compiler did and the version that
+// did it, since the check does not run again with each new one.
+function cstdManualCell(m, c, feature) {
+  if (!m) return el("td", { class: "res" });
+  const td = el("td", { class: `res ${m.result}` }, CSTD_MARK[m.result], el("span", { class: "manual-mark" }, "*"));
+  hoverTip(td, (t) => {
+    t.append(el("div", { class: "t-head" }, label(c)), el("div", {}, ...descNodes(feature.description)),
+      el("div", { class: "t-manual" }, `Checked manually on ${cstdInfo.checked} with ${cstdInfo.versions[c] || "?"}`),
+      el("div", {}, m.note));
+  });
+  return td;
+}
+
+// The features in cppstat's order: a probe's result comes from the run, and a
+// feature checked manually carries its own. Without cstd.json, the run's probes.
+function cstdRows() {
+  if (!cstdInfo) {
+    return Object.entries(run.benchmarks).filter(([, v]) => v.tier === "cstd")
+      .map(([bench, v]) => ({ bench, check: "run", ...v }));
+  }
+  return cstdInfo.features.filter((f) => f.check === "manual" || (f.check === "run" && run.benchmarks[f.bench]));
+}
+
+// Every compiler's probes, whatever CPU is selected: each ran on its first.
+// The table is built again only when the compilers shown change, and a
+// standard folds by hiding its rows, so the columns and the page stay put.
+let cstdShown = null;
+
+function renderCstd() {
+  const feats = cstdRows();
+  $("cstd").hidden = !feats.length;
+  if (!feats.length) return;
+  const hidden = hiddenSet();
+  const cs = runCompilers().filter((c) => !run.compilers[c].baseline && !hidden.has(c)
+    && run.results.some((r) => r.compiler === c && tierOf(r.bench) === "cstd"));
+  if (cstdShown === cs.join()) return;
+  cstdShown = cs.join();
+  const res = (c, b) => run.results.find((r) => r.compiler === c && r.bench === b);
+  const works = (c, f) => (f.check === "manual" ? f.results[c]?.result === "ok" : res(c, f.bench)?.status === "ok");
+
+  const table = $("cstd-table");
+  table.replaceChildren();
+  // The compilers share what the feature and paper columns leave, equally; a
+  // long name breaks at its hyphen or space.
+  const cols = el("colgroup", {}, el("col", { class: "c-feature" }), el("col", { class: "c-paper" }));
+  for (const c of cs) cols.append(el("col"));
+  table.append(cols);
+  table.style.minWidth = `${340 + 72 * cs.length}px`;
+
+  const head = el("tr", {}, el("th", { scope: "col" }, "Feature"), el("th", { scope: "col" }, "Paper"));
+  for (const c of cs) head.append(el("th", { scope: "col", class: "c" }, label(c)));
+  table.append(el("thead", {}, head));
+
+  const closed = cstdClosed();
+  for (const std of STANDARDS) {
+    const rows = feats.filter((f) => f.standard === std);
+    if (!rows.length) continue;
+    const body = el("tbody", { class: closed.has(std) ? "closed" : "" });
+    const toggle = el("button", { type: "button", class: "cstd-toggle", "aria-expanded": String(!closed.has(std)) },
+      el("span", { class: "chev", "aria-hidden": "true" }, "›"), std,
+      el("span", { class: "cstd-count" }, `${rows.length} features`));
+    toggle.addEventListener("click", () => {
+      const open = body.classList.toggle("closed") === false;
+      toggle.setAttribute("aria-expanded", String(open));
+      const now = cstdClosed();
+      if (open) now.delete(std);
+      else now.add(std);
+      store("cstd-closed", JSON.stringify([...now]));
+    });
+    const draft = STANDARD_DRAFT[std];
+    const group = el("tr", { class: "cstd-group" }, el("th", { scope: "rowgroup" }, toggle),
+      el("td", { class: "papers" }, draft
+        ? el("a", { href: `${WG14_DOCS}${draft.toLowerCase()}.pdf`, title: `The ${std} draft` }, draft) : ""));
+    for (const c of cs) {
+      const n = rows.filter((f) => works(c, f)).length;
+      // One hue, deeper the more of the standard works.
+      const share = n / rows.length;
+      group.append(el("td", { class: "cstd-sum", title: `${label(c)}: ${n} of ${rows.length} ${std} features work`,
+        style: `--share:${Math.round(share * 100)}%` }, `${n}/${rows.length}`));
+    }
+    body.append(group);
+    for (const f of rows) {
+      const tr = el("tr", { class: "cstd-row" },
+        el("th", { scope: "row" }, el("a", { class: "f-name", href: `#src/${f.bench}` }, ...descNodes(f.description))),
+        el("td", { class: "papers" }, ...paperLinks(f.papers)));
+      for (const c of cs) {
+        tr.append(f.check === "manual" ? cstdManualCell(f.results[c], c, f) : cstdCell(res(c, f.bench), c, f));
+      }
+      body.append(tr);
+    }
+    table.append(body);
+  }
+  renderCstdOthers();
+}
+
+function paperLinks(papers) {
+  return Object.entries(papers || {}).map(([n, u]) => el("a", { href: u }, n));
+}
+
+// The features no probe or manual check covers, folded away under the table,
+// each with the reason.
+function renderCstdOthers() {
+  const box = $("cstd-others");
+  const others = (cstdInfo?.features || []).filter((f) => f.check === "none");
+  box.hidden = !others.length;
+  if (!others.length || box.dataset.built) return;
+  box.dataset.built = "1";
+  $("cstd-others-count").textContent = `${others.length} more features not checked`;
+  const table = $("cstd-others-table");
+  table.append(el("colgroup", {}, el("col", { class: "c-feature" }), el("col", { class: "c-paper" }), el("col")),
+    el("thead", {}, el("tr", {}, el("th", { scope: "col" }, "Feature"), el("th", { scope: "col" }, "Paper"),
+      el("th", { scope: "col" }, "Why"))));
+  for (const std of STANDARDS) {
+    const rows = others.filter((f) => f.standard === std);
+    if (!rows.length) continue;
+    const body = el("tbody", {}, el("tr", { class: "cstd-group" },
+      el("th", { scope: "rowgroup", colspan: "3" }, std, el("span", { class: "cstd-count" }, `${rows.length} features`))));
+    for (const f of rows) {
+      body.append(el("tr", {}, el("th", { scope: "row" }, ...descNodes(f.description)),
+        el("td", { class: "papers" }, ...paperLinks(f.papers)), el("td", { class: "why" }, ...descNodes(f.why))));
+    }
+    table.append(body);
+  }
 }
 
 // Compilers and benchmarks
@@ -788,12 +983,13 @@ async function showFile(bench, path) {
 
 function openSource(bench, path) {
   const files = sources[bench];
-  const info = benchInfo[bench] || run.benchmarks[bench];
+  // A C feature checked manually is in no run.
+  const info = benchInfo[bench] || run.benchmarks[bench] || cstdInfo?.features.find((f) => f.bench === bench);
   if (!files || !info) return;
   $("viewer-title").textContent = bench;
   const sub = $("viewer-sub");
-  sub.replaceChildren(info.description, " \u00b7 ",
-    info.url ? el("a", { href: info.url }, info.origin) : info.origin);
+  sub.replaceChildren(info.description);
+  if (info.origin) sub.append(" \u00b7 ", info.url ? el("a", { href: info.url }, info.origin) : info.origin);
   // Files grouped by directory, in the order publish.py listed them.
   const list = $("viewer-files");
   list.replaceChildren();
@@ -850,6 +1046,7 @@ function renderView() {
   renderMatrix();
   renderHistory();
   renderBenchmarks();
+  renderCstd();
 }
 
 function setupControls() {
@@ -895,6 +1092,8 @@ async function main() {
   sources = await (await fetch("data/sources.json")).json();
   info = await (await fetch("data/compilers.json")).json();
   benchInfo = await (await fetch("data/benchmarks.json")).json();
+  // Older data has no list of C features beyond the run's probes.
+  cstdInfo = await fetch("data/cstd.json").then((r) => (r.ok ? r.json() : null)).catch(() => null);
   renderMeta();
   renderView();
   renderCompilers();

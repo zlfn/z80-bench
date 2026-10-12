@@ -1,0 +1,9 @@
+description = "Linear system, float"
+details = "Solves a 10 by 10 system by Gaussian elimination with partial pivoting, in single-precision floats. Floating-point division, multiplication and subtraction."
+origin = "written for z80-bench"
+url = ""
+tier = "extended"
+math = true
+tolerance = 0.001
+sources = ["main.c"]
+include = []

@@ -6,6 +6,7 @@ on:
     paths:
       - site/**
       - benchmarks/**
+      - cstd/**
       - vendor/**
       - compilers-info.toml
       - tools/publish.py

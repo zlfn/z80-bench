@@ -6,7 +6,8 @@ every run with its summary scores, which is all the history chart needs, and
 is rebuilt from the run files on every publish. The
 benchmark sources, with every header they include, go under site/src/ for the
 source viewer, listed in site/data/sources.json. compilers-info.toml and the
-benchmark descriptions go to site/data/compilers.json and benchmarks.json.
+benchmark descriptions go to site/data/compilers.json and benchmarks.json, and
+the C features with what was checked manually to site/data/cstd.json.
 
 A compiler's score for one target, preset and metric is the geometric mean,
 over the scored benchmarks it and the baseline compiler both passed, of its
@@ -38,7 +39,7 @@ DATA = ROOT / "site" / "data"
 SRC = ROOT / "site" / "src"
 
 sys.path.insert(0, str(ROOT))
-from bench import BENCHMARKS, Benchmark  # noqa: E402
+from bench import BENCHMARKS, CSTD, Benchmark  # noqa: E402
 METRICS = {"cycles": "cycles", "size": "size"}
 
 
@@ -195,6 +196,28 @@ def included(path: Path, include: list[Path]) -> list[Path]:
     return found
 
 
+def cstd_features() -> list[dict]:
+    return tomllib.loads((CSTD / "features.toml").read_text())["feature"]
+
+
+def cstd_info() -> dict:
+    """Every C feature cppstat lists, in its order: what the compilers did with
+    those checked manually, and why the others that no probe runs are not
+    checked."""
+    manual = tomllib.loads((CSTD / "manual.toml").read_text())
+    features = []
+    for f in cstd_features():
+        std = f["standard"].lower()
+        item = {"bench": f"cstd-{std}-{f['name']}", "standard": f["standard"], "description": f["desc"],
+                "papers": f["papers"], "check": f.get("check", "run")}
+        if item["check"] == "manual":
+            item["results"] = manual[std][f["name"]]
+        if "why" in f:
+            item["why"] = f["why"]
+        features.append(item)
+    return {"checked": manual["checked"], "versions": manual["versions"], "features": features}
+
+
 def copy_sources() -> dict:
     shutil.rmtree(SRC, ignore_errors=True)
     listing = {}
@@ -216,6 +239,18 @@ def copy_sources() -> dict:
             (SRC / r).parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / r, SRC / r)
         listing[d.name] = rel
+    # A C feature probe shows its own file, then the main that runs it, and a
+    # feature checked manually the file the compilers were given.
+    files = {b.name: b.raw + [CSTD / "main.c"] for b in Benchmark.probes()}
+    for f in cstd_features():
+        if f.get("check") == "manual":
+            files[f"cstd-{f['standard'].lower()}-{f['name']}"] = [CSTD / f["standard"].lower() / f"{f['name']}.c"]
+    for name, paths in files.items():
+        rel = [f.relative_to(ROOT).as_posix() for f in paths]
+        for r in rel:
+            (SRC / r).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / r, SRC / r)
+        listing[name] = rel
     return listing
 
 
@@ -289,6 +324,7 @@ def write_assets():
             conf = tomllib.loads((d / "bench.toml").read_text())
             benches[d.name] = {k: conf.get(k, "") for k in ("description", "details", "origin", "url")}
     (DATA / "benchmarks.json").write_text(json.dumps(benches, indent=1) + "\n")
+    (DATA / "cstd.json").write_text(json.dumps(cstd_info(), indent=1, ensure_ascii=False) + "\n")
 
 
 if __name__ == "__main__":

@@ -5,6 +5,8 @@ SECTIONS {
   .text : { KEEP(*(.text.crt0)) *(.text .text.*) }
   .rodata : { *(.rodata .rodata.*) }
   .data : { *(.data .data.*) }
+  /* z88dk's routines, built for this address once the program is linked. */
+  .z88dk : { __z88dk = .; KEEP(*(.z88dk)) }
   .bss (NOLOAD) : {
     __bss_start = .;
     *(.bss .bss.*) *(COMMON)

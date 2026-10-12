@@ -15,7 +15,8 @@ void bench_done(void);
 
 extern volatile uint32_t bench_result;
 
-/* From data.c, which only the benchmarks that use these link. */
+/* From fill.c and hash.c, which a benchmark lists among its sources when it
+ * uses them. */
 
 /* Input the compiler cannot know: bytes from a generator seeded by a
  * volatile, so no kernel can be folded at compile time. */
@@ -23,5 +24,11 @@ void bench_fill(uint8_t *buf, uint16_t len);
 
 /* Folds a buffer into the result after the timed region. */
 uint32_t bench_hash(const uint8_t *buf, uint16_t len);
+
+/* From the input.c of a benchmark that decodes a fixed input, which the runner
+ * leaves out of its size. */
+extern const uint16_t bench_input_len;
+extern const uint16_t bench_output_len;
+extern const uint8_t bench_input[];
 
 #endif

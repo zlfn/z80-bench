@@ -2,6 +2,6 @@ description = "AES-256-CBC over 4 KB"
 details = "Encrypts 4 KB in CBC mode with tiny-AES-c, key expansion included. Byte table lookups, XORs and shifts over a 16-byte state."
 origin = "tiny-AES-c, Unlicense"
 url = "https://github.com/kokke/tiny-AES-c"
-sources = ["main.c", "../../vendor/tiny-AES-c/aes.c", "../harness/data.c"]
+sources = ["main.c", "../../vendor/tiny-AES-c/aes.c", "../harness/fill.c", "../harness/hash.c"]
 include = ["../../vendor/tiny-AES-c"]
 defines = ["AES256=1", "CBC=1", "ECB=0", "CTR=0"]

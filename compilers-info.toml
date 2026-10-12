@@ -1,12 +1,9 @@
 # What the site says about each compiler. compilers.toml has how they are run.
-# "modified" marks a compiler that runs with code written for this site; the
-# site puts an asterisk after its name.
 # "history" draws a compiler in the History chart until the viewer turns it
 # off; the others start off.
 # "since" is the year the compiler, or the project it grew from, started.
 # "language-url" is where the language support is detailed.
-# "family" is the compiler it derives from. "ai" marks a compiler developed with
-# heavy AI use and says why; the site shows only the mark. "repo", "branch" and "path" are
+# "family" is the compiler it derives from. "repo", "branch" and "path" are
 # where publish.py looks up the last commit, to mark a compiler unmaintained.
 
 [sdcc]
@@ -39,7 +36,6 @@ description = "A fork of LLVM, the open-source compiler infrastructure behind Cl
 language = "C89, C99, C11, C17, C23, part of C2y"
 language-url = "https://clang.llvm.org/c_status.html"
 family = "LLVM"
-ai = "Developed with Claude Code by its maintainer."
 repo = "llvm-z80/llvm-z80"
 branch = "main"
 
@@ -53,7 +49,6 @@ license = "Clarified Artistic License"
 description = "z88dk's newer compiler: the Small C frontend it shares with sccz80, and a new backend that lowers an SSA-style intermediate representation to Z80 family assembly."
 language = "Part of C90"
 family = "Small C"
-ai = "Its source directory keeps working rules for AI coding agents in AGENTS.md."
 repo = "z88dk/z88dk"
 branch = "master"
 path = "src/80cc"
@@ -90,8 +85,7 @@ since = 2016
 logo = "logos/ce-programming.png"
 homepage = "https://github.com/CE-Programming/llvm-project"
 license = "Apache-2.0 WITH LLVM-exception"
-description = "CE-Programming's fork of LLVM for the eZ80 in TI calculators, which also compiles for the Z80."
-modified = "Z80-mode helper functions and string functions written for z80-bench. CEdev's runtime is for ADL mode only."
+description = "CE-Programming's fork of LLVM for the eZ80 in TI calculators, which also compiles for the Z80. CEdev's runtime is for the eZ80's ADL mode only, so here it is built with z88dk's headers and linked with z88dk's runtime and C library, the way z88dk uses it."
 language = "C89, C99, C11, C17, C23, part of C2y"
 language-url = "https://clang.llvm.org/c_status.html"
 family = "LLVM"
@@ -105,7 +99,6 @@ logo = "logos/fcc.png"
 homepage = "https://github.com/EtchedPixels/Fuzix-Compiler-Kit"
 license = "GPL-3.0"
 description = "The Fuzix Compiler Kit: Alan Cox's C compiler for 8-bit processors, written to build the Fuzix operating system for the 8080, 8085 and Z80."
-modified = "Startup code, string functions and a stddef.h with size_t written for z80-bench. Standalone builds get no C library."
 language = "C89 subset"
 repo = "EtchedPixels/Fuzix-Compiler-Kit"
 branch = "main"
@@ -129,7 +122,6 @@ homepage = "https://github.com/avwohl/uc80"
 license = "GPL-3.0-or-later"
 description = "A C compiler for the Z80 and CP/M written in Python, which compiles a whole program at once and optimizes for size."
 language = "C89, C99, C11, C17, C23"
-ai = "Its recent commits are co-authored by Claude, and the repository has a CLAUDE.md."
 repo = "avwohl/uc80"
 branch = "main"
 
@@ -140,7 +132,6 @@ logo = "logos/gb-llvm.png"
 homepage = "https://github.com/DaveDuck321/gb-llvm"
 license = "Apache-2.0 WITH LLVM-exception"
 description = "A fork of LLVM with a backend for the Game Boy's SM83."
-modified = "String functions, 8- and 16-bit division and multiplies written for z80-bench. gb-llvm ships no C library, and its own multiplies never finish on a negative operand."
 language = "C89, C99, C11, C17, C23, part of C2y"
 language-url = "https://clang.llvm.org/c_status.html"
 family = "LLVM"

@@ -2,7 +2,8 @@
 """Build every benchmark with every compiler and count its cycles in z88dk-ticks.
 
 Each run is checked against the result the same source produces on the host,
-and sizes are given relative to the empty program built the same way.
+and sizes are given relative to the empty program built the same way, with
+the same harness files, leaving out fixed input data.
 """
 
 from __future__ import annotations
@@ -17,19 +18,22 @@ import re
 import shutil
 import subprocess
 import sys
+import threading
 import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 BENCHMARKS = ROOT / "benchmarks"
 HARNESS = BENCHMARKS / "harness"
+# Programs that show whether a compiler has a C language feature.
+CSTD = ROOT / "cstd"
 # llvm-z80 has no C library headers; these declare what its runtime provides.
 LIBC_INCLUDE = ROOT / "toolchains" / "libc" / "include"
 BUILD = ROOT / "build"
 TICKS = ROOT / ".cache" / "bin" / "z88dk-ticks"
 TARGETS = ("z80", "sm83")
 PRESETS = ("speed", "size")
-# Well above the slowest correct run here, gb-llvm's pi on the SM83. A program
+# Well above the slowest correct run here, gb-llvm's pi32 on the SM83. A program
 # still running at this point never gets to where ticks is waiting, which
 # counts as miscompiled.
 CYCLE_LIMIT = 3_000_000_000
@@ -46,7 +50,7 @@ class Hang(Failure):
     pass
 
 
-def run(cmd, cwd=None, timeout=3600, on_timeout=None) -> str:
+def run(cmd, cwd=None, timeout=600, on_timeout=None) -> str:
     try:
         p = subprocess.run([str(c) for c in cmd], cwd=cwd, capture_output=True,
                            text=True, errors="replace", timeout=timeout)
@@ -71,8 +75,22 @@ class Benchmark:
     sources: list[Path]
     include: list[Path]
     defines: list[str]
-    # Dhrystone is shown but kept out of scores.
-    scored: bool
+    # "core" goes into the scores; "extended" is shown but kept out of them.
+    tier: str
+    # Bytes of fixed input data in its sources, which its size leaves out.
+    input_size: int
+    # Links the toolchain's floating-point library, where it has its own.
+    math: bool = False
+    # How far the result may stray from the host's, relative to it.
+    tolerance: float = 0.0
+    # The result to expect, when it is not the host's.
+    expect: int | None = None
+    # Sources that toolchains which preprocess for the compiler must give it
+    # as they are: they test the compiler's own preprocessor.
+    raw: list[Path] = dataclasses.field(default_factory=list)
+    # For a C feature probe: its standard and the papers that brought it.
+    standard: str = ""
+    papers: dict[str, str] = dataclasses.field(default_factory=dict)
 
     @classmethod
     def load(cls, d: Path) -> Benchmark:
@@ -85,11 +103,40 @@ class Benchmark:
             sources += [Path(f).resolve() for f in found]
         sources.append(HARNESS / "marker.c")
         include = [(d / i).resolve() for i in conf["include"]] + [HARNESS]
+        input_size = sum(data_size(d / i) for i in conf.get("input", []))
         return cls(d.name, conf["description"], conf.get("origin", ""), conf.get("url", ""),
-                   sources, include, conf.get("defines", []), conf.get("scored", True))
+                   sources, include, conf.get("defines", []), conf.get("tier", "core"), input_size,
+                   math=conf.get("math", False), tolerance=conf.get("tolerance", 0.0))
+
+    @classmethod
+    def probes(cls) -> list[Benchmark]:
+        """The C feature probes in cstd/features.toml, leaving out the features
+        checked manually or not at all. Each returns 1 when its feature works,
+        so there is no host build to compare with."""
+        out = []
+        for f in tomllib.loads((CSTD / "features.toml").read_text())["feature"]:
+            if "check" in f:
+                continue
+            src = CSTD / f["standard"].lower() / f"{f['name']}.c"
+            out.append(cls(f"cstd-{f['standard'].lower()}-{f['name']}", f["desc"], "", "",
+                           [CSTD / "main.c", src, HARNESS / "marker.c"], [src.parent, HARNESS],
+                           [], "cstd", 0, expect=1, raw=[src], standard=f["standard"],
+                           papers=f["papers"]))
+        return out
 
     def cflags(self) -> list[str]:
         return [f"-I{i}" for i in self.include] + [f"-D{d}" for d in self.defines]
+
+    def harness(self) -> tuple[str, ...]:
+        """The harness files it links besides the markers, such as fill."""
+        return tuple(sorted(s.stem for s in self.sources if s.parent == HARNESS and s.stem != "marker"))
+
+
+def data_size(path: Path) -> int:
+    """The bytes a generated input.c holds: its byte arrays and 16-bit values."""
+    text = path.read_text()
+    return (sum(int(n) for n in re.findall(r"uint8_t \w+\[(\d+)\]", text))
+            + 2 * len(re.findall(r"uint16_t \w+ =", text)))
 
 
 @dataclasses.dataclass
@@ -141,8 +188,8 @@ class Llvm:
 
 class GbLlvm:
     """gb-llvm, an LLVM for the Game Boy only. Programs link with the runtime.S
-    its release ships and with our string functions and runtime fixes, and
-    enter at 0x100, as on the console."""
+    and compiler-rt its release ships, and nothing else, and enter at 0x100,
+    as on the console."""
 
     def __init__(self, bindir: Path):
         self.bindir = bindir
@@ -158,9 +205,7 @@ class GbLlvm:
         lib = self.bindir.parent / "lib"
         env = ["env", f"LD_LIBRARY_PATH={lib}:{os.environ.get('LD_LIBRARY_PATH', '')}"]
         run([*env, self.bindir / "clang", "--target=gb-unknown-unknown", *flags, "-ffreestanding",
-             *bench.cflags(), "-isystem", LIBC_INCLUDE, *bench.sources,
-             ROOT / "toolchains" / "libc" / "string.c", ROOT / "toolchains" / "gb-llvm" / "runtime.c",
-             self.bindir.parent / "runtime.S",
+             *bench.cflags(), "-isystem", LIBC_INCLUDE, *bench.sources, self.bindir.parent / "runtime.S",
              "-T", ROOT / "toolchains" / "gb-llvm" / "gb.ld",
              "-o", elf])
         run([self.bindir / "llvm-objcopy", "-O", "binary", elf, image])
@@ -174,47 +219,90 @@ class GbLlvm:
 
 
 class Ez80Clang:
-    """CE-Programming's ez80-clang in Z80 mode, with the binutils CEdev ships.
-    CEdev's runtime and C library are for ADL mode only, so programs link
-    with ours."""
+    """CE-Programming's ez80-clang in Z80 mode, used with z88dk the way z88dk
+    uses it: with z88dk's headers, and with the routines z88dk has for it and
+    its C library. CEdev's binutils assemble and link the program. z88dk's
+    assembler then builds the library routines it calls into a block placed
+    right after it, and the program is linked once more against that block."""
 
-    def __init__(self, bindir: Path):
+    def __init__(self, bindir: Path, image: str | None):
+        if not image:
+            sys.exit("ez80-clang needs the z88dk image for z88dk's library")
         self.bindir = bindir
         self.cedev = bindir.parent
         self.binutils = self.cedev / "binutils" / "bin"
+        self.z88dk = Z88dk("sdcc", image)
+        self.lock = threading.Lock()
+        self.include = None
 
     def version(self) -> str:
-        return clang_version(self.bindir / "ez80-clang")
+        return f"{clang_version(self.bindir / 'ez80-clang')}, z88dk {self.z88dk.version()}"
+
+    def z88dk_include(self) -> Path:
+        """z88dk's headers, copied out of its image once."""
+        with self.lock:
+            if not self.include:
+                dest = BUILD / "ez80-clang" / "z88dk-include"
+                shutil.rmtree(dest, ignore_errors=True)
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                run(self.z88dk.wrap(["cp", "-r", "/opt/z88dk/include", dest], ROOT))
+                self.include = dest
+            return self.include
+
+    def link(self, objs: list[Path], elf: Path, extra: list = ()) -> dict[str, int]:
+        run([self.binutils / "z80-none-elf-ld", "-T", ROOT / "toolchains" / "ez80-clang" / "z80.ld",
+             "--gc-sections", "--no-warn-rwx-segments", *extra, *objs, "-o", elf])
+        return elf_symbols(self.binutils / "z80-none-elf-nm", elf)
 
     def build(self, bench: Benchmark, target: str, flags: list[str], out: Path) -> Program:
-        here = ROOT / "toolchains" / "ez80-clang"
         as_ = [self.binutils / "z80-none-elf-as", "-march=z80+xyhl"]
-        objs = []
-        sources = [(s, []) for s in bench.sources]
-        sources.append((ROOT / "toolchains" / "libc" / "string.c", ["-ffunction-sections"]))
-        for i, (src, extra) in enumerate(sources):
+        include = self.z88dk_include()
+        objs = [out / "crt0.o"]
+        run([*as_, ROOT / "toolchains" / "ez80-clang" / "crt0.s", "-o", objs[0]])
+        for i, src in enumerate(bench.sources):
             asm = out / f"{i}-{src.stem}.s"
-            run([self.bindir / "ez80-clang", "--target=z80", *flags, *extra, "-ffreestanding",
-                 "-fno-addrsig", "-mllvm", "-z80-gas-style", "-nostdinc", *bench.cflags(),
-                 "-isystem", self.cedev / "include", "-S", src, "-o", asm])
+            run([self.bindir / "ez80-clang", "--target=z80", *flags, "-ffreestanding", "-fno-addrsig",
+                 "-mllvm", "-z80-gas-style", "-nostdinc", "-D__CLANG", "-D__Z88DK", "-D__Z80",
+                 "-D__Z80__", *bench.cflags(), "-isystem", include, "-S", src, "-o", asm])
             objs.append(asm.with_suffix(".o"))
             run([*as_, asm, "-o", objs[-1]])
-        for name in ("crt0", "runtime"):
-            objs.append(out / f"{name}.o")
-            run([*as_, here / f"{name}.s", "-o", objs[-1]])
+
+        # A first link leaves out the library, to see what the program calls
+        # and where it ends.
         elf = out / "prog.elf"
+        first = self.link(objs, elf, ["--unresolved-symbols=ignore-all"])
+        nm = run([self.binutils / "z80-none-elf-nm", "-u", elf])
+        calls = sorted({line.split()[-1] for line in nm.splitlines() if line.strip()})
+        origin = first["__z88dk"]
+        extra = []
+        if calls:
+            # Referenced from a section of its own, which z80asm writes to a
+            # file of its own, so only the routines land in the block.
+            (out / "rt.asm").write_text(
+                "SECTION rt_refs\nORG $F000\n"
+                + "".join(f"EXTERN {c}\ndefw {c}\n" for c in calls)
+                + f"SECTION rt_code\nORG ${origin:04X}\n")
+            lib = "/opt/z88dk/lib/clibs"
+            run(self.z88dk.wrap(["z88dk-z80asm", "-mz80", "-b", "-m", f"-L{lib}", f"-L{lib}/z80",
+                                 "-ltest_clib", "-lz80_crt0", "rt.asm"], out), cwd=out)
+            run([self.binutils / "z80-none-elf-objcopy", "-I", "binary", "-O", "elf32-z80",
+                 "--rename-section", ".data=.z88dk,alloc,load,contents,code",
+                 out / "rt_rt_code.bin", out / "rt.o"])
+            objs.append(out / "rt.o")
+            routines = z88dk_symbols(out / "rt.map")
+            extra = [f"--defsym={c}=0x{routines[c]:04x}" for c in calls]
+        symbols = self.link(objs, elf, extra)
+        if symbols["__z88dk"] != origin:
+            raise Failure(f"z88dk's routines moved from {origin:#x} to {symbols['__z88dk']:#x}")
         image = out / "prog.bin"
-        run([self.binutils / "z80-none-elf-ld", "-T", here / "z80.ld", "--gc-sections", "--no-warn-rwx-segments",
-             *objs, "-o", elf])
         run([self.binutils / "z80-none-elf-objcopy", "-O", "binary", elf, image])
-        return Program(image, elf_symbols(self.binutils / "z80-none-elf-nm", elf),
-                       image.stat().st_size)
+        return Program(image, symbols, image.stat().st_size)
 
 
 class Fcc:
     """The Fuzix Compiler Kit in standalone mode, with no Fuzix libraries:
-    programs link with our startup code and string functions. The build in
-    bindir's parent is tied to its path by tools/build-fcc.sh."""
+    programs link with our startup code and the kit's own support library.
+    The build in bindir's parent is tied to its path by tools/build-fcc.sh."""
 
     def __init__(self, bindir: Path):
         self.bindir = bindir
@@ -230,7 +318,7 @@ class Fcc:
         run([*env, self.bindir / "asz80", "-o", objs[0], here / "crt0.s"])
         include = ["-I" + str(i) for i in (here / "include", self.root / "lib" / "z80" / "include",
                                             LIBC_INCLUDE)]
-        for i, src in enumerate([*bench.sources, ROOT / "toolchains" / "libc" / "string.c"]):
+        for i, src in enumerate(bench.sources):
             # fcc keeps its intermediate files next to the source, so each job
             # compiles a copy of its own; quoted includes still find the original.
             copy = out / f"{i}-{src.name}"
@@ -282,13 +370,16 @@ class Hitech:
         options = ["-" + f for f in flags]
         objs = []
         for i, src in enumerate(bench.sources):
-            run(["gcc", "-E", "-P", "-std=gnu89", "-undef", "-nostdinc", "-DCPM", "-DHI_TECH_C",
-                 "-Dz80", "-Dconst=", "-Dvolatile=", f"-I{self.cpm / 'include80'}",
-                 *bench.cflags(), f"-I{src.parent}", src, "-o", out / f"f{i}.c"])
+            if src in bench.raw:
+                shutil.copyfile(src, out / f"f{i}.c")
+            else:
+                run(["gcc", "-E", "-P", "-std=gnu89", "-undef", "-nostdinc", "-DCPM", "-DHI_TECH_C",
+                     "-Dz80", "-Dconst=", "-Dvolatile=", f"-I{self.cpm / 'include80'}",
+                     *bench.cflags(), f"-I{src.parent}", src, "-o", out / f"f{i}.c"])
             self.zxcc([*options, "--C", f"f{i}.c"], out, out / f"f{i}.obj")
             objs.append(f"f{i}.obj")
-        # The program is named after the first object.
-        self.zxcc(["--Mprog.map", *objs], out, out / "f0.com")
+        # The program is named after the first object; LIBF has the floats.
+        self.zxcc(["--Mprog.map", *objs, *(["--LF"] if bench.math else [])], out, out / "f0.com")
         image = out / "prog.com"
         (out / "f0.com").rename(image)
         symbols = {}
@@ -301,9 +392,9 @@ class Hitech:
 
 
 class Uc80:
-    """uc80 compiles every C file of a program in one go. The markers stay in
-    a translation unit of their own, as they do for the other compilers, and
-    a startup for bare memory replaces its CP/M one."""
+    """uc80 compiles every C file of a program in one go. The harness stays in
+    translation units of its own, as it does for the other compilers, and a
+    startup for bare memory replaces its CP/M one."""
 
     def __init__(self, bindir: Path):
         self.bindir = bindir
@@ -315,18 +406,21 @@ class Uc80:
     def build(self, bench: Benchmark, target: str, flags: list[str], out: Path) -> Program:
         uc80 = self.bindir / "uc80"
         lib = Path(run([uc80, "--print-lib-dir"]).strip())
-        marker = HARNESS / "marker.c"
-        program = [s for s in bench.sources if s != marker]
+        harness = [s for s in bench.sources if s.parent == HARNESS]
+        program = [s for s in bench.sources if s not in harness]
         run([uc80, *flags, *bench.cflags(), "--startup-lib", ROOT / "toolchains" / "uc80" / "crt0.mac",
              *program, "-o", out / "prog.mac"])
-        run([uc80, *flags, *bench.cflags(), "--no-whole-program", "--no-embed-startup",
-             "--no-embed-runtime", marker, "-o", out / "marker.mac"])
-        for name in ("prog", "marker"):
+        names = ["prog"]
+        for src in harness:
+            run([uc80, *flags, *bench.cflags(), "--no-whole-program", "--no-embed-startup",
+                 "--no-embed-runtime", src, "-o", out / f"{src.stem}.mac"])
+            names.append(src.stem)
+        for name in names:
             run([self.bindir / "um80", out / f"{name}.mac", "-o", out / f"{name}.rel"])
         # A .com name makes ticks load the image at 100h, as CP/M would.
         image = out / "prog.bin"
         run([self.bindir / "ul80", "-p", "0", "-S", out / "prog.sym", "-o", image,
-             out / "prog.rel", out / "marker.rel", lib / "libc.lib", lib / "runtime.lib"])
+             *[out / f"{name}.rel" for name in names], lib / "libc.lib", lib / "runtime.lib"])
         symbols = {}
         for line in (out / "prog.sym").read_text().splitlines():
             parts = line.split()
@@ -400,8 +494,9 @@ class Z88dk:
     def build(self, bench: Benchmark, target: str, flags: list[str], out: Path) -> Program:
         clib = ["-clib=gbz80"] if target == "sm83" else []
         image = out / "prog.bin"
+        math = ["-lm"] if bench.math else []
         run(self.wrap(["zcc", "+test", *clib, f"-compiler={self.compiler}", *flags, "-vn", "-m",
-                       *bench.cflags(), *bench.sources, "-o", image], out), cwd=out)
+                       *bench.cflags(), *bench.sources, *math, "-o", image], out), cwd=out)
         symbols = z88dk_symbols(out / "prog.map")
         # +test images carry .bss as well; it starts where the loaded data ends.
         return Program(image, symbols, symbols["__BSS_head"] - symbols["__head"])
@@ -450,6 +545,8 @@ def measure(prog: Program, target: str, out: Path) -> tuple[int, int]:
 
 
 def expected_result(bench: Benchmark) -> int:
+    if bench.expect is not None:
+        return bench.expect
     out = BUILD / "host" / bench.name
     out.mkdir(parents=True, exist_ok=True)
     exe = out / "host"
@@ -476,13 +573,13 @@ def job(compiler: str, toolchain, flags: list[str], bench: Benchmark,
         return rec | {"status": "miscompiled", "error": str(e)}
     except Failure as e:
         return rec | {"status": "run-failed", "error": str(e)}
-    if result != expect:
+    if abs(result - expect) > bench.tolerance * expect:
         return rec | {"status": "miscompiled", "error": f"result {result:#x}, expected {expect:#x}"}
     return rec | {"status": "ok", "cycles": cycles}
 
 
 # Toolchains that take nothing but the directory of their binaries.
-TOOLCHAINS = {"gb-llvm": GbLlvm, "ez80-clang": Ez80Clang, "fcc": Fcc, "hitech": Hitech,
+TOOLCHAINS = {"gb-llvm": GbLlvm, "fcc": Fcc, "hitech": Hitech,
               "uc80": Uc80}
 
 
@@ -503,6 +600,10 @@ def make_toolchain(name: str, conf: dict, args):
         return Sdcc(Path(bindir) if bindir else None)
     if kind == "z88dk":
         return Z88dk(conf["zcc-compiler"], args.z88dk_image or None)
+    if kind == "ez80-clang":
+        if not bindir:
+            sys.exit(f"{name} needs --bin {name}=DIR")
+        return Ez80Clang(Path(bindir), args.z88dk_image or None)
     if kind in TOOLCHAINS:
         if not bindir:
             sys.exit(f"{name} needs --bin {name}=DIR")
@@ -564,6 +665,21 @@ def main():
     bench_dirs = sorted(d for d in BENCHMARKS.iterdir() if (d / "bench.toml").exists())
     benches = [Benchmark.load(d) for d in bench_dirs
                if d.name == "empty" or not args.bench or d.name in args.bench]
+    # The empty program once more for each set of harness files a benchmark
+    # links, calling them, so that the harness drops out of every size.
+    empty = next(b for b in benches if b.name == "empty")
+    empties = {(): empty}
+    for b in benches:
+        h = b.harness()
+        if h not in empties:
+            empties[h] = dataclasses.replace(
+                empty, name="-".join(("empty", *h)),
+                sources=[*empty.sources, *(HARNESS / f"{n}.c" for n in h)],
+                defines=[*empty.defines, *(f"BENCH_{n.upper()}" for n in h)])
+    benches += [e for h, e in empties.items() if h]
+    # The C feature probes run with -b cstd, or when no benchmark is named.
+    probes = [b for b in Benchmark.probes()
+              if not args.bench or "cstd" in args.bench or b.name in args.bench]
 
     toolchains = {n: make_toolchain(n, all_compilers[n], args) for n in names}
     versions = {n: toolchains[n].version() for n in names}
@@ -576,27 +692,46 @@ def main():
         return
 
     subprocess.run([ROOT / "tools" / "build-ticks.sh"], check=True)
-    expect = {b.name: expected_result(b) for b in benches}
+    expect = {b.name: expected_result(b) for b in benches + probes}
 
+    # A compiler with no flags for a target does not support it.
+    jobs = [(n, all_compilers[n].get(t, {}).get(p), b, t, p)
+            for n in names for t in targets for p in presets for b in benches]
+    # A probe is built once per compiler, for its first CPU and for speed,
+    # with the option for the newest standard it has.
+    for n in names:
+        conf = all_compilers[n]
+        t = next((t for t in targets if conf.get(t, {}).get("speed") is not None), None)
+        if t and "speed" in presets and not conf.get("baseline"):
+            jobs += [(n, [*conf[t]["speed"], *conf.get("std", [])], b, t, "speed") for b in probes]
     with cf.ThreadPoolExecutor(args.jobs) as pool:
-        # A compiler with no flags for a target does not support it.
-        futures = [pool.submit(job, n, toolchains[n], all_compilers[n].get(t, {}).get(p), b, t, p, expect[b.name])
-                   for n in names for t in targets for p in presets for b in benches]
+        futures = [pool.submit(job, n, toolchains[n], flags, b, t, p, expect[b.name])
+                   for n, flags, b, t, p in jobs]
         results = [f.result() for f in futures]
 
-    empty = {(r["compiler"], r["target"], r["preset"]): r.get("size_total")
-             for r in results if r["bench"] == "empty"}
+    by_name = {b.name: b for b in benches + probes}
+    names_of_empties = {e.name for e in empties.values()}
+    base_size = {(r["compiler"], r["target"], r["preset"], by_name[r["bench"]].harness()): r.get("size_total")
+                 for r in results if r["bench"] in names_of_empties}
     for r in results:
-        base = empty.get((r["compiler"], r["target"], r["preset"]))
+        b = by_name[r["bench"]]
+        base = base_size.get((r["compiler"], r["target"], r["preset"], b.harness()))
         if "size_total" in r and base is not None:
-            r["size"] = r["size_total"] - base
-    results = [r for r in results if r["bench"] != "empty"]
+            r["size"] = r["size_total"] - base - b.input_size
+    results = [r for r in results if r["bench"] not in names_of_empties]
 
-    for r in results:
+    measured = [r for r in results if by_name[r["bench"]].tier != "cstd"]
+    for r in measured:
         if r["status"] != "ok":
             print(f"{r['compiler']} {r['target']} {r['preset']} {r['bench']}: {r['status']}"
                   + (f"\n  {r['error'][:500]}" if "error" in r else ""), file=sys.stderr)
-    print_table(results, names)
+    print_table(measured, names)
+    if probes:
+        print("\nC features that work:")
+        for n in names:
+            done = [r for r in results if r["compiler"] == n and by_name[r["bench"]].tier == "cstd"]
+            if done:
+                print(f"  {n:12} {sum(r['status'] == 'ok' for r in done)}/{len(done)}")
 
     if args.output:
         commit = subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD"],
@@ -617,8 +752,10 @@ def main():
                 "description": b.description,
                 "origin": b.origin,
                 "url": b.url,
-                "scored": b.scored,
-            } for b in benches if b.name != "empty"},
+                "tier": b.tier,
+                "scored": b.tier == "core",
+                **({"standard": b.standard, "papers": b.papers} if b.standard else {}),
+            } for b in benches + probes if b.name not in names_of_empties},
             "results": results,
         }
         args.output.parent.mkdir(parents=True, exist_ok=True)

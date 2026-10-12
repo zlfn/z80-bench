@@ -60,8 +60,30 @@
     </div>
     <div class="overall" id="overall"></div>
 
+    <div id="cstd" hidden>
+      <div class="section-head">
+        <h2>C support</h2>
+        <p class="note">Language features from <a href="https://cppstat.dev">cppstat</a>.
+          <span class="cstd-key"><b class="ok">✓</b> works <b class="bad">✗</b> wrong result
+          <b class="no">—</b> not supported <b class="manual-mark">*</b> checked manually</span></p>
+      </div>
+      <div class="matrix-wrap">
+        <table class="cstd" id="cstd-table"></table>
+      </div>
+      <details class="cstd-others" id="cstd-others" hidden>
+        <summary id="cstd-others-count"></summary>
+        <div class="matrix-wrap">
+          <table class="cstd cstd-none" id="cstd-others-table"></table>
+        </div>
+      </details>
+    </div>
+
     <div class="section-head">
       <h2>By benchmark</h2>
+      <div class="seg" data-key="tier" role="group" aria-label="Benchmarks">
+        <button type="button" data-value="core">Core</button>
+        <button type="button" data-value="extended">Extended</button>
+      </div>
     </div>
     <div class="matrix-box">
       <div class="matrix-groups" id="matrix-groups" aria-hidden="true"></div>
@@ -84,7 +106,13 @@
   </section>
 
   <section id="benchmarks">
-    <div class="section-head"><h2>Benchmarks</h2></div>
+    <div class="section-head">
+      <h2>Benchmarks</h2>
+      <div class="seg" data-key="tier" role="group" aria-label="Benchmarks">
+        <button type="button" data-value="core">Core</button>
+        <button type="button" data-value="extended">Extended</button>
+      </div>
+    </div>
     <div class="benches" id="bench-cards"></div>
   </section>
 </main>

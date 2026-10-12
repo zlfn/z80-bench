@@ -1,0 +1,7 @@
+description = "Decompress 4 KB with ZX0"
+details = "Einar Saukas' ZX0, an LZ77 format made for 8-bit machines, unpacks the same 4 KB of text as puff from a 1.5 KB stream. It reads interlaced Elias gamma codes a bit at a time and copies literals and back-references byte by byte."
+origin = "written for z80-bench from the ZX0 v2 format"
+url = "https://github.com/einar-saukas/ZX0"
+sources = ["main.c", "input.c", "../harness/hash.c"]
+include = []
+input = ["input.c"]

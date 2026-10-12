@@ -1,0 +1,946 @@
+# Every C language feature cppstat lists (https://cppstat.dev, CC0-1.0), in
+# cppstat's order. A feature a program can show working has a probe in
+# <standard>/<name>.c whose probe() returns 1 when it works. One that only a
+# compiler's diagnostics show is checked manually, check = "manual":
+# <standard>/<name>.c is what each compiler was given, and manual.toml has what
+# it did. The rest have check = "none" and say why.
+
+[[feature]]
+standard = "C99"
+name = "ucn-identifiers"
+desc = "Universal-character-names in identifiers"
+papers = {  }
+
+[[feature]]
+standard = "C99"
+name = "translation-limits"
+desc = "Increased translation limits"
+papers = { N590 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n590.pdf" }
+
+[[feature]]
+standard = "C99"
+name = "line-comments"
+desc = "`//` comments"
+papers = { N644 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n644.htm" }
+
+[[feature]]
+standard = "C99"
+name = "restrict"
+desc = "`restrict` pointers"
+papers = { N448 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n448.pdf" }
+
+[[feature]]
+standard = "C99"
+name = "arithmetic-types"
+desc = "Enhanced arithmetic types"
+papers = { N815 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n815.htm", N601 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n601.ps", N620 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n620.ps", N638 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n638.ps", N657 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n657.ps", N694 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n694.ps", N809 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n809.ps" }
+
+[[feature]]
+standard = "C99"
+name = "flexible-array-members"
+desc = "Flexible array members"
+papers = {  }
+
+[[feature]]
+standard = "C99"
+name = "vla"
+desc = "Variable-length array (VLA) types"
+papers = { N683 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n683.htm" }
+
+[[feature]]
+standard = "C99"
+name = "vm-types"
+desc = "Variably-modified (VM) types"
+papers = { N683 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n683.htm" }
+
+[[feature]]
+standard = "C99"
+name = "designated-initializers"
+desc = "Designated initializers"
+papers = { N494 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n494.pdf" }
+
+[[feature]]
+standard = "C99"
+name = "non-constant-initializers"
+desc = "Non-constant initializers"
+papers = {  }
+
+[[feature]]
+standard = "C99"
+name = "idempotent-qualifiers"
+desc = "Idempotent cvr-qualifiers"
+papers = { N505 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n505.pdf" }
+
+[[feature]]
+standard = "C99"
+name = "enum-trailing-comma"
+desc = "Trailing comma in _enumerator-list_"
+papers = {  }
+
+[[feature]]
+standard = "C99"
+name = "hex-float"
+desc = "Hexadecimal floating constants"
+papers = { N308 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n308.pdf" }
+
+[[feature]]
+standard = "C99"
+name = "compound-literals"
+desc = "Compound literals"
+papers = { N716 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n716.htm" }
+
+[[feature]]
+standard = "C99"
+name = "fenv"
+desc = "Floating-point environment"
+papers = {  }
+check = "none"
+why = "Part of the C library (`<fenv.h>`)."
+
+[[feature]]
+standard = "C99"
+name = "signed-division"
+desc = "Requiring truncation for divisions of signed integer types"
+papers = { N617 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n617.htm" }
+
+[[feature]]
+standard = "C99"
+name = "implicit-return"
+desc = "Implicit `return 0;` in the `main()` function"
+papers = {  }
+check = "none"
+why = "Applies only to hosted programs."
+
+[[feature]]
+standard = "C99"
+name = "mixed-declarations"
+desc = "Declarations and statements in mixed order"
+papers = { N740 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n740.htm" }
+
+[[feature]]
+standard = "C99"
+name = "for-declarations"
+desc = "_init-statement_ in `for` loops"
+papers = {  }
+
+[[feature]]
+standard = "C99"
+name = "inline"
+desc = "`inline` functions"
+papers = { N741 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n741.htm" }
+
+[[feature]]
+standard = "C99"
+name = "func"
+desc = "Predefined variable `__func__`"
+papers = { N611 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n611.ps" }
+
+[[feature]]
+standard = "C99"
+name = "array-parameter-qualifiers"
+desc = "Cvr-qualifiers and `static` in `[]` within function declarations"
+papers = {  }
+
+[[feature]]
+standard = "C99"
+name = "variadic-macros"
+desc = "Variadic macros"
+papers = { N707 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n707.htm" }
+
+[[feature]]
+standard = "C99"
+name = "pragma-operator"
+desc = "`_Pragma` preprocessor operator"
+papers = { N634 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n634.ps" }
+
+[[feature]]
+standard = "C99"
+name = "fp-pragmas"
+desc = "Standard pragmas for floating-point evaluation"
+papers = { N631 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n631.htm", N696 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n696.ps" }
+
+[[feature]]
+standard = "C11"
+name = "static-assert"
+desc = "Static assertions (`_Static_assert`)"
+papers = { N1330 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n1330.pdf" }
+
+[[feature]]
+standard = "C11"
+name = "generic"
+desc = "Generic selection (`_Generic`)"
+papers = { N1441 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n1441.htm" }
+
+[[feature]]
+standard = "C11"
+name = "anonymous-struct-union"
+desc = "Anonymous structures and unions"
+papers = { N1444 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n1444.htm" }
+
+[[feature]]
+standard = "C11"
+name = "alignas-alignof"
+desc = "Alignment support (`_Alignas`, `_Alignof`, `<stdalign.h>`)"
+papers = { N1353 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n1353.pdf" }
+
+[[feature]]
+standard = "C11"
+name = "atomics"
+desc = "Atomic operations (`_Atomic`, `<stdatomic.h>`)"
+papers = { N1485 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n1485.pdf" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C11"
+name = "thread-local"
+desc = "Thread-local storage (`_Thread_local`)"
+papers = { N1287 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n1287.htm" }
+
+[[feature]]
+standard = "C11"
+name = "threads"
+desc = "Multi-threading support (`<threads.h>`)"
+papers = { N1437 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n1437.htm" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C11"
+name = "noreturn"
+desc = "Noreturn function specifier (`_Noreturn`, `<stdnoreturn.h>`)"
+papers = { N1478 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n1478.htm" }
+
+[[feature]]
+standard = "C11"
+name = "unicode"
+desc = "Unicode support (`<uchar.h>`, `u/U` prefixes)"
+papers = { N1487 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n1487.pdf" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C11"
+name = "fopen-exclusive"
+desc = "Exclusive create-and-open mode for `fopen()` (\"x\")"
+papers = { N1339 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n1339.pdf" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C11"
+name = "quick-exit"
+desc = "Quick exit (`quick_exit()`, `at_quick_exit()`)"
+papers = { N1327 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n1327.htm" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C11"
+name = "timespec-get"
+desc = "`timespec_get()` function"
+papers = { N1499 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n1499.htm" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C11"
+name = "cmplx"
+desc = "Macros for complex number types (`CMPLX`)"
+papers = { N1464 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n1464.htm" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C23"
+name = "static-assert-no-message"
+desc = "`static_assert` with no message"
+papers = { N2265 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2265.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "nodiscard"
+desc = "`[[nodiscard]]`"
+papers = { N2267 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2267.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "maybe-unused"
+desc = "`[[maybe_unused]]`"
+papers = { N2270 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2270.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "deprecated"
+desc = "`[[deprecated]]`"
+papers = { N2334 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2334.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "attributes"
+desc = "Attributes"
+papers = { N2335 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2335.pdf", N2554 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2554.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "decimal-float"
+desc = "IEEE 754 decimal floating-point types"
+papers = { N2341 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2341.pdf" }
+check = "none"
+why = "Decimal floating types are optional."
+
+[[feature]]
+standard = "C23"
+name = "fallthrough"
+desc = "`[[fallthrough]]`"
+papers = { N2408 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2408.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "u8-char-constants"
+desc = "u8 character constants"
+papers = { N2418 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2418.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "kr-definitions"
+desc = "Removal of function definitions without prototype"
+papers = { N2432 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2432.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C23"
+name = "nodiscard-message"
+desc = "`[[nodiscard]]` with message"
+papers = { N2448 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2448.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "unnamed-parameters"
+desc = "Unnamed parameters in function definitions"
+papers = { N2480 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2480.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "labels"
+desc = "Labels before declarations and end of blocks"
+papers = { N2508 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2508.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "binary-constants"
+desc = "Binary integer constants"
+papers = { N2549 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2549.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "has-c-attribute"
+desc = "__has_c_attribute in preprocessor conditionals"
+papers = { N2553 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2553.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "duplicate-attributes"
+desc = "Allow duplicate attributes"
+papers = { N2557 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2557.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "interchange-types"
+desc = "IEEE 754 interchange and extended types"
+papers = { N2601 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2601.pdf" }
+check = "none"
+why = "Annex H types are optional."
+
+[[feature]]
+standard = "C23"
+name = "array-qualifiers"
+desc = "Compatibility of Pointers to Arrays with Qualifiers"
+papers = { N2607 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2607.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C23"
+name = "digit-separators"
+desc = "Digit separators"
+papers = { N2626 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2626.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "elifdef"
+desc = "`#elifdef` and `#elifndef`"
+papers = { N2645 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2645.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "u8-string-char8"
+desc = "Type change of u8 string literals to `char8_t[]`"
+papers = { N2653 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2653.htm" }
+
+[[feature]]
+standard = "C23"
+name = "maybe-unused-labels"
+desc = "`[[maybe_unused]]` for labels"
+papers = { N2662 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2662.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "warning"
+desc = "`#warning`"
+papers = { N2686 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2686.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "bitint"
+desc = "Bit-precise integer types (`_BitInt`)"
+papers = { N2763 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2763.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "noreturn-attribute"
+desc = "`[[noreturn]]`"
+papers = { N2764 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2764.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "bitint-suffixes"
+desc = "Suffixes for bit-precise integer constants"
+papers = { N2775 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2775.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "vm-types-required"
+desc = "Require support for variably modified types"
+papers = { N2778 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2778.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "has-include"
+desc = "`__has_include` in preprocessor conditionals"
+papers = { N2799 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2799.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "uax31-identifiers"
+desc = "Identifier Syntax using Unicode Standard Annex 31"
+papers = { N2836 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2836.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "empty-parameter-lists"
+desc = "Removal of function declarations without prototype"
+papers = { N2841 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2841.htm" }
+check = "manual"
+
+[[feature]]
+standard = "C23"
+name = "empty-initializers"
+desc = "Empty initializers"
+papers = { N2900 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2900.htm" }
+
+[[feature]]
+standard = "C23"
+name = "typeof"
+desc = "`typeof` and `typeof_unqual`"
+papers = { N2927 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2927.htm", N2930 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2930.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "keyword-spellings"
+desc = "New spelling of keywords"
+papers = { N2934 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2934.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "true-false"
+desc = "Predefined `true` and `false`"
+papers = { N2935 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2935.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "unsequenced-reproducible"
+desc = "`[[unsequenced]]` and `[[reproducible]]`"
+papers = { N2956 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2956.htm" }
+
+[[feature]]
+standard = "C23"
+name = "variadic-no-named"
+desc = "Relax requirements for variadic parameter list"
+papers = { N2975 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n2975.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "auto"
+desc = "Type inference in object definitions (`auto`)"
+papers = { N3007 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3007.htm" }
+
+[[feature]]
+standard = "C23"
+name = "embed"
+desc = "`#embed`"
+papers = { N3017 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3017.htm" }
+
+[[feature]]
+standard = "C23"
+name = "constexpr"
+desc = "`constexpr` objects"
+papers = { N3018 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3018.htm" }
+
+[[feature]]
+standard = "C23"
+name = "improved-enums"
+desc = "Improved Normal Enumerations"
+papers = { N3029 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3029.htm" }
+
+[[feature]]
+standard = "C23"
+name = "enum-underlying-type"
+desc = "Enumerations with fixed underlying types"
+papers = { N3030 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3030.htm" }
+
+[[feature]]
+standard = "C23"
+name = "va-opt"
+desc = "`__VA_OPT__`"
+papers = { N3033 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3033.htm" }
+
+[[feature]]
+standard = "C23"
+name = "tag-compatibility"
+desc = "Improved tag compatibility"
+papers = { N3037 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3037.pdf" }
+
+[[feature]]
+standard = "C23"
+name = "compound-literal-storage"
+desc = "Storage-class specifiers for compound literals"
+papers = { N3038 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3038.htm" }
+
+[[feature]]
+standard = "C23"
+name = "nullptr"
+desc = "`nullptr`"
+papers = { N3042 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3042.htm" }
+
+[[feature]]
+standard = "C23"
+name = "partial-correctness"
+desc = "Partial program correctness"
+papers = { N3128 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3128.pdf" }
+check = "none"
+why = "Only an optimizer's choices show it."
+
+[[feature]]
+standard = "C2y"
+name = "round-trip-rounding"
+desc = "Round-trip rounding"
+papers = { N3232 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3232.pdf" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C2y"
+name = "earthly-demons-1"
+desc = "Slay Some Earthly Demons I"
+papers = { N3244 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3244.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "byte-arrays"
+desc = "Accessing byte arrays"
+papers = { N3254 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3254.pdf" }
+check = "none"
+why = "Only an optimizer's choices show it."
+
+[[feature]]
+standard = "C2y"
+name = "complex-increment"
+desc = "Support `++` and `--` on complex values"
+papers = { N3259 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3259.pdf" }
+check = "none"
+why = "Complex types are optional."
+
+[[feature]]
+standard = "C2y"
+name = "generic-type-operand"
+desc = "Generic selection expression with a type operand"
+papers = { N3260 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3260.pdf" }
+
+[[feature]]
+standard = "C2y"
+name = "alignof-incomplete-array"
+desc = "`alignof` of an incomplete array type"
+papers = { N3273 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3273.pdf" }
+
+[[feature]]
+standard = "C2y"
+name = "no-imaginary"
+desc = "Remove imaginary types"
+papers = { N3274 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3274.pdf" }
+check = "none"
+why = "Removes an optional feature."
+
+[[feature]]
+standard = "C2y"
+name = "fp-exception-macros"
+desc = "Floating-point exceptions for macro replacements"
+papers = { N3286 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3286.pdf" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C2y"
+name = "complex-literals"
+desc = "Introduce complex literals"
+papers = { N3298 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3298.htm" }
+check = "none"
+why = "Complex types are optional."
+
+[[feature]]
+standard = "C2y"
+name = "atomic-alignment"
+desc = "Allowing stricter alignment for atomic types"
+papers = { N3312 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3312.pdf" }
+check = "none"
+why = "A permission, so nothing to test."
+
+[[feature]]
+standard = "C2y"
+name = "null-zero-length"
+desc = "Allow zero length operations on null pointers"
+papers = { N3322 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3322.pdf" }
+check = "none"
+why = "Only an optimizer's choices show it."
+
+[[feature]]
+standard = "C2y"
+name = "increment-adjustment"
+desc = "How do you add one to something?"
+papers = { N3323 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3323.pdf" }
+check = "none"
+why = "Changes wording, not behavior."
+
+[[feature]]
+standard = "C2y"
+name = "empty-structs"
+desc = "Slay Some Earthly Demons III"
+papers = { N3341 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3341.pdf" }
+check = "none"
+why = "Now implementation-defined; any choice conforms."
+
+[[feature]]
+standard = "C2y"
+name = "qualified-function-types"
+desc = "Slay Some Earthly Demons IV"
+papers = { N3342 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3342.pdf" }
+check = "none"
+why = "Now implementation-defined; any choice conforms."
+
+[[feature]]
+standard = "C2y"
+name = "void-parameter"
+desc = "Slay Some Earthly Demons VI"
+papers = { N3344 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3344.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "unnamed-members"
+desc = "Slay Some Earthly Demons VII"
+papers = { N3345 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3345.pdf" }
+check = "none"
+why = "Removes an unreachable undefined behavior."
+
+[[feature]]
+standard = "C2y"
+name = "initializer-constraints"
+desc = "Slay Some Earthly Demons VIII"
+papers = { N3346 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3346.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "incomplete-tentative"
+desc = "Slay Some Earthly Demons IX"
+papers = { N3347 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3347.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "generic-star-arrays"
+desc = "Matching of Multi-Dimensional Arrays in Generic Selection Expressions"
+papers = { N3348 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3348.pdf" }
+
+[[feature]]
+standard = "C2y"
+name = "octal-and-delimited-escapes"
+desc = "Obsolete implicitly octal literals and delimited escape sequences"
+papers = { N3353 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3353.htm" }
+
+[[feature]]
+standard = "C2y"
+name = "named-loops"
+desc = "Named loops"
+papers = { N3355 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3355.htm" }
+
+[[feature]]
+standard = "C2y"
+name = "if-declarations"
+desc = "`if` declarations"
+papers = { N3356 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3356.htm" }
+
+[[feature]]
+standard = "C2y"
+name = "snan-initialization"
+desc = "Consistent wording for SNAN initialization"
+papers = { N3364 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3364.pdf" }
+check = "none"
+why = "Changes wording, not behavior."
+
+[[feature]]
+standard = "C2y"
+name = "case-ranges"
+desc = "Case range expressions (`case x ... y`)"
+papers = { N3370 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3370.htm" }
+
+[[feature]]
+standard = "C2y"
+name = "stdarg-wording"
+desc = "`stdarg.h` wording improvements"
+papers = { N3363 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3363.pdf" }
+check = "none"
+why = "Changes wording, not behavior."
+
+[[feature]]
+standard = "C2y"
+name = "countof"
+desc = "`_Countof` operator"
+papers = { N3369 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3369.pdf", N3469 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3469.htm" }
+
+[[feature]]
+standard = "C2y"
+name = "restartable-conversions"
+desc = "Restartable Functions for Efficient Character Conversions"
+papers = { N3366 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3366.htm" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C2y"
+name = "uabs"
+desc = "Abs Without Undefined Behavior"
+papers = { N3349 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3349.pdf" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C2y"
+name = "bit-utilities"
+desc = "More Modern Bit Utilities"
+papers = { N3367 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3367.htm" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C2y"
+name = "math-errors"
+desc = "Error conditions in `<math.h>`"
+papers = { N3405 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3405.pdf" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C2y"
+name = "void-expressions"
+desc = "Slay Some Earthly Demons X"
+papers = { N3409 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3409.pdf" }
+
+[[feature]]
+standard = "C2y"
+name = "linkage-conflicts"
+desc = "Slay Some Earthly Demons XI"
+papers = { N3410 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3410.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "final-newline"
+desc = "Slay Some Earthly Demons XII"
+papers = { N3411 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3411.pdf" }
+
+[[feature]]
+standard = "C2y"
+name = "ucn-pasting"
+desc = "Slay Some Earthly Demons XIV"
+papers = { N3418 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3418.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "anonymous-initialization"
+desc = "Anonymous structure/union initialization"
+papers = { N3451 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3451.pdf" }
+
+[[feature]]
+standard = "C2y"
+name = "counter"
+desc = "The `__COUNTER__` predefined macro"
+papers = { N3457 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3457.htm" }
+
+[[feature]]
+standard = "C2y"
+name = "complex-operators"
+desc = "Complex operators"
+papers = { N3460 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3460.pdf" }
+check = "none"
+why = "Complex types are optional."
+
+[[feature]]
+standard = "C2y"
+name = "range-errors"
+desc = "Range error definition followup"
+papers = { N3461 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3461.pdf" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C2y"
+name = "pp-integer-expressions"
+desc = "Preprocessor integer expressions"
+papers = { N3465 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3465.pdf", N3505 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3505.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "library-null-pointers"
+desc = "Null pointer clarifications in library"
+papers = { N3466 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3466.pdf" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C2y"
+name = "unterminated-comment"
+desc = "Slay Some Earthly Demons XIII"
+papers = { N3478 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3478.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "incomplete-lvalues"
+desc = "Slay Some Earthly Demons XVI"
+papers = { N3481 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3481.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "va-start-fixed"
+desc = "Slay Some Earthly Demons XVII"
+papers = { N3482 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3482.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "shall-wording"
+desc = "Slay Some Earthly Demons V"
+papers = { N3484 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3484.pdf" }
+check = "none"
+why = "Changes wording, not behavior."
+
+[[feature]]
+standard = "C2y"
+name = "narrowing-rounding-errors"
+desc = "Error conditions for narrow type rounding"
+papers = { N3492 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3492.pdf" }
+check = "none"
+why = "Part of the C library."
+
+[[feature]]
+standard = "C2y"
+name = "width-macros"
+desc = "Clarify width macros specification"
+papers = { N3496 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3496.htm" }
+check = "none"
+why = "Part of the C library (`<limits.h>`)."
+
+[[feature]]
+standard = "C2y"
+name = "static-assert-ice"
+desc = "`static_assert` without UB"
+papers = { N3525 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3525.htm" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "incomplete-member-access"
+desc = "Member access of an incomplete object"
+papers = { N3532 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3532.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "constant-expression-wording"
+desc = "Chasing Ghosts I: constant expressions"
+papers = { N3558 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3558.htm" }
+check = "none"
+why = "Changes wording, not behavior."
+
+[[feature]]
+standard = "C2y"
+name = "generic-replacement"
+desc = "Generic replacement (quasi-literals)"
+papers = { N3605 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3605.pdf" }
+
+[[feature]]
+standard = "C2y"
+name = "static-in-inline"
+desc = "Allow calling `static inline` within `extern inline`"
+papers = { N3622 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3622.txt" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "main-definition"
+desc = "Earthly Demon XV: Definition of Main"
+papers = { N3623 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3623.pdf" }
+check = "none"
+why = "Now implementation-defined; any choice conforms."
+
+[[feature]]
+standard = "C2y"
+name = "composite-types"
+desc = "Composite types"
+papers = { N3652 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3652.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "static-assert-expressions"
+desc = "static_assert expressions"
+papers = { N3715 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3715.pdf" }
+
+[[feature]]
+standard = "C2y"
+name = "atomic-members"
+desc = "Earthly Demon: Accessing a Member of an Atomic Structure or Union"
+papers = { N3653 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3653.pdf" }
+check = "manual"
+
+[[feature]]
+standard = "C2y"
+name = "const-named-constants"
+desc = "Const integer declarations as implicit named constants"
+papers = { N3833 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3833.htm" }
+
+[[feature]]
+standard = "C2y"
+name = "bitint-enum"
+desc = "Enumerations with Bit-Precise Integer as Underlying Type"
+papers = { N3705 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3705.htm" }
+
+[[feature]]
+standard = "C2y"
+name = "elvis"
+desc = "The Elvis operator ?:"
+papers = { N3804 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3804.txt" }
