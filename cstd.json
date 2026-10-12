@@ -1,0 +1,2075 @@
+{
+ "checked": "2026-10-12",
+ "versions": {
+  "sdcc": "4.6.4 #16998",
+  "llvm-z80": "24.0.0git defafaf471b1",
+  "80cc": "v26468-4522364999-20261011",
+  "zsdcc": "v26468-4522364999-20261011",
+  "sccz80": "v26468-4522364999-20261011",
+  "ez80-clang": "19.1.0 ef28e9c54cd1, z88dk v26468-4522364999-20261011",
+  "fcc": "7b2a72e",
+  "hitech": "3.09-21",
+  "uc80": "0.7.0",
+  "gb-llvm": "21.0.0git 5bc8de9127f7"
+ },
+ "features": [
+  {
+   "bench": "cstd-c99-ucn-identifiers",
+   "standard": "C99",
+   "description": "Universal-character-names in identifiers",
+   "papers": {},
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-translation-limits",
+   "standard": "C99",
+   "description": "Increased translation limits",
+   "papers": {
+    "N590": "https://open-std.org/JTC1/SC22/WG14/www/docs/n590.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-line-comments",
+   "standard": "C99",
+   "description": "`//` comments",
+   "papers": {
+    "N644": "https://open-std.org/JTC1/SC22/WG14/www/docs/n644.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-restrict",
+   "standard": "C99",
+   "description": "`restrict` pointers",
+   "papers": {
+    "N448": "https://open-std.org/JTC1/SC22/WG14/www/docs/n448.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-arithmetic-types",
+   "standard": "C99",
+   "description": "Enhanced arithmetic types",
+   "papers": {
+    "N815": "https://open-std.org/JTC1/SC22/WG14/www/docs/n815.htm",
+    "N601": "https://open-std.org/JTC1/SC22/WG14/www/docs/n601.ps",
+    "N620": "https://open-std.org/JTC1/SC22/WG14/www/docs/n620.ps",
+    "N638": "https://open-std.org/JTC1/SC22/WG14/www/docs/n638.ps",
+    "N657": "https://open-std.org/JTC1/SC22/WG14/www/docs/n657.ps",
+    "N694": "https://open-std.org/JTC1/SC22/WG14/www/docs/n694.ps",
+    "N809": "https://open-std.org/JTC1/SC22/WG14/www/docs/n809.ps"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-flexible-array-members",
+   "standard": "C99",
+   "description": "Flexible array members",
+   "papers": {},
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-vla",
+   "standard": "C99",
+   "description": "Variable-length array (VLA) types",
+   "papers": {
+    "N683": "https://open-std.org/JTC1/SC22/WG14/www/docs/n683.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-vm-types",
+   "standard": "C99",
+   "description": "Variably-modified (VM) types",
+   "papers": {
+    "N683": "https://open-std.org/JTC1/SC22/WG14/www/docs/n683.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-designated-initializers",
+   "standard": "C99",
+   "description": "Designated initializers",
+   "papers": {
+    "N494": "https://open-std.org/JTC1/SC22/WG14/www/docs/n494.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-non-constant-initializers",
+   "standard": "C99",
+   "description": "Non-constant initializers",
+   "papers": {},
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-idempotent-qualifiers",
+   "standard": "C99",
+   "description": "Idempotent cvr-qualifiers",
+   "papers": {
+    "N505": "https://open-std.org/JTC1/SC22/WG14/www/docs/n505.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-enum-trailing-comma",
+   "standard": "C99",
+   "description": "Trailing comma in _enumerator-list_",
+   "papers": {},
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-hex-float",
+   "standard": "C99",
+   "description": "Hexadecimal floating constants",
+   "papers": {
+    "N308": "https://open-std.org/JTC1/SC22/WG14/www/docs/n308.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-compound-literals",
+   "standard": "C99",
+   "description": "Compound literals",
+   "papers": {
+    "N716": "https://open-std.org/JTC1/SC22/WG14/www/docs/n716.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-fenv",
+   "standard": "C99",
+   "description": "Floating-point environment",
+   "papers": {},
+   "check": "none",
+   "why": "Part of the C library (`<fenv.h>`)."
+  },
+  {
+   "bench": "cstd-c99-signed-division",
+   "standard": "C99",
+   "description": "Requiring truncation for divisions of signed integer types",
+   "papers": {
+    "N617": "https://open-std.org/JTC1/SC22/WG14/www/docs/n617.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-implicit-return",
+   "standard": "C99",
+   "description": "Implicit `return 0;` in the `main()` function",
+   "papers": {},
+   "check": "none",
+   "why": "Applies only to hosted programs."
+  },
+  {
+   "bench": "cstd-c99-mixed-declarations",
+   "standard": "C99",
+   "description": "Declarations and statements in mixed order",
+   "papers": {
+    "N740": "https://open-std.org/JTC1/SC22/WG14/www/docs/n740.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-for-declarations",
+   "standard": "C99",
+   "description": "_init-statement_ in `for` loops",
+   "papers": {},
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-inline",
+   "standard": "C99",
+   "description": "`inline` functions",
+   "papers": {
+    "N741": "https://open-std.org/JTC1/SC22/WG14/www/docs/n741.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-func",
+   "standard": "C99",
+   "description": "Predefined variable `__func__`",
+   "papers": {
+    "N611": "https://open-std.org/JTC1/SC22/WG14/www/docs/n611.ps"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-array-parameter-qualifiers",
+   "standard": "C99",
+   "description": "Cvr-qualifiers and `static` in `[]` within function declarations",
+   "papers": {},
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-variadic-macros",
+   "standard": "C99",
+   "description": "Variadic macros",
+   "papers": {
+    "N707": "https://open-std.org/JTC1/SC22/WG14/www/docs/n707.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-pragma-operator",
+   "standard": "C99",
+   "description": "`_Pragma` preprocessor operator",
+   "papers": {
+    "N634": "https://open-std.org/JTC1/SC22/WG14/www/docs/n634.ps"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c99-fp-pragmas",
+   "standard": "C99",
+   "description": "Standard pragmas for floating-point evaluation",
+   "papers": {
+    "N631": "https://open-std.org/JTC1/SC22/WG14/www/docs/n631.htm",
+    "N696": "https://open-std.org/JTC1/SC22/WG14/www/docs/n696.ps"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c11-static-assert",
+   "standard": "C11",
+   "description": "Static assertions (`_Static_assert`)",
+   "papers": {
+    "N1330": "https://open-std.org/JTC1/SC22/WG14/www/docs/n1330.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c11-generic",
+   "standard": "C11",
+   "description": "Generic selection (`_Generic`)",
+   "papers": {
+    "N1441": "https://open-std.org/JTC1/SC22/WG14/www/docs/n1441.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c11-anonymous-struct-union",
+   "standard": "C11",
+   "description": "Anonymous structures and unions",
+   "papers": {
+    "N1444": "https://open-std.org/JTC1/SC22/WG14/www/docs/n1444.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c11-alignas-alignof",
+   "standard": "C11",
+   "description": "Alignment support (`_Alignas`, `_Alignof`, `<stdalign.h>`)",
+   "papers": {
+    "N1353": "https://open-std.org/JTC1/SC22/WG14/www/docs/n1353.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c11-atomics",
+   "standard": "C11",
+   "description": "Atomic operations (`_Atomic`, `<stdatomic.h>`)",
+   "papers": {
+    "N1485": "https://open-std.org/JTC1/SC22/WG14/www/docs/n1485.pdf"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c11-thread-local",
+   "standard": "C11",
+   "description": "Thread-local storage (`_Thread_local`)",
+   "papers": {
+    "N1287": "https://open-std.org/JTC1/SC22/WG14/www/docs/n1287.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c11-threads",
+   "standard": "C11",
+   "description": "Multi-threading support (`<threads.h>`)",
+   "papers": {
+    "N1437": "https://open-std.org/JTC1/SC22/WG14/www/docs/n1437.htm"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c11-noreturn",
+   "standard": "C11",
+   "description": "Noreturn function specifier (`_Noreturn`, `<stdnoreturn.h>`)",
+   "papers": {
+    "N1478": "https://open-std.org/JTC1/SC22/WG14/www/docs/n1478.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c11-unicode",
+   "standard": "C11",
+   "description": "Unicode support (`<uchar.h>`, `u/U` prefixes)",
+   "papers": {
+    "N1487": "https://open-std.org/JTC1/SC22/WG14/www/docs/n1487.pdf"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c11-fopen-exclusive",
+   "standard": "C11",
+   "description": "Exclusive create-and-open mode for `fopen()` (\"x\")",
+   "papers": {
+    "N1339": "https://open-std.org/JTC1/SC22/WG14/www/docs/n1339.pdf"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c11-quick-exit",
+   "standard": "C11",
+   "description": "Quick exit (`quick_exit()`, `at_quick_exit()`)",
+   "papers": {
+    "N1327": "https://open-std.org/JTC1/SC22/WG14/www/docs/n1327.htm"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c11-timespec-get",
+   "standard": "C11",
+   "description": "`timespec_get()` function",
+   "papers": {
+    "N1499": "https://open-std.org/JTC1/SC22/WG14/www/docs/n1499.htm"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c11-cmplx",
+   "standard": "C11",
+   "description": "Macros for complex number types (`CMPLX`)",
+   "papers": {
+    "N1464": "https://open-std.org/JTC1/SC22/WG14/www/docs/n1464.htm"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c23-static-assert-no-message",
+   "standard": "C23",
+   "description": "`static_assert` with no message",
+   "papers": {
+    "N2265": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2265.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-nodiscard",
+   "standard": "C23",
+   "description": "`[[nodiscard]]`",
+   "papers": {
+    "N2267": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2267.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-maybe-unused",
+   "standard": "C23",
+   "description": "`[[maybe_unused]]`",
+   "papers": {
+    "N2270": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2270.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-deprecated",
+   "standard": "C23",
+   "description": "`[[deprecated]]`",
+   "papers": {
+    "N2334": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2334.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-attributes",
+   "standard": "C23",
+   "description": "Attributes",
+   "papers": {
+    "N2335": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2335.pdf",
+    "N2554": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2554.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-decimal-float",
+   "standard": "C23",
+   "description": "IEEE 754 decimal floating-point types",
+   "papers": {
+    "N2341": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2341.pdf"
+   },
+   "check": "none",
+   "why": "Decimal floating types are optional."
+  },
+  {
+   "bench": "cstd-c23-fallthrough",
+   "standard": "C23",
+   "description": "`[[fallthrough]]`",
+   "papers": {
+    "N2408": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2408.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-u8-char-constants",
+   "standard": "C23",
+   "description": "u8 character constants",
+   "papers": {
+    "N2418": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2418.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-kr-definitions",
+   "standard": "C23",
+   "description": "Removal of function definitions without prototype",
+   "papers": {
+    "N2432": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2432.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "ok",
+     "note": "Error: \"K&R-style function 'add' is not permitted in ISO C23 or later\"."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "Error: \"unknown type name 'a'\"."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "zsdcc": {
+     "result": "ok",
+     "note": "Error: \"K&R-style function 'add' is not permitted in ISO C23 or later\"."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "ez80-clang": {
+     "result": "ok",
+     "note": "Error: \"unknown type name 'a'\"."
+    },
+    "fcc": {
+     "result": "ok",
+     "note": "Error: \"missing semicolon\". It has no such definitions at all."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "uc80": {
+     "result": "ok",
+     "note": "Error: \"unexpected token 'IDENT' 'a'\"."
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "Error: \"unknown type name 'a'\"."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c23-nodiscard-message",
+   "standard": "C23",
+   "description": "`[[nodiscard]]` with message",
+   "papers": {
+    "N2448": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2448.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-unnamed-parameters",
+   "standard": "C23",
+   "description": "Unnamed parameters in function definitions",
+   "papers": {
+    "N2480": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2480.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-labels",
+   "standard": "C23",
+   "description": "Labels before declarations and end of blocks",
+   "papers": {
+    "N2508": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2508.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-binary-constants",
+   "standard": "C23",
+   "description": "Binary integer constants",
+   "papers": {
+    "N2549": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2549.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-has-c-attribute",
+   "standard": "C23",
+   "description": "__has_c_attribute in preprocessor conditionals",
+   "papers": {
+    "N2553": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2553.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-duplicate-attributes",
+   "standard": "C23",
+   "description": "Allow duplicate attributes",
+   "papers": {
+    "N2557": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2557.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-interchange-types",
+   "standard": "C23",
+   "description": "IEEE 754 interchange and extended types",
+   "papers": {
+    "N2601": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2601.pdf"
+   },
+   "check": "none",
+   "why": "Annex H types are optional."
+  },
+  {
+   "bench": "cstd-c23-array-qualifiers",
+   "standard": "C23",
+   "description": "Compatibility of Pointers to Arrays with Qualifiers",
+   "papers": {
+    "N2607": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2607.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "ok",
+     "note": "No diagnostic."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "No diagnostic."
+    },
+    "80cc": {
+     "result": "ok",
+     "note": "No diagnostic."
+    },
+    "zsdcc": {
+     "result": "ok",
+     "note": "No diagnostic."
+    },
+    "sccz80": {
+     "result": "ok",
+     "note": "No diagnostic."
+    },
+    "ez80-clang": {
+     "result": "ok",
+     "note": "No diagnostic."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "Rejects any initialized local pointer to an array, const or not: \"not a valid auto initializer\"."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "Has no const."
+    },
+    "uc80": {
+     "result": "ok",
+     "note": "No diagnostic."
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "No diagnostic."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c23-digit-separators",
+   "standard": "C23",
+   "description": "Digit separators",
+   "papers": {
+    "N2626": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2626.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-elifdef",
+   "standard": "C23",
+   "description": "`#elifdef` and `#elifndef`",
+   "papers": {
+    "N2645": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2645.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-u8-string-char8",
+   "standard": "C23",
+   "description": "Type change of u8 string literals to `char8_t[]`",
+   "papers": {
+    "N2653": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2653.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-maybe-unused-labels",
+   "standard": "C23",
+   "description": "`[[maybe_unused]]` for labels",
+   "papers": {
+    "N2662": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2662.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-warning",
+   "standard": "C23",
+   "description": "`#warning`",
+   "papers": {
+    "N2686": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2686.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-bitint",
+   "standard": "C23",
+   "description": "Bit-precise integer types (`_BitInt`)",
+   "papers": {
+    "N2763": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2763.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-noreturn-attribute",
+   "standard": "C23",
+   "description": "`[[noreturn]]`",
+   "papers": {
+    "N2764": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2764.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-bitint-suffixes",
+   "standard": "C23",
+   "description": "Suffixes for bit-precise integer constants",
+   "papers": {
+    "N2775": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2775.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-vm-types-required",
+   "standard": "C23",
+   "description": "Require support for variably modified types",
+   "papers": {
+    "N2778": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2778.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-has-include",
+   "standard": "C23",
+   "description": "`__has_include` in preprocessor conditionals",
+   "papers": {
+    "N2799": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2799.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-uax31-identifiers",
+   "standard": "C23",
+   "description": "Identifier Syntax using Unicode Standard Annex 31",
+   "papers": {
+    "N2836": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2836.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-empty-parameter-lists",
+   "standard": "C23",
+   "description": "Removal of function declarations without prototype",
+   "papers": {
+    "N2841": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2841.htm"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "ok",
+     "note": "Error: \"too many parameters\"."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "Error: \"too many arguments to function call, expected 0, have 1\"."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "zsdcc": {
+     "result": "ok",
+     "note": "Error: \"too many parameters\"."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "ez80-clang": {
+     "result": "ok",
+     "note": "Error: \"too many arguments to function call, expected 0, have 1\"."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "Error: \"too many arguments to function call, expected 0, have 1\"."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c23-empty-initializers",
+   "standard": "C23",
+   "description": "Empty initializers",
+   "papers": {
+    "N2900": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2900.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-typeof",
+   "standard": "C23",
+   "description": "`typeof` and `typeof_unqual`",
+   "papers": {
+    "N2927": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2927.htm",
+    "N2930": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2930.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-keyword-spellings",
+   "standard": "C23",
+   "description": "New spelling of keywords",
+   "papers": {
+    "N2934": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2934.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-true-false",
+   "standard": "C23",
+   "description": "Predefined `true` and `false`",
+   "papers": {
+    "N2935": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2935.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-unsequenced-reproducible",
+   "standard": "C23",
+   "description": "`[[unsequenced]]` and `[[reproducible]]`",
+   "papers": {
+    "N2956": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2956.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-variadic-no-named",
+   "standard": "C23",
+   "description": "Relax requirements for variadic parameter list",
+   "papers": {
+    "N2975": "https://open-std.org/JTC1/SC22/WG14/www/docs/n2975.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-auto",
+   "standard": "C23",
+   "description": "Type inference in object definitions (`auto`)",
+   "papers": {
+    "N3007": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3007.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-embed",
+   "standard": "C23",
+   "description": "`#embed`",
+   "papers": {
+    "N3017": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3017.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-constexpr",
+   "standard": "C23",
+   "description": "`constexpr` objects",
+   "papers": {
+    "N3018": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3018.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-improved-enums",
+   "standard": "C23",
+   "description": "Improved Normal Enumerations",
+   "papers": {
+    "N3029": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3029.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-enum-underlying-type",
+   "standard": "C23",
+   "description": "Enumerations with fixed underlying types",
+   "papers": {
+    "N3030": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3030.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-va-opt",
+   "standard": "C23",
+   "description": "`__VA_OPT__`",
+   "papers": {
+    "N3033": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3033.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-tag-compatibility",
+   "standard": "C23",
+   "description": "Improved tag compatibility",
+   "papers": {
+    "N3037": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3037.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-compound-literal-storage",
+   "standard": "C23",
+   "description": "Storage-class specifiers for compound literals",
+   "papers": {
+    "N3038": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3038.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-nullptr",
+   "standard": "C23",
+   "description": "`nullptr`",
+   "papers": {
+    "N3042": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3042.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c23-partial-correctness",
+   "standard": "C23",
+   "description": "Partial program correctness",
+   "papers": {
+    "N3128": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3128.pdf"
+   },
+   "check": "none",
+   "why": "Only an optimizer's choices show it."
+  },
+  {
+   "bench": "cstd-c2y-round-trip-rounding",
+   "standard": "C2y",
+   "description": "Round-trip rounding",
+   "papers": {
+    "N3232": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3232.pdf"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c2y-earthly-demons-1",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons I",
+   "papers": {
+    "N3244": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3244.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "no",
+     "note": "Cases 1 to 3 diagnosed, but not case 4."
+    },
+    "llvm-z80": {
+     "result": "no",
+     "note": "Cases 1, 2 and 4 diagnosed, but not case 3."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "Case 1 diagnosed, but not case 2. Has no inline or _Alignas for cases 3 and 4."
+    },
+    "zsdcc": {
+     "result": "no",
+     "note": "Cases 1 to 3 diagnosed, but not case 4."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "Case 1 diagnosed, but not case 2. Has no inline or _Alignas for cases 3 and 4."
+    },
+    "ez80-clang": {
+     "result": "no",
+     "note": "Cases 1, 2 and 4 diagnosed, but not case 3."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "Case 1 diagnosed, but not case 2. Has no inline or _Alignas for cases 3 and 4."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "Case 1 diagnosed; case 2 only warned of as unused. Has no inline or _Alignas for cases 3 and 4."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic for any case."
+    },
+    "gb-llvm": {
+     "result": "no",
+     "note": "Cases 1, 2 and 4 diagnosed, but not case 3."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-byte-arrays",
+   "standard": "C2y",
+   "description": "Accessing byte arrays",
+   "papers": {
+    "N3254": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3254.pdf"
+   },
+   "check": "none",
+   "why": "Only an optimizer's choices show it."
+  },
+  {
+   "bench": "cstd-c2y-complex-increment",
+   "standard": "C2y",
+   "description": "Support `++` and `--` on complex values",
+   "papers": {
+    "N3259": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3259.pdf"
+   },
+   "check": "none",
+   "why": "Complex types are optional."
+  },
+  {
+   "bench": "cstd-c2y-generic-type-operand",
+   "standard": "C2y",
+   "description": "Generic selection expression with a type operand",
+   "papers": {
+    "N3260": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3260.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-alignof-incomplete-array",
+   "standard": "C2y",
+   "description": "`alignof` of an incomplete array type",
+   "papers": {
+    "N3273": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3273.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-no-imaginary",
+   "standard": "C2y",
+   "description": "Remove imaginary types",
+   "papers": {
+    "N3274": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3274.pdf"
+   },
+   "check": "none",
+   "why": "Removes an optional feature."
+  },
+  {
+   "bench": "cstd-c2y-fp-exception-macros",
+   "standard": "C2y",
+   "description": "Floating-point exceptions for macro replacements",
+   "papers": {
+    "N3286": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3286.pdf"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c2y-complex-literals",
+   "standard": "C2y",
+   "description": "Introduce complex literals",
+   "papers": {
+    "N3298": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3298.htm"
+   },
+   "check": "none",
+   "why": "Complex types are optional."
+  },
+  {
+   "bench": "cstd-c2y-atomic-alignment",
+   "standard": "C2y",
+   "description": "Allowing stricter alignment for atomic types",
+   "papers": {
+    "N3312": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3312.pdf"
+   },
+   "check": "none",
+   "why": "A permission, so nothing to test."
+  },
+  {
+   "bench": "cstd-c2y-null-zero-length",
+   "standard": "C2y",
+   "description": "Allow zero length operations on null pointers",
+   "papers": {
+    "N3322": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3322.pdf"
+   },
+   "check": "none",
+   "why": "Only an optimizer's choices show it."
+  },
+  {
+   "bench": "cstd-c2y-increment-adjustment",
+   "standard": "C2y",
+   "description": "How do you add one to something?",
+   "papers": {
+    "N3323": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3323.pdf"
+   },
+   "check": "none",
+   "why": "Changes wording, not behavior."
+  },
+  {
+   "bench": "cstd-c2y-empty-structs",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons III",
+   "papers": {
+    "N3341": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3341.pdf"
+   },
+   "check": "none",
+   "why": "Now implementation-defined; any choice conforms."
+  },
+  {
+   "bench": "cstd-c2y-qualified-function-types",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons IV",
+   "papers": {
+    "N3342": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3342.pdf"
+   },
+   "check": "none",
+   "why": "Now implementation-defined; any choice conforms."
+  },
+  {
+   "bench": "cstd-c2y-void-parameter",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons VI",
+   "papers": {
+    "N3344": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3344.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "ok",
+     "note": "All three cases diagnosed."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "All three cases diagnosed."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "Case 3 diagnosed, but not cases 1 and 2."
+    },
+    "zsdcc": {
+     "result": "ok",
+     "note": "All three cases diagnosed."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "Case 3 diagnosed, but not cases 1 and 2."
+    },
+    "ez80-clang": {
+     "result": "no",
+     "note": "Cases 1 and 3 diagnosed, but not case 2."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "Case 3 diagnosed, but not cases 1 and 2."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "No diagnostic for cases 2 and 3. Has no const for case 1."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic for any case."
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "All three cases diagnosed."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-unnamed-members",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons VII",
+   "papers": {
+    "N3345": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3345.pdf"
+   },
+   "check": "none",
+   "why": "Removes an unreachable undefined behavior."
+  },
+  {
+   "bench": "cstd-c2y-initializer-constraints",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons VIII",
+   "papers": {
+    "N3346": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3346.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "ok",
+     "note": "Both cases diagnosed."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "Both cases diagnosed."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "No diagnostic for case 2. Cannot initialize a structure from another for case 1."
+    },
+    "zsdcc": {
+     "result": "ok",
+     "note": "Both cases diagnosed."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "No diagnostic for case 2. Cannot initialize a structure from another for case 1."
+    },
+    "ez80-clang": {
+     "result": "ok",
+     "note": "Both cases diagnosed."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "Case 2 diagnosed. Cannot initialize a local structure for the file and case 1."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "Case 2 diagnosed. Cannot initialize a local structure for the file and case 1."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic for either case."
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "Both cases diagnosed."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-incomplete-tentative",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons IX",
+   "papers": {
+    "N3347": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3347.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "ok",
+     "note": "Error: \"attempt to allocate variable of unknown size 'incomplete'\"."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "Error: \"tentative definition has type 'struct never' that is never completed\"."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "Rejects the valid file as well: \"Cannot not declare an instance of incompletely defined struct 'later'\"."
+    },
+    "zsdcc": {
+     "result": "ok",
+     "note": "Error: \"attempt to allocate variable of unknown size 'incomplete'\"."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "Rejects the valid file as well: \"Cannot not declare an instance of incompletely defined struct 'later'\"."
+    },
+    "ez80-clang": {
+     "result": "ok",
+     "note": "Error: \"tentative definition has type 'struct never' that is never completed\"."
+    },
+    "fcc": {
+     "result": "ok",
+     "note": "Error: \"struct/union not declared\"."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "Rejects the valid file as well: \"undefined struct/union: later\"."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "Error: \"tentative definition has type 'struct never' that is never completed\"."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-generic-star-arrays",
+   "standard": "C2y",
+   "description": "Matching of Multi-Dimensional Arrays in Generic Selection Expressions",
+   "papers": {
+    "N3348": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3348.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-octal-and-delimited-escapes",
+   "standard": "C2y",
+   "description": "Obsolete implicitly octal literals and delimited escape sequences",
+   "papers": {
+    "N3353": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3353.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-named-loops",
+   "standard": "C2y",
+   "description": "Named loops",
+   "papers": {
+    "N3355": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3355.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-if-declarations",
+   "standard": "C2y",
+   "description": "`if` declarations",
+   "papers": {
+    "N3356": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3356.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-snan-initialization",
+   "standard": "C2y",
+   "description": "Consistent wording for SNAN initialization",
+   "papers": {
+    "N3364": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3364.pdf"
+   },
+   "check": "none",
+   "why": "Changes wording, not behavior."
+  },
+  {
+   "bench": "cstd-c2y-case-ranges",
+   "standard": "C2y",
+   "description": "Case range expressions (`case x ... y`)",
+   "papers": {
+    "N3370": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3370.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-stdarg-wording",
+   "standard": "C2y",
+   "description": "`stdarg.h` wording improvements",
+   "papers": {
+    "N3363": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3363.pdf"
+   },
+   "check": "none",
+   "why": "Changes wording, not behavior."
+  },
+  {
+   "bench": "cstd-c2y-countof",
+   "standard": "C2y",
+   "description": "`_Countof` operator",
+   "papers": {
+    "N3369": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3369.pdf",
+    "N3469": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3469.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-restartable-conversions",
+   "standard": "C2y",
+   "description": "Restartable Functions for Efficient Character Conversions",
+   "papers": {
+    "N3366": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3366.htm"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c2y-uabs",
+   "standard": "C2y",
+   "description": "Abs Without Undefined Behavior",
+   "papers": {
+    "N3349": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3349.pdf"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c2y-bit-utilities",
+   "standard": "C2y",
+   "description": "More Modern Bit Utilities",
+   "papers": {
+    "N3367": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3367.htm"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c2y-math-errors",
+   "standard": "C2y",
+   "description": "Error conditions in `<math.h>`",
+   "papers": {
+    "N3405": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3405.pdf"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c2y-void-expressions",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons X",
+   "papers": {
+    "N3409": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3409.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-linkage-conflicts",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons XI",
+   "papers": {
+    "N3410": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3410.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "ok",
+     "note": "Both cases diagnosed."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "Both cases diagnosed."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "No diagnostic for either case."
+    },
+    "zsdcc": {
+     "result": "ok",
+     "note": "Both cases diagnosed."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "No diagnostic for either case."
+    },
+    "ez80-clang": {
+     "result": "no",
+     "note": "Case 1 diagnosed, but not case 2."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "Rejects the valid file as well: \"storage class mismatch\"."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "Only warns that the variables are unused."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic for either case."
+    },
+    "gb-llvm": {
+     "result": "no",
+     "note": "Case 1 diagnosed, but not case 2."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-final-newline",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons XII",
+   "papers": {
+    "N3411": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3411.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-ucn-pasting",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons XIV",
+   "papers": {
+    "N3418": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3418.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "no",
+     "note": "Pastes it into the name é, only warning that the name is not ASCII."
+    },
+    "llvm-z80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "80cc": {
+     "result": "ok",
+     "note": "Error at the lone backslash: \"tokeniser: unexpected character 0x5c\"."
+    },
+    "zsdcc": {
+     "result": "no",
+     "note": "Pastes it into the name é; the assembler then fails on that name."
+    },
+    "sccz80": {
+     "result": "ok",
+     "note": "Error at the lone backslash: \"Missing token, expecting ; got \\\"."
+    },
+    "ez80-clang": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "Its preprocessor has no ##: \"missing semicolon\" for the valid file."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "Its preprocessor has no ##: \"illegal '#' directive\"."
+    },
+    "uc80": {
+     "result": "ok",
+     "note": "Error at the lone backslash: \"lexical error at byte 0x5c\"."
+    },
+    "gb-llvm": {
+     "result": "no",
+     "note": "No diagnostic."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-anonymous-initialization",
+   "standard": "C2y",
+   "description": "Anonymous structure/union initialization",
+   "papers": {
+    "N3451": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3451.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-counter",
+   "standard": "C2y",
+   "description": "The `__COUNTER__` predefined macro",
+   "papers": {
+    "N3457": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3457.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-complex-operators",
+   "standard": "C2y",
+   "description": "Complex operators",
+   "papers": {
+    "N3460": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3460.pdf"
+   },
+   "check": "none",
+   "why": "Complex types are optional."
+  },
+  {
+   "bench": "cstd-c2y-range-errors",
+   "standard": "C2y",
+   "description": "Range error definition followup",
+   "papers": {
+    "N3461": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3461.pdf"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c2y-pp-integer-expressions",
+   "standard": "C2y",
+   "description": "Preprocessor integer expressions",
+   "papers": {
+    "N3465": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3465.pdf",
+    "N3505": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3505.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "ok",
+     "note": "Error: \"token \\\"\\\" is not valid in preprocessor expressions\"."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "Error: \"invalid token at start of a preprocessor expression\"."
+    },
+    "80cc": {
+     "result": "ok",
+     "note": "Error from z88dk's preprocessor: \"invalid token in constant integral expression\"."
+    },
+    "zsdcc": {
+     "result": "ok",
+     "note": "Error from z88dk's preprocessor: \"invalid token in constant integral expression\"."
+    },
+    "sccz80": {
+     "result": "ok",
+     "note": "Error from z88dk's preprocessor: \"invalid token in constant integral expression\"."
+    },
+    "ez80-clang": {
+     "result": "ok",
+     "note": "Error: \"invalid token at start of a preprocessor expression\"."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "Its preprocessor warns about the valid #if as well: \"Unexpected text following preprocessor command\"."
+    },
+    "hitech": {
+     "result": "ok",
+     "note": "Error: \"Illegal character \\\" in preprocessor if\"."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "Error: \"invalid token at start of a preprocessor expression\"."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-library-null-pointers",
+   "standard": "C2y",
+   "description": "Null pointer clarifications in library",
+   "papers": {
+    "N3466": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3466.pdf"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c2y-unterminated-comment",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons XIII",
+   "papers": {
+    "N3478": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3478.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "ok",
+     "note": "Error: \"unterminated comment\"."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "Error: \"unterminated /* comment\"."
+    },
+    "80cc": {
+     "result": "ok",
+     "note": "Warning from z88dk's preprocessor: \"truncated comment\"."
+    },
+    "zsdcc": {
+     "result": "ok",
+     "note": "Warning from z88dk's preprocessor: \"truncated comment\"."
+    },
+    "sccz80": {
+     "result": "ok",
+     "note": "Warning from z88dk's preprocessor: \"truncated comment\"."
+    },
+    "ez80-clang": {
+     "result": "ok",
+     "note": "Error: \"unterminated /* comment\"."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "Its preprocessor never finished; it was stopped after 60 seconds."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "Error: \"unterminated /* comment\"."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-incomplete-lvalues",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons XVI",
+   "papers": {
+    "N3481": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3481.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "ok",
+     "note": "Error: \"lvalue of incomplete type\"."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "Error: \"incomplete type 'struct opaque' where a complete type is required\"."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "zsdcc": {
+     "result": "ok",
+     "note": "Error: \"lvalue of incomplete type\"."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "ez80-clang": {
+     "result": "ok",
+     "note": "Error: \"incomplete type 'struct opaque' where a complete type is required\"."
+    },
+    "fcc": {
+     "result": "ok",
+     "note": "Error: \"invalid type conversion\"."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "Error: \"incomplete type 'struct opaque' where a complete type is required\"."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-va-start-fixed",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons XVII",
+   "papers": {
+    "N3482": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3482.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "Error: \"'va_start' used in function with fixed args\"."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "zsdcc": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "ez80-clang": {
+     "result": "no",
+     "note": "No diagnostic: z88dk's <stdarg.h> gives it sccz80's macros."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "Error: \"'va_start' used in function with fixed args\". Its back end cannot compile the variadic function the file needs."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-shall-wording",
+   "standard": "C2y",
+   "description": "Slay Some Earthly Demons V",
+   "papers": {
+    "N3484": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3484.pdf"
+   },
+   "check": "none",
+   "why": "Changes wording, not behavior."
+  },
+  {
+   "bench": "cstd-c2y-narrowing-rounding-errors",
+   "standard": "C2y",
+   "description": "Error conditions for narrow type rounding",
+   "papers": {
+    "N3492": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3492.pdf"
+   },
+   "check": "none",
+   "why": "Part of the C library."
+  },
+  {
+   "bench": "cstd-c2y-width-macros",
+   "standard": "C2y",
+   "description": "Clarify width macros specification",
+   "papers": {
+    "N3496": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3496.htm"
+   },
+   "check": "none",
+   "why": "Part of the C library (`<limits.h>`)."
+  },
+  {
+   "bench": "cstd-c2y-static-assert-ice",
+   "standard": "C2y",
+   "description": "`static_assert` without UB",
+   "papers": {
+    "N3525": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3525.htm"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "ok",
+     "note": "Error: \"Initializer element is not a constant expression\"."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "Warning with -pedantic: \"expression is not an integer constant expression; folding it to a constant is a GNU extension\"."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "Has no _Static_assert."
+    },
+    "zsdcc": {
+     "result": "ok",
+     "note": "Error: \"Initializer element is not a constant expression\"."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "Has no _Static_assert."
+    },
+    "ez80-clang": {
+     "result": "ok",
+     "note": "Warning with -pedantic: \"expression is not an integer constant expression; folding it to a constant is a GNU extension\"."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "Has no _Static_assert."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "Has no _Static_assert."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "Warning with -pedantic: \"expression is not an integer constant expression; folding it to a constant is a GNU extension\"."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-incomplete-member-access",
+   "standard": "C2y",
+   "description": "Member access of an incomplete object",
+   "papers": {
+    "N3532": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3532.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "ok",
+     "note": "Error: \"'_a' not a structure/union member\"."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "Error: \"incomplete definition of type 'struct self'\"."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "Rejects the valid bit-field width as well: \"Calling a non-pointer function?\"."
+    },
+    "zsdcc": {
+     "result": "ok",
+     "note": "Error: \"'_a' not a structure/union member\"."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "Rejects the valid bit-field width as well: \"Calling a non-pointer function?\"."
+    },
+    "ez80-clang": {
+     "result": "ok",
+     "note": "Error: \"incomplete definition of type 'struct self'\"."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "Rejects the valid bit-field width as well: \"bad type\"."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "Rejects the valid bit-field width as well: \"integer constant expected\"."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic."
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "Error: \"incomplete definition of type 'struct self'\"."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-constant-expression-wording",
+   "standard": "C2y",
+   "description": "Chasing Ghosts I: constant expressions",
+   "papers": {
+    "N3558": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3558.htm"
+   },
+   "check": "none",
+   "why": "Changes wording, not behavior."
+  },
+  {
+   "bench": "cstd-c2y-generic-replacement",
+   "standard": "C2y",
+   "description": "Generic replacement (quasi-literals)",
+   "papers": {
+    "N3605": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3605.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-static-in-inline",
+   "standard": "C2y",
+   "description": "Allow calling `static inline` within `extern inline`",
+   "papers": {
+    "N3622": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3622.txt"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "ok",
+     "note": "No diagnostic."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "No diagnostic."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "Has no inline."
+    },
+    "zsdcc": {
+     "result": "ok",
+     "note": "No diagnostic."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "Has no inline."
+    },
+    "ez80-clang": {
+     "result": "no",
+     "note": "Warning: \"static function 'bump' is used in an inline function with external linkage\"."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "Has no inline."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "Has no inline."
+    },
+    "uc80": {
+     "result": "ok",
+     "note": "No diagnostic."
+    },
+    "gb-llvm": {
+     "result": "no",
+     "note": "Warning: \"static function 'bump' is used in an inline function with external linkage\"."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-main-definition",
+   "standard": "C2y",
+   "description": "Earthly Demon XV: Definition of Main",
+   "papers": {
+    "N3623": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3623.pdf"
+   },
+   "check": "none",
+   "why": "Now implementation-defined; any choice conforms."
+  },
+  {
+   "bench": "cstd-c2y-composite-types",
+   "standard": "C2y",
+   "description": "Composite types",
+   "papers": {
+    "N3652": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3652.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "no",
+     "note": "No diagnostic for either case."
+    },
+    "llvm-z80": {
+     "result": "no",
+     "note": "No diagnostic for either case."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "Has no variable-length arrays."
+    },
+    "zsdcc": {
+     "result": "no",
+     "note": "No diagnostic for either case."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "Has no variable-length arrays."
+    },
+    "ez80-clang": {
+     "result": "no",
+     "note": "No diagnostic for either case."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "Has no variable-length arrays."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "Has no variable-length arrays."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic for either case."
+    },
+    "gb-llvm": {
+     "result": "no",
+     "note": "No diagnostic for either case."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-static-assert-expressions",
+   "standard": "C2y",
+   "description": "static_assert expressions",
+   "papers": {
+    "N3715": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3715.pdf"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-atomic-members",
+   "standard": "C2y",
+   "description": "Earthly Demon: Accessing a Member of an Atomic Structure or Union",
+   "papers": {
+    "N3653": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3653.pdf"
+   },
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "no",
+     "note": "Has no atomics: \"atomics are not supported\"."
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "Error: \"accessing a member of an atomic structure or union is undefined behavior\"."
+    },
+    "80cc": {
+     "result": "no",
+     "note": "Has no _Atomic."
+    },
+    "zsdcc": {
+     "result": "no",
+     "note": "Has no atomics: \"atomics are not supported\"."
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "Has no _Atomic."
+    },
+    "ez80-clang": {
+     "result": "ok",
+     "note": "Error: \"accessing a member of an atomic structure or union is undefined behavior\"."
+    },
+    "fcc": {
+     "result": "no",
+     "note": "Has no _Atomic."
+    },
+    "hitech": {
+     "result": "no",
+     "note": "Has no _Atomic."
+    },
+    "uc80": {
+     "result": "no",
+     "note": "No diagnostic for either case."
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "Error: \"accessing a member of an atomic structure or union is undefined behavior\"."
+    }
+   }
+  },
+  {
+   "bench": "cstd-c2y-const-named-constants",
+   "standard": "C2y",
+   "description": "Const integer declarations as implicit named constants",
+   "papers": {
+    "N3833": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3833.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-bitint-enum",
+   "standard": "C2y",
+   "description": "Enumerations with Bit-Precise Integer as Underlying Type",
+   "papers": {
+    "N3705": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3705.htm"
+   },
+   "check": "run"
+  },
+  {
+   "bench": "cstd-c2y-elvis",
+   "standard": "C2y",
+   "description": "The Elvis operator ?:",
+   "papers": {
+    "N3804": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3804.txt"
+   },
+   "check": "run"
+  }
+ ]
+}

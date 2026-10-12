@@ -35,15 +35,39 @@
   "origin": "Dhrystone 2.1 (netlib), adapted",
   "url": "https://www.netlib.org/benchmark/dhry-c"
  },
- "fact": {
+ "fact32": {
   "description": "Recursive 32-bit factorials",
   "details": "Recursive factorials of 0 to 15 in 32-bit arithmetic, eight times over. Call and return overhead and 32-bit multiplication.",
   "origin": "written for z80-bench after c-bench-64",
   "url": "https://github.com/thred/c-bench-64"
  },
- "pi": {
+ "fact64": {
+  "description": "Recursive 64-bit factorials",
+  "details": "Recursive factorials of 0 to 20 in 64-bit arithmetic, eight times over. Call and return overhead and 64-bit multiplication.",
+  "origin": "written for z80-bench after c-bench-64",
+  "url": "https://github.com/thred/c-bench-64"
+ },
+ "linsolve": {
+  "description": "Linear system, float",
+  "details": "Solves a 10 by 10 system by Gaussian elimination with partial pivoting, in single-precision floats. Floating-point division, multiplication and subtraction.",
+  "origin": "written for z80-bench",
+  "url": ""
+ },
+ "mandel": {
+  "description": "Mandelbrot set, float",
+  "details": "Escape counts for a 32 by 24 grid of points, up to 24 iterations each, in single-precision floats. Floating-point multiplication, addition and comparison.",
+  "origin": "written for z80-bench",
+  "url": ""
+ },
+ "pi32": {
   "description": "160 digits of pi, 32-bit",
   "details": "A spigot algorithm that produces 160 digits of pi, four at a time. Nearly all the time goes into 32-bit multiplication, division and remainder.",
+  "origin": "written for z80-bench after c-bench-64",
+  "url": "https://github.com/thred/c-bench-64"
+ },
+ "pi64": {
+  "description": "40 digits of pi, 64-bit",
+  "details": "The pi32 spigot with its 32-bit numbers widened to 64 bits, for 40 digits. Nearly all the time goes into 64-bit multiplication, division and remainder.",
   "origin": "written for z80-bench after c-bench-64",
   "url": "https://github.com/thred/c-bench-64"
  },
@@ -70,5 +94,11 @@
   "details": "Philipp Krause's benchmark for small systems. Its c90base module decompresses RLE and Huffman data, sorts sprites by insertion sort and multiplies integer matrices, mostly code taken from real ColecoVision programs.",
   "origin": "stdcbench 0.8, GPL-2.0-or-later",
   "url": "https://sourceforge.net/projects/stdcbench/"
+ },
+ "zx0": {
+  "description": "Decompress 4 KB with ZX0",
+  "details": "Einar Saukas' ZX0, an LZ77 format made for 8-bit machines, unpacks the same 4 KB of text as puff from a 1.5 KB stream. It reads interlaced Elias gamma codes a bit at a time and copies literals and back-references byte by byte.",
+  "origin": "written for z80-bench from the ZX0 v2 format",
+  "url": "https://github.com/einar-saukas/ZX0"
  }
 }

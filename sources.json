@@ -3,7 +3,8 @@
   "benchmarks/aes256/main.c",
   "vendor/tiny-AES-c/aes.c",
   "vendor/tiny-AES-c/aes.h",
-  "benchmarks/harness/data.c",
+  "benchmarks/harness/fill.c",
+  "benchmarks/harness/hash.c",
   "benchmarks/harness/marker.c",
   "benchmarks/harness/bench.h"
  ],
@@ -21,19 +22,19 @@
  ],
  "crc16": [
   "benchmarks/crc16/main.c",
-  "benchmarks/harness/data.c",
+  "benchmarks/harness/fill.c",
   "benchmarks/harness/marker.c",
   "benchmarks/harness/bench.h"
  ],
  "crc32": [
   "benchmarks/crc32/main.c",
-  "benchmarks/harness/data.c",
+  "benchmarks/harness/fill.c",
   "benchmarks/harness/marker.c",
   "benchmarks/harness/bench.h"
  ],
  "crc8": [
   "benchmarks/crc8/main.c",
-  "benchmarks/harness/data.c",
+  "benchmarks/harness/fill.c",
   "benchmarks/harness/marker.c",
   "benchmarks/harness/bench.h"
  ],
@@ -44,13 +45,33 @@
   "benchmarks/harness/marker.c",
   "benchmarks/harness/bench.h"
  ],
- "fact": [
-  "benchmarks/fact/main.c",
+ "fact32": [
+  "benchmarks/fact32/main.c",
   "benchmarks/harness/marker.c",
   "benchmarks/harness/bench.h"
  ],
- "pi": [
-  "benchmarks/pi/main.c",
+ "fact64": [
+  "benchmarks/fact64/main.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "linsolve": [
+  "benchmarks/linsolve/main.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "mandel": [
+  "benchmarks/mandel/main.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "pi32": [
+  "benchmarks/pi32/main.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "pi64": [
+  "benchmarks/pi64/main.c",
   "benchmarks/harness/marker.c",
   "benchmarks/harness/bench.h"
  ],
@@ -60,7 +81,7 @@
   "benchmarks/puff/input.c",
   "benchmarks/puff/puff.h",
   "benchmarks/puff/setjmp.h",
-  "benchmarks/harness/data.c",
+  "benchmarks/harness/hash.c",
   "benchmarks/harness/marker.c",
   "benchmarks/harness/bench.h"
  ],
@@ -90,5 +111,406 @@
   "vendor/stdcbench/c90base-huffman.h",
   "benchmarks/harness/marker.c",
   "benchmarks/harness/bench.h"
+ ],
+ "zx0": [
+  "benchmarks/zx0/main.c",
+  "benchmarks/zx0/input.c",
+  "benchmarks/harness/hash.c",
+  "benchmarks/harness/marker.c",
+  "benchmarks/harness/bench.h"
+ ],
+ "cstd-c99-ucn-identifiers": [
+  "cstd/c99/ucn-identifiers.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-translation-limits": [
+  "cstd/c99/translation-limits.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-line-comments": [
+  "cstd/c99/line-comments.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-restrict": [
+  "cstd/c99/restrict.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-arithmetic-types": [
+  "cstd/c99/arithmetic-types.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-flexible-array-members": [
+  "cstd/c99/flexible-array-members.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-vla": [
+  "cstd/c99/vla.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-vm-types": [
+  "cstd/c99/vm-types.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-designated-initializers": [
+  "cstd/c99/designated-initializers.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-non-constant-initializers": [
+  "cstd/c99/non-constant-initializers.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-idempotent-qualifiers": [
+  "cstd/c99/idempotent-qualifiers.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-enum-trailing-comma": [
+  "cstd/c99/enum-trailing-comma.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-hex-float": [
+  "cstd/c99/hex-float.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-compound-literals": [
+  "cstd/c99/compound-literals.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-signed-division": [
+  "cstd/c99/signed-division.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-mixed-declarations": [
+  "cstd/c99/mixed-declarations.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-for-declarations": [
+  "cstd/c99/for-declarations.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-inline": [
+  "cstd/c99/inline.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-func": [
+  "cstd/c99/func.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-array-parameter-qualifiers": [
+  "cstd/c99/array-parameter-qualifiers.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-variadic-macros": [
+  "cstd/c99/variadic-macros.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-pragma-operator": [
+  "cstd/c99/pragma-operator.c",
+  "cstd/main.c"
+ ],
+ "cstd-c99-fp-pragmas": [
+  "cstd/c99/fp-pragmas.c",
+  "cstd/main.c"
+ ],
+ "cstd-c11-static-assert": [
+  "cstd/c11/static-assert.c",
+  "cstd/main.c"
+ ],
+ "cstd-c11-generic": [
+  "cstd/c11/generic.c",
+  "cstd/main.c"
+ ],
+ "cstd-c11-anonymous-struct-union": [
+  "cstd/c11/anonymous-struct-union.c",
+  "cstd/main.c"
+ ],
+ "cstd-c11-alignas-alignof": [
+  "cstd/c11/alignas-alignof.c",
+  "cstd/main.c"
+ ],
+ "cstd-c11-thread-local": [
+  "cstd/c11/thread-local.c",
+  "cstd/main.c"
+ ],
+ "cstd-c11-noreturn": [
+  "cstd/c11/noreturn.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-static-assert-no-message": [
+  "cstd/c23/static-assert-no-message.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-nodiscard": [
+  "cstd/c23/nodiscard.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-maybe-unused": [
+  "cstd/c23/maybe-unused.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-deprecated": [
+  "cstd/c23/deprecated.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-attributes": [
+  "cstd/c23/attributes.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-fallthrough": [
+  "cstd/c23/fallthrough.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-u8-char-constants": [
+  "cstd/c23/u8-char-constants.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-nodiscard-message": [
+  "cstd/c23/nodiscard-message.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-unnamed-parameters": [
+  "cstd/c23/unnamed-parameters.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-labels": [
+  "cstd/c23/labels.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-binary-constants": [
+  "cstd/c23/binary-constants.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-has-c-attribute": [
+  "cstd/c23/has-c-attribute.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-duplicate-attributes": [
+  "cstd/c23/duplicate-attributes.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-digit-separators": [
+  "cstd/c23/digit-separators.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-elifdef": [
+  "cstd/c23/elifdef.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-u8-string-char8": [
+  "cstd/c23/u8-string-char8.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-maybe-unused-labels": [
+  "cstd/c23/maybe-unused-labels.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-warning": [
+  "cstd/c23/warning.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-bitint": [
+  "cstd/c23/bitint.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-noreturn-attribute": [
+  "cstd/c23/noreturn-attribute.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-bitint-suffixes": [
+  "cstd/c23/bitint-suffixes.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-vm-types-required": [
+  "cstd/c23/vm-types-required.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-has-include": [
+  "cstd/c23/has-include.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-uax31-identifiers": [
+  "cstd/c23/uax31-identifiers.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-empty-initializers": [
+  "cstd/c23/empty-initializers.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-typeof": [
+  "cstd/c23/typeof.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-keyword-spellings": [
+  "cstd/c23/keyword-spellings.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-true-false": [
+  "cstd/c23/true-false.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-unsequenced-reproducible": [
+  "cstd/c23/unsequenced-reproducible.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-variadic-no-named": [
+  "cstd/c23/variadic-no-named.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-auto": [
+  "cstd/c23/auto.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-embed": [
+  "cstd/c23/embed.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-constexpr": [
+  "cstd/c23/constexpr.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-improved-enums": [
+  "cstd/c23/improved-enums.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-enum-underlying-type": [
+  "cstd/c23/enum-underlying-type.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-va-opt": [
+  "cstd/c23/va-opt.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-tag-compatibility": [
+  "cstd/c23/tag-compatibility.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-compound-literal-storage": [
+  "cstd/c23/compound-literal-storage.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-nullptr": [
+  "cstd/c23/nullptr.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-generic-type-operand": [
+  "cstd/c2y/generic-type-operand.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-alignof-incomplete-array": [
+  "cstd/c2y/alignof-incomplete-array.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-generic-star-arrays": [
+  "cstd/c2y/generic-star-arrays.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-octal-and-delimited-escapes": [
+  "cstd/c2y/octal-and-delimited-escapes.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-named-loops": [
+  "cstd/c2y/named-loops.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-if-declarations": [
+  "cstd/c2y/if-declarations.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-case-ranges": [
+  "cstd/c2y/case-ranges.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-countof": [
+  "cstd/c2y/countof.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-void-expressions": [
+  "cstd/c2y/void-expressions.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-final-newline": [
+  "cstd/c2y/final-newline.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-anonymous-initialization": [
+  "cstd/c2y/anonymous-initialization.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-counter": [
+  "cstd/c2y/counter.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-generic-replacement": [
+  "cstd/c2y/generic-replacement.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-static-assert-expressions": [
+  "cstd/c2y/static-assert-expressions.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-const-named-constants": [
+  "cstd/c2y/const-named-constants.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-bitint-enum": [
+  "cstd/c2y/bitint-enum.c",
+  "cstd/main.c"
+ ],
+ "cstd-c2y-elvis": [
+  "cstd/c2y/elvis.c",
+  "cstd/main.c"
+ ],
+ "cstd-c23-kr-definitions": [
+  "cstd/c23/kr-definitions.c"
+ ],
+ "cstd-c23-array-qualifiers": [
+  "cstd/c23/array-qualifiers.c"
+ ],
+ "cstd-c23-empty-parameter-lists": [
+  "cstd/c23/empty-parameter-lists.c"
+ ],
+ "cstd-c2y-earthly-demons-1": [
+  "cstd/c2y/earthly-demons-1.c"
+ ],
+ "cstd-c2y-void-parameter": [
+  "cstd/c2y/void-parameter.c"
+ ],
+ "cstd-c2y-initializer-constraints": [
+  "cstd/c2y/initializer-constraints.c"
+ ],
+ "cstd-c2y-incomplete-tentative": [
+  "cstd/c2y/incomplete-tentative.c"
+ ],
+ "cstd-c2y-linkage-conflicts": [
+  "cstd/c2y/linkage-conflicts.c"
+ ],
+ "cstd-c2y-ucn-pasting": [
+  "cstd/c2y/ucn-pasting.c"
+ ],
+ "cstd-c2y-pp-integer-expressions": [
+  "cstd/c2y/pp-integer-expressions.c"
+ ],
+ "cstd-c2y-unterminated-comment": [
+  "cstd/c2y/unterminated-comment.c"
+ ],
+ "cstd-c2y-incomplete-lvalues": [
+  "cstd/c2y/incomplete-lvalues.c"
+ ],
+ "cstd-c2y-va-start-fixed": [
+  "cstd/c2y/va-start-fixed.c"
+ ],
+ "cstd-c2y-static-assert-ice": [
+  "cstd/c2y/static-assert-ice.c"
+ ],
+ "cstd-c2y-incomplete-member-access": [
+  "cstd/c2y/incomplete-member-access.c"
+ ],
+ "cstd-c2y-static-in-inline": [
+  "cstd/c2y/static-in-inline.c"
+ ],
+ "cstd-c2y-composite-types": [
+  "cstd/c2y/composite-types.c"
+ ],
+ "cstd-c2y-atomic-members": [
+  "cstd/c2y/atomic-members.c"
  ]
 }
