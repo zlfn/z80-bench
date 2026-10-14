@@ -433,7 +433,9 @@ tbody.closed .cstd-row { display: none; }
 .cstd td.ok { color: var(--good); background: color-mix(in srgb, var(--good) 12%, transparent); }
 .cstd td.bad { color: var(--critical); background: color-mix(in srgb, var(--critical) 10%, transparent); }
 .cstd td.no { color: var(--muted); }
-.cstd-key { margin-left: 10px; white-space: nowrap; }
+/* Each entry keeps to one line; the key wraps between them. */
+.cstd-key { margin-left: 10px; }
+.cstd-key > span { white-space: nowrap; }
 .cstd-key b { margin: 0 3px 0 8px; }
 .cstd-key b.ok { color: var(--good); }
 .cstd-key b.bad { color: var(--critical); }
@@ -645,4 +647,8 @@ tbody.closed .cstd-row { display: none; }
   .p-logo { padding: 0 0 10px; }
   .p-logo img { width: 48px; height: 48px; border-radius: 10px; }
   .p-link { margin-left: 0; }
+  /* The key starts on its own line, under the note. */
+  .cstd-key { display: block; margin: 4px 0 0; }
+  .cstd-key > span { margin-right: 8px; }
+  .cstd-key b { margin: 0 3px 0 0; }
 }
