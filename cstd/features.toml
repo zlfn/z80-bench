@@ -602,7 +602,7 @@ name = "atomic-alignment"
 desc = "Allowing stricter alignment for atomic types"
 papers = { N3312 = "https://open-std.org/JTC1/SC22/WG14/www/docs/n3312.pdf" }
 check = "none"
-why = "A permission, so nothing to test."
+why = "Now implementation-defined; any choice conforms."
 
 [[feature]]
 standard = "C2y"
