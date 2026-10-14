@@ -108,8 +108,7 @@ standard = "C99"
 name = "implicit-return"
 desc = "Implicit `return 0;` in the `main()` function"
 papers = {  }
-check = "none"
-why = "Applies only to hosted programs."
+check = "manual"
 
 [[feature]]
 standard = "C99"

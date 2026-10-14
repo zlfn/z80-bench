@@ -745,7 +745,8 @@ function cstdManualCell(m, c, feature) {
   const td = el("td", { class: `res ${m.result}` }, CSTD_MARK[m.result], el("span", { class: "manual-mark" }, "*"));
   hoverTip(td, (t) => {
     t.append(el("div", { class: "t-head" }, label(c)), el("div", {}, ...descNodes(feature.description)),
-      el("div", { class: "t-manual" }, `Checked manually on ${checked.checked} with ${checked.version}`),
+      el("div", { class: "t-manual" },
+        `Checked manually on ${m.checked || checked.checked} with ${m.version || checked.version}`),
       el("div", {}, m.note));
   });
   return td;

@@ -5,6 +5,11 @@
 # Clang's option for every diagnostic the standard asks for. "ok" means the
 # compiler does what the standard says, and "no" that it does not, or that it
 # rejects code the check needs.
+#
+# c99/implicit-return.c is built as a hosted program instead: the Clang-based
+# compilers without -ffreestanding, and z88dk's for its CP/M target. Its
+# results give their own date, and their own version where it differs from
+# the one below.
 
 # The version of each compiler that was checked, and when.
 [compilers]
@@ -19,6 +24,19 @@ hitech = { version = "3.09-21", checked = "2026-10-12" }
 uc80 = { version = "0.7.0", checked = "2026-10-12" }
 dcc = { version = "c98156fe", checked = "2026-10-13" }
 "gb-llvm" = { version = "21.0.0git 5bc8de9127f7", checked = "2026-10-12" }
+
+[c99.implicit-return]
+sdcc = { result = "no", note = "Warning: \"function 'main' must return value\"; main jumps to value().", version = "4.6.4 #16997", checked = "2026-10-14" }
+"llvm-z80" = { result = "ok", note = "Sets DE to 0 after the call.", version = "24.0.0git ed0b651b1cc0", checked = "2026-10-14" }
+"80cc" = { result = "no", note = "main returns what value() left.", checked = "2026-10-14" }
+zsdcc = { result = "no", note = "Warning: \"function 'main' must return value\"; main is another name for value().", checked = "2026-10-14" }
+sccz80 = { result = "no", note = "main returns what value() left.", checked = "2026-10-14" }
+"ez80-clang" = { result = "ok", note = "Sets HL to 0 after the call.", checked = "2026-10-14" }
+fcc = { result = "no", note = "main returns what value() left.", checked = "2026-10-14" }
+hitech = { result = "no", note = "main jumps to value().", checked = "2026-10-14" }
+uc80 = { result = "no", note = "main returns what value() left.", checked = "2026-10-14" }
+dcc = { result = "ok", note = "Sets HL to 0 after the call.", checked = "2026-10-14" }
+"gb-llvm" = { result = "ok", note = "Sets HL to 0 after the call.", checked = "2026-10-14" }
 
 [c23.kr-definitions]
 sdcc = { result = "ok", note = "Error: \"K&R-style function 'add' is not permitted in ISO C23 or later\"." }
