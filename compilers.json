@@ -11,7 +11,7 @@
   "family": "SDCC",
   "repo": "llvm-z80/sdcc",
   "branch": "trunk",
-  "last_commit": "2026-10-12"
+  "last_commit": "2026-10-13"
  },
  "sdcc-4.6.0": {
   "name": "SDCC 4.6.0"
