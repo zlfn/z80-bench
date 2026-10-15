@@ -459,6 +459,9 @@
   "cstd/c2y/elvis.c",
   "cstd/main.c"
  ],
+ "cstd-c99-implicit-return": [
+  "cstd/c99/implicit-return.c"
+ ],
  "cstd-c23-kr-definitions": [
   "cstd/c23/kr-definitions.c"
  ],

@@ -192,8 +192,66 @@
    "standard": "C99",
    "description": "Implicit `return 0;` in the `main()` function",
    "papers": {},
-   "check": "none",
-   "why": "Applies only to hosted programs."
+   "check": "manual",
+   "results": {
+    "sdcc": {
+     "result": "no",
+     "note": "Warning: \"function 'main' must return value\"; main jumps to value().",
+     "version": "4.6.4 #16997",
+     "checked": "2026-10-14"
+    },
+    "llvm-z80": {
+     "result": "ok",
+     "note": "Sets DE to 0 after the call.",
+     "version": "24.0.0git ed0b651b1cc0",
+     "checked": "2026-10-14"
+    },
+    "80cc": {
+     "result": "no",
+     "note": "main returns what value() left.",
+     "checked": "2026-10-14"
+    },
+    "zsdcc": {
+     "result": "no",
+     "note": "Warning: \"function 'main' must return value\"; main is another name for value().",
+     "checked": "2026-10-14"
+    },
+    "sccz80": {
+     "result": "no",
+     "note": "main returns what value() left.",
+     "checked": "2026-10-14"
+    },
+    "ez80-clang": {
+     "result": "ok",
+     "note": "Sets HL to 0 after the call.",
+     "checked": "2026-10-14"
+    },
+    "fcc": {
+     "result": "no",
+     "note": "main returns what value() left.",
+     "checked": "2026-10-14"
+    },
+    "hitech": {
+     "result": "no",
+     "note": "main jumps to value().",
+     "checked": "2026-10-14"
+    },
+    "uc80": {
+     "result": "no",
+     "note": "main returns what value() left.",
+     "checked": "2026-10-14"
+    },
+    "dcc": {
+     "result": "ok",
+     "note": "Sets HL to 0 after the call.",
+     "checked": "2026-10-14"
+    },
+    "gb-llvm": {
+     "result": "ok",
+     "note": "Sets HL to 0 after the call.",
+     "checked": "2026-10-14"
+    }
+   }
   },
   {
    "bench": "cstd-c99-mixed-declarations",
@@ -1077,7 +1135,7 @@
     "N3312": "https://open-std.org/JTC1/SC22/WG14/www/docs/n3312.pdf"
    },
    "check": "none",
-   "why": "A permission, so nothing to test."
+   "why": "Now implementation-defined; any choice conforms."
   },
   {
    "bench": "cstd-c2y-null-zero-length",
