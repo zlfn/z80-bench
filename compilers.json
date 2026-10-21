@@ -30,7 +30,7 @@
   "family": "LLVM",
   "repo": "llvm-z80/llvm-z80",
   "branch": "main",
-  "last_commit": "2026-10-18"
+  "last_commit": "2026-10-20"
  },
  "80cc": {
   "name": "80cc",
@@ -137,7 +137,7 @@
   "language": "C89, part of C99, part of C11",
   "repo": "davidly/dcc",
   "branch": "main",
-  "last_commit": "2026-10-09"
+  "last_commit": "2026-10-20"
  },
  "gb-llvm": {
   "name": "gb-llvm",
