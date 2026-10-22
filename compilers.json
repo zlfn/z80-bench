@@ -30,7 +30,7 @@
   "family": "LLVM",
   "repo": "llvm-z80/llvm-z80",
   "branch": "main",
-  "last_commit": "2026-10-20"
+  "last_commit": "2026-10-21"
  },
  "80cc": {
   "name": "80cc",
