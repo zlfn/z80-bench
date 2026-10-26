@@ -11,7 +11,7 @@
   "family": "SDCC",
   "repo": "llvm-z80/sdcc",
   "branch": "trunk",
-  "last_commit": "2026-10-24"
+  "last_commit": "2026-10-25"
  },
  "sdcc-4.6.0": {
   "name": "SDCC 4.6.0"
@@ -45,7 +45,7 @@
   "repo": "z88dk/z88dk",
   "branch": "master",
   "path": "src/80cc",
-  "last_commit": "2026-10-23"
+  "last_commit": "2026-10-24"
  },
  "zsdcc": {
   "name": "zsdcc",
@@ -125,7 +125,7 @@
   "language": "C89, C99, C11, C17, C23",
   "repo": "avwohl/uc80",
   "branch": "main",
-  "last_commit": "2026-09-30"
+  "last_commit": "2026-10-25"
  },
  "dcc": {
   "name": "dcc",
