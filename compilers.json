@@ -11,7 +11,7 @@
   "family": "SDCC",
   "repo": "llvm-z80/sdcc",
   "branch": "trunk",
-  "last_commit": "2026-10-25"
+  "last_commit": "2026-10-26"
  },
  "sdcc-4.6.0": {
   "name": "SDCC 4.6.0"
@@ -137,7 +137,7 @@
   "language": "C89, part of C99, part of C11",
   "repo": "davidly/dcc",
   "branch": "main",
-  "last_commit": "2026-10-24"
+  "last_commit": "2026-10-26"
  },
  "gb-llvm": {
   "name": "gb-llvm",
