@@ -11,7 +11,7 @@
   "family": "SDCC",
   "repo": "llvm-z80/sdcc",
   "branch": "trunk",
-  "last_commit": "2026-11-08"
+  "last_commit": "2026-11-10"
  },
  "sdcc-4.6.0": {
   "name": "SDCC 4.6.0"
@@ -73,7 +73,7 @@
   "repo": "z88dk/z88dk",
   "branch": "master",
   "path": "src/sccz80",
-  "last_commit": "2026-11-08"
+  "last_commit": "2026-11-09"
  },
  "ez80-clang": {
   "name": "ez80-clang",
@@ -137,7 +137,7 @@
   "language": "C89, part of C99, part of C11",
   "repo": "davidly/dcc",
   "branch": "main",
-  "last_commit": "2026-11-07"
+  "last_commit": "2026-11-09"
  },
  "gb-llvm": {
   "name": "gb-llvm",
