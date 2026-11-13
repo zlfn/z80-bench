@@ -30,7 +30,7 @@
   "family": "LLVM",
   "repo": "llvm-z80/llvm-z80",
   "branch": "main",
-  "last_commit": "2026-11-10"
+  "last_commit": "2026-11-12"
  },
  "80cc": {
   "name": "80cc",
@@ -45,7 +45,7 @@
   "repo": "z88dk/z88dk",
   "branch": "master",
   "path": "src/80cc",
-  "last_commit": "2026-11-10"
+  "last_commit": "2026-11-12"
  },
  "zsdcc": {
   "name": "zsdcc",
@@ -137,7 +137,7 @@
   "language": "C89, part of C99, part of C11",
   "repo": "davidly/dcc",
   "branch": "main",
-  "last_commit": "2026-11-12"
+  "last_commit": "2026-11-13"
  },
  "gb-llvm": {
   "name": "gb-llvm",
