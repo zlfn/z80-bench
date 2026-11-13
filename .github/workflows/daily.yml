@@ -82,16 +82,36 @@ jobs:
           path: ~/sdcc-trunk
           key: sdcc-trunk-${{ steps.sdcc.outputs.sha }}-${{ hashFiles('tools/build-sdcc.sh') }}
 
-      # The compilers below are pinned releases that no longer change daily.
-      - name: Fetch CEdev v15.0
+      # The next three are fetched ready-built, the newest each day.
+      # CEdev's nightly package is rebuilt only when CEdev itself changes, so
+      # ez80-clang comes from its LLVM fork's nightly, rebuilt on every commit.
+      - name: Fetch CEdev and ez80-clang nightly
         run: |
           mkdir -p dl
-          gh release download v15.0 --repo CE-Programming/toolchain --dir dl \
-            --pattern CEdev-Linux.tar.gz
-          echo "85f4794a617b134249a9cba8a084414e86e16d2a68377b1d72ace30c636dbdf9  dl/CEdev-Linux.tar.gz" |
-            sha256sum -c
-          tar -xzf dl/CEdev-Linux.tar.gz -C ~
+          gh release download nightly --repo CE-Programming/toolchain --dir dl \
+            --pattern CEdev-Linux-nightly.tar.gz
+          tar -xzf dl/CEdev-Linux-nightly.tar.gz -C ~
+          gh release download nightly --repo CE-Programming/llvm-project --dir dl \
+            --pattern ez80-clang-link_ubuntu_nightly.zip
+          unzip -q -o dl/ez80-clang-link_ubuntu_nightly.zip ez80-clang -d ~/CEdev/bin
 
+      # Its newest release; the tag is the version the site shows.
+      - name: Fetch the latest dcc release
+        run: |
+          tag=$(gh release view --repo davidly/dcc --json tagName --jq .tagName)
+          mkdir -p dl ~/dcc
+          gh release download "$tag" --repo davidly/dcc --dir dl \
+            --pattern 'dcc-cpm-z80-*-linux-x64.tar.gz' --pattern SHA256SUMS.txt
+          (cd dl && sha256sum -c --ignore-missing SHA256SUMS.txt)
+          tar -xzf dl/dcc-cpm-z80-*-linux-x64.tar.gz --strip-components=1 -C ~/dcc
+          echo "${tag#v}" > ~/dcc/version
+
+      - name: Install the latest uc80
+        run: |
+          python3 -m venv ~/uc80
+          ~/uc80/bin/pip install -q uc80 um80
+
+      # The compilers below are pinned and no longer change daily.
       - id: gb-llvm-cache
         uses: actions/cache/restore@v6
         with:
@@ -165,27 +185,6 @@ jobs:
         with:
           path: ~/hitech
           key: hitech-${{ hashFiles('tools/build-hitech.sh') }}
-
-      - id: dcc-cache
-        uses: actions/cache/restore@v6
-        with:
-          path: ~/dcc
-          key: dcc-${{ hashFiles('tools/build-dcc.sh') }}
-
-      - name: Build dcc
-        if: steps.dcc-cache.outputs.cache-hit != 'true'
-        run: tools/build-dcc.sh ~/dcc
-
-      - if: steps.dcc-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v6
-        with:
-          path: ~/dcc
-          key: dcc-${{ hashFiles('tools/build-dcc.sh') }}
-
-      - name: Install uc80 0.7.0
-        run: |
-          python3 -m venv ~/uc80
-          ~/uc80/bin/pip install -q uc80==0.7.0 um80==0.3.52
 
       - name: Pull z88dk
         run: docker pull -q "$Z88DK_IMAGE"

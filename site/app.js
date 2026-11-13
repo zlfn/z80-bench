@@ -896,7 +896,8 @@ function renderCompilers() {
     fact("Language", about["language-url"] && about.language
       ? el("a", { href: about["language-url"] }, about.language) : about.language);
     fact("License", about.license);
-    fact("Builds", c.nightly ? `Every day from ${about.branch || "its development branch"}` : "A fixed release");
+    fact("Builds", c.nightly ? `Every day from ${about.branch || "its development branch"}`
+      : c.latest ? "Its latest release, fetched every day" : "A fixed release");
     fact("Last commit", about.last_commit);
     const flags = el("dl", { class: "p-facts" });
     for (const t of ["z80", "sm83"]) {

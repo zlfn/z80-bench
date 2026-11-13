@@ -1,7 +1,8 @@
 # Flags for each compiler, per target and preset. "speed" and "size" are what
 # each project recommends for its fastest and its smallest code.
 # "nightly" marks a compiler the daily workflow builds from its development
-# branch, so its numbers can change from one day to the next.
+# branch, so its numbers can change from one day to the next. "latest" marks
+# one it fetches the newest release of every day.
 # "std" selects the newest C standard a compiler has, for the C feature
 # probes only.
 
@@ -69,6 +70,7 @@ sm83.size = ["-O3"]
 
 # CE-Programming's ez80-clang in Z80 mode. -Oz is CEdev's default.
 [ez80-clang]
+nightly = true
 toolchain = "ez80-clang"
 std = ["-std=c2y"]
 z80.speed = ["-O2"]
@@ -88,6 +90,7 @@ z80.size = ["-O"]
 
 # uc80 has a single optimization setting.
 [uc80]
+latest = true
 toolchain = "uc80"
 z80.speed = []
 z80.size = []
@@ -95,6 +98,7 @@ z80.size = []
 # dcc has no optimization levels of its own; its peephole optimizer, dccpeep,
 # rewrites the code for time or for size, and these flags go to it.
 [dcc]
+latest = true
 toolchain = "dcc"
 z80.speed = ["-Ot"]
 z80.size = ["-Os"]

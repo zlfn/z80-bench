@@ -400,8 +400,11 @@ class Uc80:
         self.bindir = bindir
 
     def version(self) -> str:
+        # Its C frontend and its peephole optimizer are packages of their own,
+        # released apart from it, and change the code it makes as much.
         return run([self.bindir / "python", "-c",
-                    "import importlib.metadata as m; print(m.version('uc80'))"]).strip()
+                    "import importlib.metadata as m; print(m.version('uc80'), end='');"
+                    "[print(f', {p} {m.version(p)}', end='') for p in ('uc_core', 'upeepz80')]"]).strip()
 
     def build(self, bench: Benchmark, target: str, flags: list[str], out: Path) -> Program:
         uc80 = self.bindir / "uc80"
@@ -812,6 +815,7 @@ def main():
                 "version": versions[n],
                 "baseline": all_compilers[n].get("baseline", False),
                 "nightly": all_compilers[n].get("nightly", False),
+                "latest": all_compilers[n].get("latest", False),
                 "flags": {t: all_compilers[n][t] for t in TARGETS if t in all_compilers[n]},
             } for n in names},
             "benchmarks": {b.name: {
