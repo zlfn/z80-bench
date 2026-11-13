@@ -15482,7 +15482,7 @@
   },
   {
    "id": "2026-11-13",
-   "commit": "c541a845775b970908cc8a39be7d05634ed8235d",
+   "commit": "eae869278966ceb256603d8a9e28b482d1e5fc18",
    "versions": {
     "sdcc": "4.6.4 #17193",
     "sdcc-4.6.0": "4.6.0 #16608",
@@ -15490,11 +15490,11 @@
     "80cc": "v27031-44860d0890-20261112",
     "zsdcc": "v27031-44860d0890-20261112",
     "sccz80": "v27031-44860d0890-20261112",
-    "ez80-clang": "19.1.0 ef28e9c54cd1, z88dk v27031-44860d0890-20261112",
+    "ez80-clang": "22.1.8 c1c359f0f2ea, z88dk v27031-44860d0890-20261112",
     "fcc": "7b2a72e",
     "hitech": "3.09-21",
-    "uc80": "0.7.0",
-    "dcc": "c98156fe",
+    "uc80": "0.8.0, uc_core 0.4.2, upeepz80 0.2.8",
+    "dcc": "3.8.0",
     "gb-llvm": "21.0.0git 5bc8de9127f7"
    },
    "summary": {
@@ -15738,14 +15738,20 @@
         "total": 13
        },
        "uc80": {
-        "score": 2.559,
-        "value": 35873769,
-        "passed": 11,
-        "total": 13
+        "score": 0.8506,
+        "value": 11924940,
+        "passed": 13,
+        "total": 13,
+        "new_failures": {},
+        "fixed": [
+         "coremark",
+         "stdcbench"
+        ],
+        "step": 0.324
        },
        "dcc": {
-        "score": 2.1095,
-        "value": 29572121,
+        "score": 2.1068,
+        "value": 29535071,
         "passed": 9,
         "total": 13
        }
@@ -15806,14 +15812,20 @@
         "total": 13
        },
        "uc80": {
-        "score": 1.9205,
-        "value": 1362,
-        "passed": 11,
-        "total": 13
+        "score": 1.1955,
+        "value": 848,
+        "passed": 13,
+        "total": 13,
+        "new_failures": {},
+        "fixed": [
+         "coremark",
+         "stdcbench"
+        ],
+        "step": 0.6315
        },
        "dcc": {
-        "score": 2.1745,
-        "value": 1542,
+        "score": 2.1726,
+        "value": 1541,
         "passed": 9,
         "total": 13
        }
@@ -15858,10 +15870,19 @@
         "total": 13
        },
        "ez80-clang": {
-        "score": 0.7307,
-        "value": 10188871,
-        "passed": 2,
-        "total": 13
+        "score": 0.6812,
+        "value": 9498056,
+        "passed": 7,
+        "total": 13,
+        "new_failures": {},
+        "fixed": [
+         "crc16",
+         "crc32",
+         "sieve",
+         "sieve-bit",
+         "zx0"
+        ],
+        "step": 0.5061
        },
        "fcc": {
         "score": 3.1562,
@@ -15876,14 +15897,20 @@
         "total": 13
        },
        "uc80": {
-        "score": 2.5685,
-        "value": 35813751,
-        "passed": 11,
-        "total": 13
+        "score": 0.8552,
+        "value": 11924940,
+        "passed": 13,
+        "total": 13,
+        "new_failures": {},
+        "fixed": [
+         "coremark",
+         "stdcbench"
+        ],
+        "step": 0.324
        },
        "dcc": {
-        "score": 1.8344,
-        "value": 25578646,
+        "score": 1.8306,
+        "value": 25525832,
         "passed": 9,
         "total": 13
        }
@@ -15926,10 +15953,19 @@
         "total": 13
        },
        "ez80-clang": {
-        "score": 2.5187,
-        "value": 1837,
-        "passed": 2,
-        "total": 13
+        "score": 3.1954,
+        "value": 2331,
+        "passed": 7,
+        "total": 13,
+        "new_failures": {},
+        "fixed": [
+         "crc16",
+         "crc32",
+         "sieve",
+         "sieve-bit",
+         "zx0"
+        ],
+        "step": 1.4779
        },
        "fcc": {
         "score": 2.4444,
@@ -15944,14 +15980,20 @@
         "total": 13
        },
        "uc80": {
-        "score": 1.8556,
-        "value": 1354,
-        "passed": 11,
-        "total": 13
+        "score": 1.1622,
+        "value": 848,
+        "passed": 13,
+        "total": 13,
+        "new_failures": {},
+        "fixed": [
+         "coremark",
+         "stdcbench"
+        ],
+        "step": 0.6315
        },
        "dcc": {
-        "score": 2.1877,
-        "value": 1596,
+        "score": 2.1841,
+        "value": 1593,
         "passed": 9,
         "total": 13
        }
