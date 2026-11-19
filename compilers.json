@@ -137,7 +137,7 @@
   "language": "C89, part of C99, part of C11",
   "repo": "davidly/dcc",
   "branch": "main",
-  "last_commit": "2026-11-18"
+  "last_commit": "2026-11-19"
  },
  "gb-llvm": {
   "name": "gb-llvm",
