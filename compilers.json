@@ -73,7 +73,7 @@
   "repo": "z88dk/z88dk",
   "branch": "master",
   "path": "src/sccz80",
-  "last_commit": "2026-11-21"
+  "last_commit": "2026-11-22"
  },
  "ez80-clang": {
   "name": "ez80-clang",
@@ -137,7 +137,7 @@
   "language": "C89, part of C99, part of C11",
   "repo": "davidly/dcc",
   "branch": "main",
-  "last_commit": "2026-11-21"
+  "last_commit": "2026-11-22"
  },
  "gb-llvm": {
   "name": "gb-llvm",
