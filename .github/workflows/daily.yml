@@ -2,7 +2,7 @@ name: Daily run
 
 on:
   schedule:
-    # After llvm-z80's nightly package and the SDCC mirror, both at 20:00 UTC.
+    # The wait job below lines it up with llvm-z80's nightly and the SDCC mirror.
     - cron: "0 22 * * *"
   workflow_dispatch:
     inputs:
@@ -16,7 +16,34 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Both run on a 20:00 UTC cron, which GitHub starts hours late, as it does
+  # this one, and a full llvm-z80 rebuild takes up to three hours more. So a
+  # scheduled run waits for that night's runs, for up to four hours, and then
+  # goes on with what they published last.
+  wait:
+    name: Wait for llvm-z80's nightly and the SDCC mirror
+    runs-on: ubuntu-24.04
+    steps:
+      - if: github.event_name == 'schedule'
+        timeout-minutes: 240
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # The last 20:00 UTC.
+          since="$(date -u -d '20 hours ago' +%F)T20:00:00Z"
+          for workflow in llvm-z80/z80-nightly.yml sdcc-build/mirror.yml; do
+            repo=llvm-z80/${workflow%/*}
+            until id=$(gh run list --repo "$repo" --workflow "${workflow#*/}" --event schedule \
+                         --created ">=$since" --limit 1 --json databaseId --jq '.[].databaseId') &&
+                  [ -n "$id" ]; do
+              sleep 300
+            done
+            gh run watch "$id" --repo "$repo" --interval 300 --compact
+          done
+
   bench:
+    needs: wait
     runs-on: ubuntu-24.04
     timeout-minutes: 240
     permissions:
